@@ -447,7 +447,7 @@ body::after {
 .btn-redeem::after { content: '🫳 REDEEM'; font-size: 14px; display: block; margin-top: 5px; }
 .btn-applist::after { content: '🫳 APP LIST'; font-size: 14px; display: block; margin-top: 5px; }
 .btn-midasbuy::after { content: '🫳 midasbuy'; font-size: 14px; display: block; margin-top: 5px; }
-
+.btn-krcrate::after { content: '🫳 KR Crate'; font-size: 14px; display: block; margin-top: 5px; }
 /* =======================
    Notice Banner
 ======================= */
