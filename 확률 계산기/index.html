@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>모배 확률 계산기</title>
+  <!-- Open Graph -->
+  <meta property="og:title" content="PUBG INFO - UC 최저가 계산기 & 정보">
+  <meta property="og:description" content="iOS / Android UC 최저가 계산기, 확률 계산기, PUBG 최신 정보를 한곳에서 확인하세요!">
+  <meta property="og:image" content="https://wsrv.nl/?url=pbs.twimg.com/media/HD0AyoGb0AAxXjQ.jpg:large&w=1200&h=630&fit=cover">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="https://pubgmk14.github.io/Main-web/">
+  <meta property="og:type" content="website">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:      #0a0c0f;
+      --panel:   #0f1318;
+      --border:  #2a3540;
+      --accent:  #c8a84b;
+      --accent2: #4b8fc8;
+      --text:    #d4dde6;
+      --dim:     #5a6a7a;
+      --danger:  #c84b4b;
+      --green:   #4bc87a;
+      --red:     #e05c5c;
+      --mono:    'Share Tech Mono', monospace;
+      --sans:    'Rajdhani', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 28px 0;
+    }
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(200,168,75,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200,168,75,.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,.08) 2px, rgba(0,0,0,.08) 4px);
+      pointer-events: none;
+    }
+
+    .panel {
+      position: relative;
+      width: min(520px, 96vw);
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 30px 26px 26px;
+      animation: fadeIn .5s ease;
+    }
+    .panel::before, .panel::after,
+    .panel .cbl, .panel .cbr {
+      content: '';
+      position: absolute;
+      width: 16px; height: 16px;
+      border-color: var(--accent);
+      border-style: solid;
+    }
+    .panel::before { top:-1px;    left:-1px;   border-width: 2px 0 0 2px; }
+    .panel::after  { top:-1px;    right:-1px;  border-width: 2px 2px 0 0; }
+    .panel .cbl    { bottom:-1px; left:-1px;   border-width: 0 0 2px 2px; }
+    .panel .cbr    { bottom:-1px; right:-1px;  border-width: 0 2px 2px 0; }
+
+    /* ── Header ── */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 22px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+    }
+    .badge { font-family: var(--mono); font-size: 10px; letter-spacing: .15em; color: var(--accent); margin-bottom: 4px; }
+    h1 { font-size: 21px; font-weight: 700; letter-spacing: .05em; color: #fff; line-height: 1.1; }
+    .sub { font-family: var(--mono); font-size: 11px; color: var(--dim); margin-top: 3px; }
+
+    /* ── Loading ── */
+    .loading-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--accent);
+      padding: 10px 0 14px;
+    }
+    .spinner {
+      width: 14px; height: 14px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      flex-shrink: 0;
+    }
+    .load-err {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--danger);
+      padding: 8px 12px;
+      border: 1px solid rgba(200,75,75,.3);
+      border-left: 3px solid var(--danger);
+      background: rgba(200,75,75,.05);
+      margin-bottom: 14px;
+      display: none;
+    }
+    .load-err.show { display: block; }
+
+    /* ── Field label ── */
+    .flabel {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: .12em;
+      color: var(--dim);
+      text-transform: uppercase;
+      margin-bottom: 7px;
+    }
+
+    /* ── Dropdowns ── */
+    .select-wrap { position: relative; margin-bottom: 14px; }
+    .select-wrap select {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 11px 36px 11px 12px;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+      transition: border-color .2s;
+    }
+    .select-wrap select:focus { border-color: var(--accent); }
+    .select-wrap select:disabled { opacity: .35; cursor: not-allowed; }
+    .select-arrow {
+      position: absolute;
+      right: 12px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--accent);
+      pointer-events: none;
+      font-size: 10px;
+    }
+    .select-wrap select option { background: #141a22; }
+
+    /* item option grade color dots */
+    .grade-dot {
+      display: inline-block;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      margin-right: 4px;
+    }
+
+    /* ── Selected prob display ── */
+    .prob-display {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .prob-display.show { display: flex; }
+    .prob-left { flex: 1; min-width: 0; }
+    .prob-label { font-family: var(--mono); font-size: 9px; color: var(--dim); letter-spacing: .1em; margin-bottom: 2px; }
+    .prob-item  { font-family: var(--mono); font-size: 11px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .prob-grade-badge {
+      font-family: var(--mono);
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .prob-val-big { font-family: var(--mono); font-size: 22px; color: var(--accent); flex-shrink: 0; }
+
+    /* ── Manual toggle ── */
+    .manual-toggle {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--dim);
+      text-align: right;
+      margin-bottom: 12px;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      letter-spacing: .05em;
+      user-select: none;
+    }
+    .manual-toggle:hover { color: var(--accent); }
+
+    .manual-section { display: none; }
+    .manual-section.show { display: block; }
+
+    /* ── Text input ── */
+    .input-wrap { position: relative; margin-bottom: 14px; }
+    .input-wrap input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 19px;
+      padding: 10px 42px 10px 12px;
+      outline: none;
+      transition: border-color .2s;
+      appearance: textfield;
+      -moz-appearance: textfield;
+    }
+    .input-wrap input::-webkit-inner-spin-button,
+    .input-wrap input::-webkit-outer-spin-button { -webkit-appearance: none; }
+    .input-wrap input:focus { border-color: var(--accent); }
+    .input-wrap input::placeholder { color: var(--dim); font-size: 15px; }
+    .ulabel {
+      position: absolute;
+      right: 10px; top: 50%;
+      transform: translateY(-50%);
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--accent);
+      pointer-events: none;
+    }
+
+    /* ── Sep ── */
+    .sep { border: none; border-top: 1px solid var(--border); margin: 4px 0 16px; }
+
+    /* ── Chips ── */
+    .chip-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 16px; }
+    .chip {
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 4px 9px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--dim);
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .chip:hover  { border-color: var(--accent); color: var(--accent); }
+    .chip.active { border-color: var(--accent); background: rgba(200,168,75,.12); color: var(--accent); }
+
+    /* ── Calc btn ── */
+    .calc-btn {
+      width: 100%;
+      background: var(--accent);
+      color: #0a0c0f;
+      border: none;
+      font-family: var(--sans);
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 13px;
+      cursor: pointer;
+      transition: background .15s, transform .1s;
+      margin-bottom: 14px;
+    }
+    .calc-btn:hover  { background: #d9bc6e; }
+    .calc-btn:active { transform: scale(.98); }
+    .calc-btn:disabled { opacity: .35; cursor: not-allowed; transform: none; }
+
+    /* ── Error ── */
+    .error-msg { font-family: var(--mono); font-size: 11px; color: var(--danger); margin-bottom: 10px; display: none; }
+    .error-msg.show { display: block; }
+
+    /* ── Results ── */
+    .results {
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity .3s, transform .3s;
+    }
+    .results.visible { opacity: 1; transform: none; }
+
+    .res-header {
+      display: grid;
+      grid-template-columns: 70px 1fr 1fr;
+      margin-bottom: 4px;
+      padding: 0 2px;
+    }
+    .res-header span {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: .12em;
+      color: var(--dim);
+      text-transform: uppercase;
+    }
+    .res-header span:nth-child(2),
+    .res-header span:nth-child(3) { text-align: center; }
+
+    .res-row {
+      display: grid;
+      grid-template-columns: 70px 1fr 1fr;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent2);
+      background: var(--bg);
+      margin-bottom: 6px;
+      overflow: hidden;
+    }
+    .res-row.c-gold  { border-left-color: var(--accent); }
+    .res-row.c-green { border-left-color: var(--green);  }
+    .res-row.c-red   { border-left-color: var(--red);    }
+
+    .res-label {
+      padding: 10px 8px;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .res-label .pct  { font-family: var(--mono); font-size: 15px; color: #fff; font-weight: 700; line-height: 1; }
+    .res-label .ptag { font-family: var(--mono); font-size: 9px; color: var(--dim); margin-top: 2px; }
+
+    .res-cell {
+      padding: 10px 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border-right: 1px solid var(--border);
+    }
+    .res-cell:last-child { border-right: none; }
+
+    .cell-val {
+      font-family: var(--mono);
+      font-size: 17px;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+    .cell-val .unit  { font-size: 11px; color: var(--dim); margin-left: 2px; }
+    .cell-val .ucsym { font-size: 11px; color: var(--accent); margin-right: 2px; }
+    .cell-sub { font-family: var(--mono); font-size: 9px; color: var(--dim); margin-top: 2px; }
+
+    /* ── 100% note ── */
+    .inf-note {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--dim);
+      background: rgba(224,92,92,.05);
+      border: 1px solid rgba(224,92,92,.18);
+      border-left: 3px solid var(--red);
+      padding: 8px 12px;
+      line-height: 1.8;
+      margin-bottom: 6px;
+      display: none;
+    }
+    .inf-note.show { display: block; }
+    .inf-note b { color: #e8a0a0; }
+
+    /* ── Freshness ── */
+    .freshness {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--dim);
+      margin-bottom: 14px;
+      display: none;
+    }
+    .freshness.show { display: flex; align-items: center; gap: 6px; }
+    .freshness .dot { color: var(--green); }
+    .freshness .cnt { color: var(--accent); }
+
+    /* ── Notice ── */
+    .notice {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--dim);
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      line-height: 1.8;
+    }
+    .notice b { color: var(--accent); }
+
+    @media (max-width: 380px) {
+      .res-row    { grid-template-columns: 58px 1fr 1fr; }
+      .res-header { grid-template-columns: 58px 1fr 1fr; }
+      .res-cell   { padding: 8px 6px; }
+      .res-label  { padding: 8px 5px; }
+      .res-label .pct { font-size: 13px; }
+      .cell-val   { font-size: 14px; }
+    }
+
+    @keyframes fadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:none; } }
+    @keyframes spin   { to { transform: rotate(360deg); } }
+    @keyframes rowpulse {
+      0%   { box-shadow: 0 0 0 0 rgba(200,168,75,.3); }
+      70%  { box-shadow: 0 0 0 6px rgba(200,168,75,0); }
+      100% { box-shadow: 0 0 0 0 rgba(200,168,75,0); }
+    }
+    .grade-chip {
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 5px 10px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all .15s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .grade-chip:hover { filter: brightness(1.2); }
+    .grade-chip.active { outline: 2px solid var(--accent); outline-offset: 1px; }
+    .grade-chip .gname { font-weight: 700; }
+    .grade-chip .gpct  { opacity: .8; }
+
+    .res-row.pulse { animation: rowpulse .4s ease; }
+  </style>
+</head>
+<body>
+<div class="panel">
+  <div class="cbl"></div><div class="cbr"></div>
+
+  <!-- Header -->
+       <div class="header">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="52" height="52" style="flex-shrink:0;">
+      <path d="M 20 40 C 20 20, 80 20, 80 40 L 80 70 C 80 85, 20 85, 20 70 Z" fill="#2a2e33"/>
+      <path d="M 22 40 C 22 22, 78 22, 78 40 L 78 50 C 78 50, 50 60, 22 50 Z" fill="#3b424a"/>
+      <rect x="15" y="42" width="70" height="22" rx="4" fill="#586069"/>
+      <rect x="19" y="46" width="62" height="14" rx="2" fill="#0d1117"/>
+      <path d="M 22 64 L 78 64 L 70 82 C 60 88, 40 88, 30 82 Z" fill="#30363d"/>
+      <circle cx="85" cy="53" r="5" fill="#586069"/>
+      <circle cx="15" cy="53" r="5" fill="#586069"/>
+    </svg>
+    <div>
+      
+      <div class="badge">PUBG MOBILE · CRATE DROP CALC</div>
+      <h1>모배 확률 계산기</h1>
+      <div class="sub">CRATE · UC COST ESTIMATOR</div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-bar" id="loading">
+    <div class="spinner"></div>
+    <span>확률 데이터 불러오는 중...</span>
+  </div>
+  <div class="load-err" id="load-err">
+    ⚠ 데이터를 불러오지 못했습니다. 아래 직접 입력을 사용해주세요.
+  </div>
+
+  <!-- Dropdown section -->
+  <div id="dropdown-section" style="display:none">
+
+    <div class="freshness" id="freshness">
+      <span class="dot">●</span>
+      <span>PUBGM 확률표 연동 —</span>
+      <span class="cnt" id="crate-count"></span>
+      <span>개 상자 로드됨</span>
+    </div>
+
+    <div class="flabel">상자 선택</div>
+    <div class="select-wrap">
+      <select id="crate-select" onchange="onCrateChange()">
+        <option value="">— 상자를 선택하세요 —</option>
+      </select>
+      <span class="select-arrow">▼</span>
+    </div>
+
+    <div class="flabel">아이템 선택</div>
+    <div class="select-wrap">
+      <select id="item-select" onchange="onItemChange()" disabled>
+        <option value="">— 상자를 먼저 선택하세요 —</option>
+      </select>
+      <span class="select-arrow">▼</span>
+    </div>
+
+    <!-- 선택 확률 표시 -->
+    <div class="prob-display" id="prob-display">
+      <div class="prob-left">
+        <div class="prob-label">ITEM DROP RATE</div>
+        <div class="prob-item" id="prob-item-name"></div>
+      </div>
+      <div class="prob-grade-badge" id="prob-grade-badge"></div>
+      <div class="prob-val-big" id="prob-val-display">—%</div>
+    </div>
+
+    <!-- 등급별 합산 확률 칩 -->
+    <div id="grade-summary" style="display:none;margin-bottom:12px">
+      <div class="flabel" style="margin-bottom:6px">등급별 합산 확률 — 클릭하면 해당 확률로 계산</div>
+      <div id="grade-chips" style="display:flex;flex-wrap:wrap;gap:5px"></div>
+    </div>
+
+    <div class="manual-toggle" onclick="toggleManual()">✏ 직접 입력하기</div>
+  </div>
+
+  <!-- Manual input -->
+  <div class="manual-section" id="manual-section">
+    <div class="manual-toggle" id="back-btn" onclick="toggleManual()" style="display:none">◂ 상자 선택으로 돌아가기</div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- 확률 + UC 나란히 -->
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px;">
+    <div>
+      <div class="flabel" style="display:flex;align-items:center;height:20px;margin-bottom:7px">
+        <span>아이템 획득 확률</span>
+      </div>
+      <div class="input-wrap" style="margin-bottom:0">
+        <input type="number" id="probability" placeholder="예: 0.1" min="0.0001" max="100" step="any"
+               onkeydown="if(event.key==='Enter') calculate()">
+        <span class="ulabel">%</span>
+      </div>
+    </div>
+    <div>
+      <div class="flabel" style="display:flex;align-items:center;height:20px;margin-bottom:7px">
+        <span>상자 가격 <span style="color:#3a4a5a;font-size:9px">선택사항</span></span>
+      </div>
+      <div class="input-wrap" style="margin-bottom:0">
+        <input type="number" id="uc-price" placeholder="60" min="1" step="1"
+               onkeydown="if(event.key==='Enter') calculate()"
+               oninput="syncChips()">
+        <span class="ulabel">UC</span>
+      </div>
+    </div>
+  </div>
+  <div class="flabel" style="margin-bottom:6px">빠른 UC 선택</div>
+  <div class="chip-row" id="chip-row"></div>
+
+  <button type="button" class="calc-btn" id="calc-btn" onclick="calculate()" disabled>▶ 계산하기</button>
+  <div class="error-msg" id="error">⚠ 올바른 확률을 입력하세요 (0 초과 ~ 100 이하)</div>
+
+  <!-- Results -->
+  <div class="results" id="results">
+    <div class="res-header">
+      <span>구간</span>
+      <span>📦 시도 횟수</span>
+      <span>💸 UC 소비</span>
+    </div>
+    <div class="res-row c-gold" id="row-avg">
+      <div class="res-label"><div class="pct">평균</div><div class="ptag">EXPECTED</div></div>
+      <div class="res-cell"><div class="cell-val" id="val-avg">—<span class="unit">회</span></div><div class="cell-sub">기댓값</div></div>
+      <div class="res-cell" id="uc-avg"><div class="cell-val" style="color:var(--dim);font-size:13px">—</div><div class="cell-sub">가격 미입력</div></div>
+    </div>
+    <div class="res-row" id="row-50">
+      <div class="res-label"><div class="pct">50%</div><div class="ptag">MEDIAN</div></div>
+      <div class="res-cell"><div class="cell-val" id="val-50">—<span class="unit">회</span></div><div class="cell-sub">2번 중 1번</div></div>
+      <div class="res-cell" id="uc-50"><div class="cell-val" style="color:var(--dim);font-size:13px">—</div><div class="cell-sub">가격 미입력</div></div>
+    </div>
+    <div class="res-row c-green" id="row-90">
+      <div class="res-label"><div class="pct">90%</div><div class="ptag">HIGH</div></div>
+      <div class="res-cell"><div class="cell-val" id="val-90">—<span class="unit">회</span></div><div class="cell-sub">10번 중 9번</div></div>
+      <div class="res-cell" id="uc-90"><div class="cell-val" style="color:var(--dim);font-size:13px">—</div><div class="cell-sub">가격 미입력</div></div>
+    </div>
+    <div class="res-row c-red" id="row-99">
+      <div class="res-label"><div class="pct">99%</div><div class="ptag">≈100%</div></div>
+      <div class="res-cell"><div class="cell-val" id="val-99">—<span class="unit">회</span></div><div class="cell-sub">100번 중 99번</div></div>
+      <div class="res-cell" id="uc-99"><div class="cell-val" style="color:var(--dim);font-size:13px">—</div><div class="cell-sub">가격 미입력</div></div>
+    </div>
+    <div class="inf-note" id="inf-note">
+      <b>💡 100%는 왜 없나요?</b><br>
+      확률 게임에서 "반드시 나온다"는 보장은 없어요.<br>
+      99% 행은 <b>저 횟수만큼 열면 100번 중 99번은 이미 나왔을 기준</b>이에요.<br>
+      현실적인 목표치로 참고하세요!
+    </div>
+  </div>
+
+  <div class="notice">
+    <b>⚠ REFERENCE ONLY</b> — 확률 통계 기반 참고값이며 실제 결과와 다를 수 있습니다.<br>
+    각 시도는 독립 시행으로 계산됩니다.
+  </div>
+</div>
+
+<script>
+  const SHEET_ID = '1K2Q4loa65fnmIWM70UW4BA_bs894VUIBClE6gqUHOMU';
+  // gviz CSV는 인증 없이 공개 시트 전체를 가져옴
+  const CSV_URL  = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=확률표`;
+  const PRESETS = [10, 30, 40, 60, 180];
+
+  // 등급별 색상 매핑
+  const GRADE_COLORS = {
+    '레드':   { bg: 'rgba(220,60,60,.15)',  text: '#e07070', border: 'rgba(220,60,60,.4)'  },
+    '핑크':   { bg: 'rgba(220,100,180,.15)',text: '#e090d0', border: 'rgba(220,100,180,.4)'},
+    '퍼플':   { bg: 'rgba(150,80,220,.15)', text: '#b090e0', border: 'rgba(150,80,220,.4)' },
+    '블루':   { bg: 'rgba(60,120,220,.15)', text: '#70a0e0', border: 'rgba(60,120,220,.4)' },
+    '그린':   { bg: 'rgba(60,180,100,.15)', text: '#70c080', border: 'rgba(60,180,100,.4)' },
+  };
+
+  let sheetData    = {};
+  let isManual     = false;
+  let selectedProb = null;
+  function renderChips() {
+    const row = document.getElementById('chip-row');
+    row.innerHTML = '';
+    for (const val of PRESETS) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'chip';
+      btn.textContent = val;
+      btn.onclick = () => setUC(val);
+      row.appendChild(btn);
+    }
+  }
+  let dataLoaded   = false;
+
+  /* ══ CSV 로드 ══ */
+  async function loadSheet() {
+    try {
+      const res = await fetch(CSV_URL);
+      if (!res.ok) throw new Error('fetch failed');
+      const text = await res.text();
+      parseSheet(text);
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('dropdown-section').style.display = 'block';
+      document.getElementById('freshness').classList.add('show');
+      document.getElementById('crate-count').textContent = Object.keys(sheetData).length;
+      dataLoaded = true;
+    } catch (e) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('load-err').classList.add('show');
+      showManual(true);
+    }
+  }
+
+  /* ══ CSV 파싱 ══
+     로직: A열에서 '아이템 명(KR)' 찾기 → 위 행 = 상자명
+     확률 컬럼은 헤더에서 '확률' 첫 번째 컬럼 사용
+     확률 데이터 없는 상자는 드롭다운 제외
+  ══ */
+  function parseSheet(text) {
+    const rows = csvToRows(text);
+    sheetData  = {};
+    const crateOrder = [];
+
+    // 아이템 명(KR) 헤더 행 인덱스 전부 수집
+    const sections = [];
+    for (let i = 0; i < rows.length; i++) {
+      const c0 = (rows[i][0] || '').toString().trim();
+      if (c0 === '아이템 명(KR)' || c0 === '아이템명(KR)' || c0.includes('아이템 명(KR)')) {
+        // 상자명: 바로 위 행 (비어있으면 더 위로)
+        let nameRow = i - 1;
+        while (nameRow >= 0 && !(rows[nameRow][0] || '').toString().trim()) nameRow--;
+        const rawName = nameRow >= 0 ? (rows[nameRow][0] || '').toString() : '';
+        // 정제: 특수문자, 끝 시간 제거
+        const crateName = rawName
+          .replace(/[■▣□◆◇●◎▷\[\]]/g, '')
+          .replace(/\s*\d{1,2}:\d{2}~?\s*$/, '')
+          .replace(/~\s*$/, '')
+          .replace(/\s+/g, ' ')
+          .trim();
+        if (crateName) sections.push({ crateName, headerRow: i, nameRow });
+      }
+    }
+
+    // 각 섹션 데이터 파싱
+    for (let s = 0; s < sections.length; s++) {
+      const { crateName, headerRow, nameRow } = sections[s];
+      const endRow = s + 1 < sections.length ? sections[s + 1].headerRow - 2 : rows.length;
+
+      // 헤더 컬럼에서 등급/확률 인덱스 찾기
+      const hdr = rows[headerRow].map(c => (c || '').toString().trim());
+      const gradeIdx = hdr.findIndex(h => h.includes('등급'));
+      const probIdx  = hdr.findIndex(h => h === '확률' || h.startsWith('확률'));
+
+      const items = [];
+      for (let r = headerRow + 1; r < endRow; r++) {
+        const row = rows[r];
+        const c0  = (row[0] || '').toString().trim();
+        if (!c0) continue;
+        if (c0 === '총합' || c0.startsWith('*') || /^\d+\./.test(c0)) continue;
+
+        const itemKR = c0;
+        const grade  = gradeIdx !== -1 ? (row[gradeIdx] || '').toString().trim() : '';
+
+        // 확률 파싱: probIdx 우선, 없으면 전체 스캔
+        let probNum = probIdx !== -1
+          ? parseFloat((row[probIdx] || '').toString().replace('%', ''))
+          : NaN;
+
+        if (isNaN(probNum) || probNum <= 0) {
+          for (let ci = 2; ci < row.length; ci++) {
+            const n = parseFloat((row[ci] || '').toString().replace('%', ''));
+            if (!isNaN(n) && n > 0 && n < 100) { probNum = n; break; }
+          }
+        }
+
+        if (isNaN(probNum) || probNum <= 0 || probNum >= 100) continue;
+        items.push({ item: itemKR, grade, prob: probNum });
+      }
+
+      if (items.length === 0) continue; // 확률 데이터 없으면 제외
+
+      // 같은 이름 상자면 B열 날짜 붙이기
+      let key = crateName;
+      if (sheetData[key]) {
+        const bCell = (rows[nameRow] ? (rows[nameRow][1] || rows[nameRow][2] || '') : '').toString();
+        const dateM = bCell.match(/\d{4}-\d{2}-\d{2}/) || bCell.match(/\d{2,4}[.\-]\d{1,2}[.\-]\d{1,2}/);
+        key = dateM ? `${crateName} (${dateM[0]})` : `${crateName} (${crateOrder.filter(k => k === crateName || k.startsWith(crateName + ' (')).length + 1})`;
+      }
+      sheetData[key] = items;
+      crateOrder.push(key);
+    }
+
+    populateCrates(crateOrder.reverse());
+  }
+
+  /* ══ CSV → 2D 배열 (따옴표 처리 포함) ══ */
+  function csvToRows(text) {
+    const rows = [];
+    const lines = text.split('\n');
+    for (const line of lines) {
+      const cols = [];
+      let cur = '', inQ = false;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (ch === '"') { inQ = !inQ; continue; }
+        if (ch === ',' && !inQ) { cols.push(cur.trim()); cur = ''; continue; }
+        cur += ch;
+      }
+      cols.push(cur.trim());
+      rows.push(cols);
+    }
+    return rows;
+  }
+
+  /* ══ 드롭다운 구성 ══ */
+  function populateCrates(orderedKeys) {
+    const sel = document.getElementById('crate-select');
+    sel.innerHTML = '<option value="">— 상자를 선택하세요 —</option>';
+    for (const crate of orderedKeys) {
+      if (!sheetData[crate] || sheetData[crate].length === 0) continue;
+      const opt = document.createElement('option');
+      opt.value = crate;
+      opt.textContent = crate;
+      sel.appendChild(opt);
+    }
+  }
+
+  function onCrateChange() {
+    const crate   = document.getElementById('crate-select').value;
+    const itemSel = document.getElementById('item-select');
+    itemSel.innerHTML = '<option value="">— 아이템을 선택하세요 —</option>';
+    selectedProb = null;
+    hideProbDisplay();
+    document.getElementById('calc-btn').disabled = true;
+
+    if (!crate) { itemSel.disabled = true; return; }
+
+    const items = sheetData[crate] || [];
+    // 등급 순 정렬: 레드 > 핑크 > 퍼플 > 블루 > 그린 > 기타
+    const gradeOrder = ['레드', '핑크', '퍼플', '블루', '그린'];
+    const sorted = [...items].sort((a, b) => {
+      const ai = gradeOrder.indexOf(a.grade);
+      const bi = gradeOrder.indexOf(b.grade);
+      if (ai === bi) return a.prob - b.prob; // 같은 등급이면 확률 낮은 순
+      return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+    });
+
+    for (const { item, grade, prob } of sorted) {
+      const opt = document.createElement('option');
+      opt.value = JSON.stringify({ prob, grade, item });
+      const gradeTag = grade ? `[${grade}] ` : '';
+      opt.textContent = `${gradeTag}${item}  (${prob}%)`;
+      itemSel.appendChild(opt);
+    }
+    itemSel.disabled = false;
+
+    // 등급별 합산 확률 칩 렌더링
+    const gradeSum = {};
+    for (const { grade, prob } of items) {
+      if (!grade) continue;
+      gradeSum[grade] = (gradeSum[grade] || 0) + prob;
+    }
+    const gradeSummaryEl = document.getElementById('grade-summary');
+    const gradeChipsEl   = document.getElementById('grade-chips');
+    gradeChipsEl.innerHTML = '';
+
+    const gradeStyle = {
+      '레드':  { bg:'rgba(220,60,60,.15)',   text:'#e07070', border:'rgba(220,60,60,.5)'   },
+      '핑크':  { bg:'rgba(220,100,180,.15)', text:'#e090d0', border:'rgba(220,100,180,.5)' },
+      '퍼플':  { bg:'rgba(150,80,220,.15)',  text:'#b090e0', border:'rgba(150,80,220,.5)'  },
+      '블루':  { bg:'rgba(60,120,220,.15)',  text:'#70a0e0', border:'rgba(60,120,220,.5)'  },
+      '그린':  { bg:'rgba(60,180,100,.15)',  text:'#70c080', border:'rgba(60,180,100,.5)'  },
+    };
+    const sortedGrades = Object.keys(gradeSum).sort((a,b) =>
+      (gradeOrder.indexOf(a) === -1 ? 99 : gradeOrder.indexOf(a)) -
+      (gradeOrder.indexOf(b) === -1 ? 99 : gradeOrder.indexOf(b))
+    );
+
+    for (const grade of sortedGrades) {
+      const total = Math.round(gradeSum[grade] * 10000) / 10000;
+      const gs = gradeStyle[grade] || { bg:'rgba(100,100,100,.15)', text:'#aaa', border:'rgba(100,100,100,.4)' };
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'grade-chip';
+      chip.style.cssText = `background:${gs.bg};color:${gs.text};border-color:${gs.border}`;
+      chip.innerHTML = `<span class="gname">${grade}</span><span class="gpct">${total}%</span>`;
+      chip.onclick = () => {
+        document.querySelectorAll('.grade-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        // 아이템 선택 해제
+        document.getElementById('item-select').value = '';
+        hideProbDisplay();
+        selectedProb = total;
+        document.getElementById('calc-btn').disabled = false;
+        calculate();
+      };
+      gradeChipsEl.appendChild(chip);
+    }
+
+    gradeSummaryEl.style.display = sortedGrades.length ? '' : 'none';
+  }
+
+  function onItemChange() {
+    const sel = document.getElementById('item-select');
+    if (!sel.value) {
+      hideProbDisplay();
+      selectedProb = null;
+      document.getElementById('calc-btn').disabled = true;
+      return;
+    }
+    const { prob, grade, item } = JSON.parse(sel.value);
+    selectedProb = prob;
+    document.querySelectorAll('.grade-chip').forEach(c => c.classList.remove('active'));
+
+    // 확률 표시
+    document.getElementById('prob-val-display').textContent = `${prob}%`;
+    document.getElementById('prob-item-name').textContent   = item;
+
+    // 등급 뱃지 색상
+    const badge = document.getElementById('prob-grade-badge');
+    const gc = GRADE_COLORS[grade];
+    if (gc) {
+      badge.textContent = grade;
+      badge.style.cssText = `background:${gc.bg};color:${gc.text};border:1px solid ${gc.border}`;
+    } else {
+      badge.textContent = grade || '';
+      badge.style.cssText = '';
+    }
+
+    document.getElementById('prob-display').classList.add('show');
+    document.getElementById('calc-btn').disabled = false;
+  }
+
+  function hideProbDisplay() {
+    document.getElementById('prob-display').classList.remove('show');
+  }
+
+  /* ══ 직접 입력 토글 ══ */
+  function toggleManual() {
+    isManual = !isManual;
+    showManual(isManual);
+  }
+  function showManual(on) {
+    isManual = on;
+    document.getElementById('manual-section').classList.toggle('show', on);
+    const backBtn = document.getElementById('back-btn');
+    if (on) {
+      document.getElementById('calc-btn').disabled = false;
+      if (dataLoaded) backBtn.style.display = 'block';
+    } else {
+      backBtn.style.display = 'none';
+      document.getElementById('calc-btn').disabled = (selectedProb === null);
+    }
+  }
+
+  /* ══ UC ══ */
+  function setUC(val) {
+    document.getElementById('uc-price').value = val;
+    syncChips();
+    if (document.getElementById('results').classList.contains('visible')) calculate();
+  }
+  function syncChips() {
+    const v = parseInt(document.getElementById('uc-price').value);
+    document.querySelectorAll('#chip-row .chip').forEach(c => {
+      c.classList.toggle('active', parseInt(c.textContent) === v);
+    });
+  }
+
+  /* ══ 계산 ══ */
+  function calculate() {
+    const error   = document.getElementById('error');
+    const results = document.getElementById('results');
+
+    const rawP = isManual
+      ? parseFloat(document.getElementById('probability').value)
+      : selectedProb;
+
+    const p = rawP / 100;
+    if (!rawP || isNaN(p) || p <= 0 || p > 1) {
+      error.classList.add('show');
+      results.classList.remove('visible');
+      return;
+    }
+    error.classList.remove('show');
+
+    const ucPrice = parseFloat(document.getElementById('uc-price').value);
+    const hasUC   = ucPrice > 0 && !isNaN(ucPrice);
+
+    if (p >= 1) {
+      ['avg','50','90','99'].forEach(k => setRow(k, 1, ucPrice, hasUC));
+    } else {
+      setRow('avg', Math.ceil(1 / p),                               ucPrice, hasUC);
+      setRow('50',  Math.ceil(Math.log(0.5)  / Math.log(1 - p)),   ucPrice, hasUC);
+      setRow('90',  Math.ceil(Math.log(0.10) / Math.log(1 - p)),   ucPrice, hasUC);
+      setRow('99',  Math.ceil(Math.log(0.01) / Math.log(1 - p)),   ucPrice, hasUC);
+    }
+
+    document.getElementById('inf-note').classList.add('show');
+    results.classList.add('visible');
+  }
+
+  function setRow(key, count, ucPrice, hasUC) {
+    document.getElementById(`val-${key}`).innerHTML =
+      `${count.toLocaleString()}<span class="unit">회</span>`;
+
+    const ucCell = document.getElementById(`uc-${key}`);
+    if (hasUC) {
+      const total = Math.round(count * ucPrice);
+      ucCell.innerHTML = `
+        <div class="cell-val"><span class="ucsym">UC </span>${total.toLocaleString()}</div>
+        <div class="cell-sub">${ucPrice.toLocaleString()}UC × ${count.toLocaleString()}회</div>`;
+    } else {
+      ucCell.innerHTML = `
+        <div class="cell-val" style="color:var(--dim);font-size:13px">—</div>
+        <div class="cell-sub">가격 미입력</div>`;
+    }
+
+    const row = document.getElementById(`row-${key}`);
+    row.classList.remove('pulse');
+    void row.offsetWidth;
+    row.classList.add('pulse');
+  }
+
+  // 시작
+  renderChips();
+  loadSheet();
+</script>
+</body>
+</html>
