@@ -1,1 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PUBG INFO - iOS, AOS 최저가 UC 계산기, 확률 계산기, 최신 정보를 한곳에서 확인하세요!</title>
 
+  <!-- Open Graph -->
+  <meta property="og:title" content="PUBG INFO - UC 최저가 계산기 & 정보">
+  <meta property="og:description" content="iOS / Android UC 최저가 계산기, 확률 계산기, PUBG 최신 정보를 한곳에서 확인하세요!">
+  <meta property="og:image" content="https://wsrv.nl/?url=pbs.twimg.com/media/HD0AyoGb0AAxXjQ.jpg:large&w=1200&h=630&fit=cover">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="https://pubgmk14.github.io/Main-web/">
+  <meta property="og:type" content="website">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <!-- 다크/라이트 토글 -->
+  <button class="theme-toggle" id="theme-toggle" aria-label="테마 전환">
+    <span class="toggle-icon">☀️</span>
+    <span class="toggle-label">LIGHT</span>
+  </button>
+
+  <!-- 코너 UI 요소들 -->
+  <div class="corner-ui top-left">◤ STATUS: ONLINE</div>
+  <div class="corner-ui top-right">SERVERS: KR/JP ◥</div>
+  <div class="corner-ui bottom-left">◣ v2.9.2</div>
+  <div class="corner-ui bottom-right">PING: 46ms ◢</div>
+
+  <div class="warning-banner">PUBG MOBILE INFO</div>
+
+  <div class="container">
+    <!-- 메인 로고 -->
+    <div class="logo-container load-in" style="--i:0">
+      <div class="radar-container">
+        <div class="radar-ring"></div>
+        <div class="radar-ring"></div>
+        <div class="radar-ring"></div>
+        <div class="radar-sweep"></div>
+      </div>
+      <h1 class="logo-title">PUBG INFO</h1>
+      <p class="logo-subtitle">PUBG MOBILE INFO CENTER</p>
+    </div>
+
+    <!-- 버튼 영역 -->
+    <div class="buttons-container">
+      <a class="pubg-button btn-uc-calc load-in" style="--i:1" href="http://uc계산기.kro.kr" target="_blank" rel="noopener noreferrer">💵 UC 계산기</a>
+
+      <!--
+      <a class="pubg-button btn-ios load-in" style="--i:1" href="http://pubgmk14-ios.kro.kr" target="_blank" rel="noopener noreferrer">⚡️ UC 최저가 계산기 (IOS)</a>
+      <a class="pubg-button btn-aos load-in" style="--i:2" href="http://pubgmk14-aos.kro.kr" target="_blank" rel="noopener noreferrer">🔥 UC 최저가 계산기 (AOS)</a>
+      <a class="pubg-button btn-budget-ios load-in" style="--i:3" href="http://pubgmk14-budget-ios.kro.kr" target="_blank" rel="noopener noreferrer">💵 UC 최적 조합 계산기 (IOS)</a>
+      <a class="pubg-button btn-budget-aos load-in" style="--i:4" href="http://pubgmk14-budget-aos.kro.kr" target="_blank" rel="noopener noreferrer">💴 UC 최적 조합 계산기 (AOS)</a>
+      -->
+
+      <button id="btn-probability" class="pubg-button btn-calc load-in" style="--i:2" type="button" data-url="https://pubgmk14.github.io/PUBG-Probability">🎯 확률 계산기</button>
+      <a class="pubg-button btn-uc-calendar load-in" style="--i:3" href="https://docs.google.com/spreadsheets/d/10HaYd2NioeYoCcuYnPY-Qd9N25YyotboQviAtWZ-HwM/edit?usp=drivesdk" target="_blank" rel="noopener noreferrer">🗓️ UC 이벤트 일정표</a>
+      <a class="pubg-button btn-navercafe load-in" style="--i:4" href="https://cafe.naver.com/pubginfokr?tc=shared_link" target="_blank" rel="noopener noreferrer">☕️ 정보 카페</a>
+      <a class="pubg-button btn-kakaotlak load-in" style="--i:5" href="https://open.kakao.com/o/gxqkyr7f" target="_blank" rel="noopener noreferrer">💬 PUBG INFO 공지방</a>
+      <a class="pubg-button btn-redeem load-in" style="--i:6" href="https://www.pubgmobile.com/act/a20180515pubgmjk/" target="_blank" rel="noopener noreferrer">🎟️ 쿠폰 입력 사이트</a>
+      <a class="pubg-button btn-applist load-in" style="--i:7" href="https://docs.google.com/document/d/1-7GFk5oBDgM4lHBmaUsnZUIAWId76pV7LcJBDmpa91U/edit?usp=drivesdk" target="_blank" rel="noopener noreferrer">📋 모배 어플 모음 (AOS)</a>
+      <a class="pubg-button btn-midasbuy load-in" style="--i:8" href="https://www.midasbuy.com/midasbuy/kr/buy/pubgm-jpkr" target="_blank" rel="noopener noreferrer">💡 Midasbuy</a>
+    </div>
+
+    <!-- ✅ 공지 배너 (버튼과 시계 사이) -->
+    <section class="notice-section load-in" style="--i:9">
+      <div class="notice-header">
+        <span class="notice-badge">📢 NOTICE</span>
+      </div>
+      <div class="notice-list">
+        <!-- 공지 아이템: 내용/링크 수정은 여기서 하세요 -->
+        <a class="notice-item notice-important notice-link" href="https://docs.google.com/spreadsheets/d/10HaYd2NioeYoCcuYnPY-Qd9N25YyotboQviAtWZ-HwM/edit?usp=drivesdk" target="_blank" rel="noopener noreferrer">
+          <span class="notice-tag tag-event">이벤트</span>
+          <span class="notice-text">🎁 현재 진행 중인 이벤트를 확인하세요! UC 이벤트 일정표를 참고해 주세요.</span>
+          <span class="notice-arrow">›</span>
+        </a>
+        <a class="notice-item notice-important notice-link" href="https://docs.google.com/spreadsheets/d/18nJMIkgdWOP6d1pQnrPKp1eB137JvA5te8IytP7BWqM/edit?usp=drivesdk" target="_blank" rel="noopener noreferrer">
+          <span class="notice-tag tag-notice">공지</span>
+          <span class="notice-text"> 2026년 PUBGM 국내대회 일정표 안내 </span>
+          <span class="notice-arrow">›</span>
+        </a>
+        <a class="notice-item notice-link" href="https://naver.me/FsoPix8q?tc=shared_link" target="_blank" rel="noopener noreferrer">
+          <span class="notice-tag tag-update">업데이트</span>
+          <span class="notice-text">🔧 새로운 시즌 정보가 업데이트되었습니다. 카페에서 확인해 주세요.</span>
+          <span class="notice-arrow">›</span>
+        </a>
+        <a class="notice-item notice-link" href="https://open.kakao.com/o/ghhZxMfh" target="_blank" rel="noopener noreferrer">
+          <span class="notice-tag tag-info">안내</span>
+          <span class="notice-text">💬 문의 및 건의사항은 PUBG INFO 질문방을 이용해 주세요.</span>
+          <span class="notice-arrow">›</span>
+        </a>
+      </div>
+      <span class="notice-date" id="notice-date"></span>
+    </section>
+  </div>
+
+    <footer class="footer-clock load-in" style="--i:10">
+    <div class="time-box">
+      <div class="time-row utc-row">
+        <span class="label">UTC</span>
+        <span id="utc-time" class="value">0000.00.00 00:00:00</span>
+      </div>
+      <div class="time-row kst-row">
+        <span class="icon">🕒</span>
+        <span class="label">KST</span>
+        <span id="kst-time" class="value">0000.00.00 00:00:00</span>
+      </div>
+    </div>
+  </footer>
+ 
+  <script type="module" src="./script.js"></script>
+</body>
+</html>
