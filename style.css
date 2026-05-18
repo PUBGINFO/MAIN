@@ -208,25 +208,29 @@ ul { list-style: none; }
   background: var(--bg-item-hover);
 }
 
-/* primary (UC 계산기) — 항상 다크 배경 + 흰 글씨 */
+/* primary (UC 계산기) — 다른 버튼들과 동일하게 디자인 통일 */
 .list-item--primary {
-  background: #111111;
-  color: #ffffff;
+  background: var(--bg-item);
+  color: var(--text);
 }
 
 .list-item--primary:hover,
 .list-item--primary:active {
-  background: #222222;
+  background: var(--bg-item-hover);
 }
 
 .list-item--primary .list-name {
-  color: #ffffff;
+  color: var(--text);
 }
 
-.list-item--primary .list-desc,
-.list-item--primary .list-arrow {
-  color: rgba(255, 255, 255, 0.5);
+.list-item--primary .list-desc {
+  color: var(--text-sub);
 }
+
+.list-item--primary .list-arrow {
+  color: var(--text-muted);
+}
+
 
 .list-icon {
   font-size: 20px;
