@@ -106,23 +106,26 @@ function selectOS(os) {
     const verMap = { ios: 'v3.4 (iOS)', android: 'v3.4 (Android)', midasbuy: 'v3.4 (MidasBuy)' };
     document.getElementById('versionTag').textContent = verMap[os];
     document.body.className = platform + ' mode-' + mode;
+    
+    // 1. 먼저 페이지를 보여줍니다.
     showPage('calcPage', 'welcomePage', 'anim-up');
-    setTimeout(() => updateMSlider(), 50);
+    
+    // 2. 렌더링이 완료되어 엘리먼트 크기를 측정할 수 있을 때(300ms 뒤) 슬라이더를 맞춥니다.
+    setTimeout(() => updateMSlider(), 300);
     setTimeout(() => document.getElementById('mainInput').focus(), 480);
-}
-
-function goBack() {
-    document.body.className = '';
-    document.getElementById('versionTag').textContent = 'v3.4';
-    showPage('welcomePage', 'calcPage', 'anim-down');
 }
 
 function updateMSlider() {
     const s = document.getElementById('mSlider');
     const t = document.getElementById(mode === 'price' ? 'tabPrice' : 'tabUC');
-    s.style.left = (t.offsetLeft - 4) + 'px';
-    s.style.width = t.offsetWidth + 'px';
+    
+    // 🛠️ 안전장치: 엘리먼트가 존재하고, 화면에 보일 때만 스타일을 계산합니다.
+    if (s && t && t.offsetWidth > 0) {
+        s.style.left = (t.offsetLeft - 4) + 'px';
+        s.style.width = t.offsetWidth + 'px';
+    }
 }
+
 
 function setMode(m) {
     if (mode === m) return;
