@@ -1,4 +1,3 @@
-cat > /mnt/user-data/outputs/script.js << 'JSEOF'
 let platform = 'ios', mode = 'price';
 
 // baseUC  : 누적 충전 이벤트 달성 기준 UC (보너스 제외 기본 지급 UC)
@@ -45,9 +44,6 @@ function getBonus(baseUC, on) {
 }
 
 // ── DP 빌더 (baseUC 기준 인덱싱) ─────────────────────────────
-// dp[b]      = b baseUC를 달성하는 최소 비용
-// dpTotal[b] = 그 조합의 총 지급 UC (base + 패키지 보너스)
-// Fix 1: 같은 비용이면 totalUC가 더 많은 쪽 선택
 function buildMinCostDP(pkgs, maxBaseUC) {
     const dp      = new Array(maxBaseUC + 1).fill(Infinity);
     const dpTotal = new Array(maxBaseUC + 1).fill(0);
@@ -70,13 +66,14 @@ function buildMinCostDP(pkgs, maxBaseUC) {
     return { dp, dpTotal, ch };
 }
 
-// 역추적: baseUC 기준
-function traceback(ch, pkgs, startBaseUC) {
+// 역추적 함수: key 매개변수를 추가하여 모드별로 baseUC 또는 price 기준으로 유연하고 안전하게 차감 (무한루프 방지)
+function traceback(ch, pkgs, startValue, key = 'baseUC') {
     const counts = new Array(pkgs.length).fill(0);
-    let tmp = startBaseUC;
+    let tmp = startValue;
     while (tmp > 0 && ch[tmp] !== -1) {
-        counts[ch[tmp]]++;
-        tmp -= pkgs[ch[tmp]].baseUC;
+        const pkgIdx = ch[tmp];
+        counts[pkgIdx]++;
+        tmp -= pkgs[pkgIdx][key];
     }
     return counts;
 }
@@ -85,10 +82,12 @@ function traceback(ch, pkgs, startBaseUC) {
 function showPage(showId, hideId, animClass) {
     const s = document.getElementById(showId);
     const h = document.getElementById(hideId);
-    h.classList.add('hidden');
-    s.classList.remove('hidden', 'anim-up', 'anim-down');
-    void s.offsetWidth;
-    s.classList.add(animClass);
+    if (h) h.classList.add('hidden');
+    if (s) {
+        s.classList.remove('hidden', 'anim-up', 'anim-down');
+        void s.offsetWidth;
+        s.classList.add(animClass);
+    }
 }
 
 function selectOS(os) {
@@ -102,30 +101,40 @@ function selectOS(os) {
     document.getElementById('inputLabel').textContent = '필요한 UC를 입력하세요';
     document.getElementById('mainInput').placeholder = '예: 12000';
     document.getElementById('mainTitle').innerHTML = 'UC 최저가 계산기 <span class="title-badge">BETA</span>';
-    document.getElementById('bonusRow').style.display = os === 'ios' ? 'flex' : 'none';
+    
+    // 🛠️ 첫 화면 멈춤 버그 수정: index.html에 정의된 소문자 'bonusrow' ID와 안전하게 매칭되도록 보정
+    const bonusRow = document.getElementById('bonusRow') || document.getElementById('bonusrow');
+    if (bonusRow) {
+        bonusRow.style.display = os === 'ios' ? 'flex' : 'none';
+    }
+    
     const verMap = { ios: 'v3.4 (iOS)', android: 'v3.4 (Android)', midasbuy: 'v3.4 (MidasBuy)' };
     document.getElementById('versionTag').textContent = verMap[os];
     document.body.className = platform + ' mode-' + mode;
     
-    // 1. 먼저 페이지를 보여줍니다.
+    // 페이지 먼저 로드
     showPage('calcPage', 'welcomePage', 'anim-up');
     
-    // 2. 렌더링이 완료되어 엘리먼트 크기를 측정할 수 있을 때(300ms 뒤) 슬라이더를 맞춥니다.
+    // 🛠️ 랜더링과 애니메이션이 끝난 후 너비를 안전하게 계산하도록 에러 안전장치 적용 및 타이밍 조절
     setTimeout(() => updateMSlider(), 300);
     setTimeout(() => document.getElementById('mainInput').focus(), 480);
+}
+
+function goBack() {
+    document.body.className = '';
+    document.getElementById('versionTag').textContent = 'v3.4';
+    showPage('welcomePage', 'calcPage', 'anim-down');
 }
 
 function updateMSlider() {
     const s = document.getElementById('mSlider');
     const t = document.getElementById(mode === 'price' ? 'tabPrice' : 'tabUC');
-    
-    // 🛠️ 안전장치: 엘리먼트가 존재하고, 화면에 보일 때만 스타일을 계산합니다.
+    // 🛠️ 엘리먼트가 존재하고 레이아웃 측정이 가능한 상태일 때만 스타일 계산 수행
     if (s && t && t.offsetWidth > 0) {
         s.style.left = (t.offsetLeft - 4) + 'px';
         s.style.width = t.offsetWidth + 'px';
     }
 }
-
 
 function setMode(m) {
     if (mode === m) return;
@@ -142,7 +151,7 @@ function setMode(m) {
 
 function resetResult() {
     const r = document.getElementById('result');
-    r.classList.remove('show'); r.innerHTML = '';
+    if (r) { r.classList.remove('show'); r.innerHTML = ''; }
     document.getElementById('mainInput').value = '';
 }
 
@@ -163,11 +172,10 @@ function calcMinPrice() {
     setTimeout(() => {
         const pkgs      = data[platform];
         const maxBase   = Math.max(...pkgs.map(p => p.baseUC));
-        const searchMax = targetUC + maxBase * 3; // 여유 탐색 범위
+        const searchMax = targetUC + maxBase * 3; 
 
         const { dp, dpTotal, ch } = buildMinCostDP(pkgs, searchMax);
 
-        // Fix 1 적용: 같은 가격이면 총 UC 더 많은 쪽 선택
         let bestPrice = Infinity, bestBaseUC = 0, bestEffective = 0;
         for (let b = 0; b <= searchMax; b++) {
             if (dp[b] === Infinity) continue;
@@ -187,9 +195,9 @@ function calcMinPrice() {
             return;
         }
 
-        const counts    = traceback(ch, pkgs, bestBaseUC);
-        const pkgTotal  = dpTotal[bestBaseUC];                         // 패키지 자체 지급 UC
-        const bonus     = bonusOn ? getBonus(bestBaseUC, true) : 0;   // 누적 보너스 (baseUC 기준)
+        const counts    = traceback(ch, pkgs, bestBaseUC, 'baseUC');
+        const pkgTotal  = dpTotal[bestBaseUC];                         
+        const bonus     = bonusOn ? getBonus(bestBaseUC, true) : 0;   
         const finalUC   = pkgTotal + bonus;
         const bonusLine = bonusOn
             ? `<span style="font-size:0.8rem;">(기본 ${bestBaseUC.toLocaleString()} + 패키지보너스 ${(pkgTotal - bestBaseUC).toLocaleString()} + 누적보너스 ${bonus.toLocaleString()})</span>`
@@ -221,17 +229,18 @@ function calcMaxUC() {
     setTimeout(() => {
         const pkgs = data[platform];
 
-        // dp[c]      = c원으로 달성 가능한 최대 totalUC
-        // dpBase[c]  = 그 조합의 baseUC 합계 (누적 보너스 계산용)
-        // Fix 2: dpBase 별도 추적해 getBonus에 baseUC 전달
-        const dp     = new Array(budget + 1).fill(0);
+        const dp     = new Array(budget + 1).fill(-1);
         const dpBase = new Array(budget + 1).fill(0);
         const ch     = new Array(budget + 1).fill(-1);
+        dp[0] = 0; 
 
         for (let i = 0; i < pkgs.length; i++) {
             for (let j = pkgs[i].price; j <= budget; j++) {
+                if (dp[j - pkgs[i].price] === -1) continue; 
+                
                 const candTotal = dp[j - pkgs[i].price] + pkgs[i].totalUC;
                 const candBase  = dpBase[j - pkgs[i].price] + pkgs[i].baseUC;
+                
                 if (candTotal > dp[j]) {
                     dp[j]     = candTotal;
                     dpBase[j] = candBase;
@@ -240,10 +249,9 @@ function calcMaxUC() {
             }
         }
 
-        // Fix 1 + Fix 2: 누적 보너스 포함 총 UC 기준으로 최적 지출 탐색
         let bestTotal = 0, bestCost = 0, bestPkgUC = 0, bestBaseUC = 0;
         for (let c = 0; c <= budget; c++) {
-            if (dp[c] === 0 && c > 0) continue;
+            if (dp[c] === -1) continue;
             const bonus = bonusOn ? getBonus(dpBase[c], true) : 0;
             const total = dp[c] + bonus;
             if (total > bestTotal || (total === bestTotal && c < bestCost)) {
@@ -261,7 +269,7 @@ function calcMaxUC() {
             return;
         }
 
-        const counts  = traceback(ch, pkgs, bestCost);
+        const counts  = traceback(ch, pkgs, bestCost, 'price');
         const bonus   = bonusOn ? getBonus(bestBaseUC, true) : 0;
         const remain  = budget - bestCost;
         const bonusLine = bonusOn
@@ -280,5 +288,3 @@ function calcMaxUC() {
         btn.innerHTML = '계산하기'; btn.disabled = false;
     }, 300);
 }
-JSEOF
-echo "Done"
