@@ -112,36 +112,76 @@ function copyResult(text) {
 }
 
 // ── 카카오 공유 ───────────────────────────────────────────────
-function shareKakao(title, desc) {
-    // 1. 버튼을 누른 시점에 카카오 SDK가 있는지, 초기화가 안 되어 있다면 여기서 초기화 진행
+// ── [종결 버전] 실시간 결과화면 캡쳐 후 카카오톡 공유 ───────────────────
+async function shareKakao(title, desc) {
+    // 1. 카카오 SDK 초기화 확인
     if (typeof Kakao !== 'undefined') {
         if (!Kakao.isInitialized()) {
-            const KAKAO_APP_KEY = 'b80f2d95ba7e522d696f884635837c5c'; // 여기에 JavaScript 키 유지
+            const KAKAO_APP_KEY = 'b80f2d95ba7e522d696f884635837c5c';
             Kakao.init(KAKAO_APP_KEY);
-            console.log("카카오 SDK가 버튼 클릭 시점에 성공적으로 초기화되었습니다:", Kakao.isInitialized());
         }
     } else {
-        alert('카카오 SDK 라이브러리가 아직 로드되지 않았습니다. 잠시 후 다시 시도해 주세요.');
+        alert('카카오 SDK 로드 실패');
         return;
     }
 
-    // 2. 초기화 확인 후 공유하기 실행
-    if (!Kakao.isInitialized()) {
-        alert('카카오 앱 키 인증에 실패했습니다. 키를 다시 확인해 주세요.');
-        return;
-    }
+    const resultDiv = document.getElementById('result');
+    if (!resultDiv) return;
 
-    Kakao.Share.sendDefault({
-        objectType: 'feed',
-        content: {
-            title: title,
-            description: desc,
-            imageUrl: 'https://github.com/user-attachments/assets/08890d07-42a2-4c4a-a8b7-06d15a9a7c33',
-            link: { mobileWebUrl: 'https://pubginfo.site', webUrl: 'https://pubginfo.site' }
-        },
-        buttons: [{ title: '계산기 바로가기', link: { mobileWebUrl: 'https://pubginfo.site', webUrl: 'https://pubginfo.site' } }]
-    });
+    try {
+        // [임시 조치] 캡쳐할 때 카톡/복사 버튼까지 사진에 나오면 지저분하므로 잠시 숨김
+        const shareButtons = resultDiv.querySelector('.share-buttons');
+        if (shareButtons) shareButtons.style.display = 'none';
+
+        // 2. html2canvas로 id="result" 영역을 실시간 이미지(canvas)로 캡쳐
+        const canvas = await html2canvas(resultDiv, {
+            useCORS: true, // 이미지 깨짐 방지
+            backgroundColor: '#0a1628' // 내 사이트 배경색에 맞춰 지정 (기존 CSS 배경색)
+        });
+
+        // 숨겼던 버튼들 다시 표시
+        if (shareButtons) shareButtons.style.display = 'flex';
+
+        // 3. 캡쳐한 이미지를 파일 형태로 변환
+        const dataUrl = canvas.toDataURL('image/png');
+        const blob = await (await fetch(dataUrl)).blob();
+        const file = new File([blob], 'uc-result.png', { type: 'image/png' });
+
+        // 4. 카카오 서버에 이 스크린샷 파일을 임시 업로드 (카카오 제공 공식 기능)
+        const uploadRes = await Kakao.API.request({
+            url: '/v2/api/talk/share/image',
+            files: [file]
+        });
+
+        // 업로드된 카카오 서버 측 이미지 URL 추출
+        const uploadedImageUrl = uploadRes.infos.original.url;
+
+        // 5. 풍성해진 텍스트 본문 조립
+        const richDescription = `💰 ${desc}\n🛒 유저님이 직접 계산한 최저가 패키지 상세 조합 캡쳐본입니다. 주소로 오시면 실시간으로 다시 계산해 볼 수 있습니다!`;
+
+        // 6. 가로형 배너 비율로 세팅하여 피드 발송
+        Kakao.Share.sendDefault({
+            objectType: 'feed',
+            content: {
+                title: title, // 예: PUBG UC 최저가: 27,500원
+                description: richDescription,
+                imageUrl: uploadedImageUrl, // 💡 방금 내 화면 캡쳐해서 카카오 서버에 올린 따끈따끈한 이미지 주소!
+                imageWidth: 800,
+                imageHeight: 450, // 가로가 더 긴 캡쳐 배너 스타일로 비중 최적화
+                link: {
+                    mobileWebUrl: 'https://pubginfo.site',
+                    webUrl: 'https://pubginfo.site'
+                }
+            },
+            buttons: [{ title: '나도 계산하러 가기 🔗', link: { mobileWebUrl: 'https://pubginfo.site', webUrl: 'https://pubginfo.site' } }]
+        });
+
+    } catch (error) {
+        console.error('실시간 캡쳐 공유 중 에러 발생:', error);
+        alert('실시간 이미지 생성에 실패하여 기본 텍스트 모드로 전환되거나 에러가 발생했습니다.');
+    }
 }
+
 
 // ── 공유 버튼 HTML 생성 ───────────────────────────────────────
 function shareButtonsHTML(copyText, kakaoTitle, kakaoDesc) {
