@@ -113,8 +113,9 @@ function copyResult(text) {
 
 // ── 카카오 공유 ───────────────────────────────────────────────
 // ── [종결 버전] 실시간 결과화면 캡쳐 후 카카오톡 공유 ───────────────────
-// ── [오류 제로 종결 버전] 카카오톡 영수증형(Item) 공식 템플릿 공유 ───────────────────
+// ── [진짜 종결] 카카오톡 영수증형(Item) 공식 템플릿 오류 수정 버전 ───────────────────
 function shareKakao(title, desc) {
+    // 1. 카카오 SDK 초기화 및 안전장치 확인
     if (typeof Kakao !== 'undefined') {
         if (!Kakao.isInitialized()) {
             const KAKAO_APP_KEY = 'b80f2d95ba7e522d696f884635837c5c';
@@ -125,30 +126,42 @@ function shareKakao(title, desc) {
         return;
     }
 
-    // desc 데이터 예시: "총 1,800 UC 획득 · pubginfo.site" 또는 추천 결과 텍스트
-    // 카톡방에 표 형태로 깔끔하게 매칭하기 위해 데이터를 분리 가공합니다.
+    // 2. 텍스트 데이터 가공 (오류 방지용 안전 처리)
     const currentTimestamp = new Date().getTime();
-    const cleanDesc = desc.replace('· pubginfo.site', '').trim();
+    const safeTitle = title || 'PUBG MOBILE UC 최저가';
+    
+    // desc에서 불필요한 주소 텍스트 제거 및 깔끔하게 정리
+    let cleanDesc = '최저가 조합 확인 완료';
+    if (desc && typeof desc === 'string') {
+        cleanDesc = desc.replace('· pubginfo.site', '').trim();
+    }
 
+    // 3. 현재 선택된 플랫폼 이름 추출 (기존 글로벌 변수 platform 활용)
+    let currentPlatform = 'iOS';
+    if (typeof platform !== 'undefined' && platform) {
+        currentPlatform = platform.toUpperCase();
+    }
+
+    // 4. 카카오톡 영수증형(item) 템플릿 발송
     Kakao.Share.sendDefault({
-        objectType: 'item', // 💡 리스트/영수증형 레이아웃 공식 적용
+        objectType: 'item',
         itemContent: {
-            profileText: 'PUBG MOBILE',
-            profileImageUrl: 'https://github.com/user-attachments/assets/08890d07-42a2-4c4a-a8b7-06d15a9a7c33', // 로고 이미지 유지
-            title: title, // 메인 제목: 예) PUBG UC 최저가: 27,500원
-            description: '유저 맞춤형 최저가 계산 결과',
-            // 📊 캡쳐 화면 대신 카톡방에 영수증 표를 실시간으로 그려줍니다.
+            profileText: 'PUBG MOBILE UC 계산기',
+            profileImageUrl: 'https://github.com/user-attachments/assets/08890d07-42a2-4c4a-a8b7-06d15a9a7c33',
+            title: safeTitle, // 예: "PUBG UC 최저가: 27,500원"
+            description: '배그 모바일 맞춤형 계산 결과',
+            // 📊 카톡방에 영수증 표 형태로 데이터를 꽂아줍니다.
             items: [
-                { item: '결과 안내', itemOp: cleanDesc },
-                { item: '적용 플랫폼', itemOp: platform.toUpperCase() },
-                { item: '보너스 반영', itemOp: '최대치 포함 완료' }
+                { item: '결과 수치', itemOp: cleanDesc },
+                { item: '충전 플랫폼', itemOp: currentPlatform },
+                { item: '보너스 반영', itemOp: '최대 수치 포함' }
             ],
-            sum: '최저가 조합',
-            sumOp: '사이트에서 확인'
+            sum: '최적 조합 결과',
+            sumOp: '확인하기'
         },
         buttons: [
             {
-                title: '나도 조합 확인하기 🔗',
+                title: '나도 최저가 계산하러 가기 ',
                 link: {
                     mobileWebUrl: 'https://pubginfo.site?t=' + currentTimestamp,
                     webUrl: 'https://pubginfo.site?t=' + currentTimestamp
@@ -157,6 +170,7 @@ function shareKakao(title, desc) {
         ]
     });
 }
+
 
 // ── 공유 버튼 HTML 생성 ───────────────────────────────────────
 function shareButtonsHTML(copyText, kakaoTitle, kakaoDesc) {
