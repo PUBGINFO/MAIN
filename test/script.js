@@ -86,10 +86,10 @@ function pkgListText(counts, pkgs) {
     return counts.map((c, i) => c > 0 ? `${pkgs[i].label} × ${c}` : '').filter(Boolean).join('\n');
 }
 
-// ── 클립보드 복사 ─────────────────────────────────────────────
-function copyResult(text) {
+// ── 클립보드 복사 (고유 ID 대응 수정) ──────────────────────────
+function copyResult(text, copyBtnId) {
     navigator.clipboard.writeText(text).then(() => {
-        const btn = document.getElementById('copyBtn');
+        const btn = document.getElementById(copyBtnId);
         if (!btn) return;
         btn.textContent = '✓ 복사됨!';
         btn.style.background = '#22c55e';
@@ -100,12 +100,18 @@ function copyResult(text) {
         document.body.appendChild(ta); ta.select();
         document.execCommand('copy');
         document.body.removeChild(ta);
-        alert('클립보드에 복사되었습니다!');
+        
+        const btn = document.getElementById(copyBtnId);
+        if (btn) {
+            btn.textContent = '✓ 복사됨!';
+            btn.style.background = '#22c55e';
+            setTimeout(() => { btn.textContent = '텍스트 복사'; btn.style.background = ''; }, 2000);
+        }
     });
 }
 
-// ── 📸 [완벽 튜닝] 정품 그라데이션 도화지 투과식 스크린샷 캡쳐 프로세스 ──
-function prepareKakaoButton(buttonId) {
+// ── 📸 카카오 SDK 최적화 및 1.91:1 비율 맞춤형 스크린샷 캡쳐 프로세스 ──
+function prepareKakaoButton(buttonId, kakaoTitle, kakaoDesc) {
     if (typeof Kakao !== 'undefined' && !Kakao.isInitialized()) {
         Kakao.init(KAKAO_APP_KEY);
     }
@@ -122,9 +128,9 @@ function prepareKakaoButton(buttonId) {
             return;
         }
         kakaoBtn.classList.add('processing');
-        kakaoBtn.innerHTML = `⏳ 이미지 매칭 중...`;
+        kakaoBtn.innerHTML = `⏳ 이미지 생성 중...`;
 
-        // 1. 카톡 황금비율(1.91:1)의 가상 도화지 생성
+        // 1. 카톡 황금비율(1.91:1) 가상 도화지 생성
         const wrapper = document.createElement('div');
         wrapper.style.position = 'absolute';
         wrapper.style.top = '-9999px';
@@ -132,7 +138,7 @@ function prepareKakaoButton(buttonId) {
         wrapper.style.width = '800px';
         wrapper.style.height = '420px';
         
-        // 🎨 [핵심 변경] 도화지 자체에 사이트 원래 화면과 100% 동일한 그라데이션 조명을 박아넣습니다.
+        // 유저 모드별 원래 사이트 그라데이션 조명 투과용 세팅
         let currentGrad = 'linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%)';
         if (platform === 'ios') {
             currentGrad = mode === 'price' 
@@ -154,25 +160,23 @@ function prepareKakaoButton(buttonId) {
         wrapper.style.justifyContent = 'center';
         wrapper.style.overflow = 'hidden';
 
-        // 2. 결과창 영수증 복제
+        // 2. 결과창 영수증 엘리먼트 복사 및 투명화 처리 (얼룩덜룩 암전 버그 방지)
         const clone = targetArea.cloneNode(true);
         clone.style.width = '380px'; 
         clone.style.boxShadow = '0 25px 60px rgba(0,0,0,0.65)';
         clone.style.borderRadius = '20px';
         clone.style.padding = '24px';
-        
-        // 💡 영수증 몸통 자체는 완전 투명처리하여 뒷배경의 예쁜 그라데이션 조명이 모든 글자에 화사하게 스며들도록 유도
         clone.style.background = 'transparent';
         clone.style.border = 'none';
 
-        // 복사본 내에서 공유 버튼 바 영역 제거
+        // 공유 버튼 바 영역 제거
         const shareBar = clone.querySelector('.share-buttons');
         if (shareBar) shareBar.remove();
 
         wrapper.appendChild(clone);
         document.body.appendChild(wrapper);
 
-        // 3. 캡쳐 시작
+        // 3. 캡쳐 연산 수행
         html2canvas(wrapper, {
             useCORS: true,
             allowTaint: true,
@@ -187,22 +191,25 @@ function prepareKakaoButton(buttonId) {
                     return;
                 }
 
+                // 4. [수정 완료] 일반 배열 대신 공식 문서 스펙인 DataTransfer(FileList) 형태로 파일 포맷 빌드
                 const file = new File([blob], "pubg_receipt.png", { type: "image/png" });
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                const standardFileList = dataTransfer.files;
 
-                // 카카오 서버 업로드
+                // 5. 카카오 서버 이미지 임시 업로드
                 Kakao.Share.uploadImage({
-                    file: [file],
+                    file: standardFileList,
                 }).then(res => {
                     const uploadedImageUrl = res.infos.original.url;
                     const currentTimestamp = new Date().getTime();
 
-                    // 브라우저 팝업 차단 우회용 버튼 트리거 주입
-                    Kakao.Share.createDefaultButton({
-                        container: '#' + buttonId,
+                    // 6. [수정 완료] 동적으로 넘어온 타이틀과 디스크립션을 매칭하여 공유 카드 생성
+                    Kakao.Share.sendDefault({
                         objectType: 'feed',
                         content: {
-                            title: 'PUBG MOBILE UC 최적 결과',
-                            description: '나에게 딱 맞는 최적의 UC 최저가 패키지 조합 영수증을 확인하세요!',
+                            title: kakaoTitle,
+                            description: kakaoDesc,
                             imageUrl: uploadedImageUrl,
                             link: {
                                 mobileWebUrl: 'https://pubginfo.site?t=' + currentTimestamp,
@@ -220,38 +227,40 @@ function prepareKakaoButton(buttonId) {
                         ]
                     });
 
+                    // 인앱 브라우저 튕김 현상을 막기 위해 전송 직후 버튼 상태 정상 초기화
                     kakaoBtn.classList.remove('processing');
                     kakaoBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.477 3 2 6.477 2 11c0 2.757 1.428 5.185 3.6 6.713L4.5 21l4.2-2.1A10.5 10.5 0 0 0 12 19c5.523 0 10-3.477 10-8S17.523 3 12 3z"/></svg> 카카오톡 공유`;
-                    
-                    // 강제 동적 터치 발동 (카톡 대화창 바로 팝업)
-                    kakaoBtn.click();
 
                 }).catch(err => {
                     alert('업로드 오류: ' + err.message);
                     kakaoBtn.classList.remove('processing');
+                    kakaoBtn.innerHTML = `카카오톡 공유`;
                 });
             }, 'image/png');
         }).catch(err => {
             alert('캡쳐 에러: ' + err.message);
             kakaoBtn.classList.remove('processing');
+            kakaoBtn.innerHTML = `카카오톡 공유`;
         });
-    }, { once: true });
+    });
 }
 
-// ── 공유 버튼 HTML 생성 (고유 ID 자동 발급) ──────────────────────
+// ── 공유 버튼 HTML 생성 (고유 ID 자동 난수 발급 처리 완료) ──────────────────────
 function shareButtonsHTML(copyText, kakaoTitle, kakaoDesc) {
-    const uniqueBtnId = 'kakao-dynamic-btn-' + Math.floor(Math.random() * 100000);
+    const randomSuffix = Math.floor(Math.random() * 100000);
+    const uniqueKakaoId = 'kakao-dynamic-btn-' + randomSuffix;
+    const uniqueCopyId = 'copy-dynamic-btn-' + randomSuffix;
     
     setTimeout(() => {
-        prepareKakaoButton(uniqueBtnId);
+        prepareKakaoButton(uniqueKakaoId, kakaoTitle, kakaoDesc);
     }, 50);
 
     return `<div class="share-buttons">
-        <button class="btn-share btn-kakao" id="${uniqueBtnId}">
+        <button class="btn-share btn-kakao" id="${uniqueKakaoId}">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.477 3 2 6.477 2 11c0 2.757 1.428 5.185 3.6 6.713L4.5 21l4.2-2.1A10.5 10.5 0 0 0 12 19c5.523 0 10-3.477 10-8S17.523 3 12 3z"/></svg>
             카카오톡 공유
         </button>
-        <button class="btn-share btn-copy" id="copyBtn" onclick='copyResult(${JSON.stringify(copyText)})'>
+        <button class="btn-share btn-copy" id="${uniqueCopyId}" onclick='copyResult(${JSON.stringify(copyText)}, "${uniqueCopyId}")'>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
             텍스트 복사
         </button>
@@ -295,7 +304,6 @@ function selectOS(os) {
     setTimeout(() => document.getElementById('mainInput').focus(), 480);
 }
 
-// (이하 중복 함수 기존 로직 그대로 유지)
 function goBack() { document.body.className = ''; document.getElementById('versionTag').textContent = 'v4.0'; showPage('welcomePage', 'calcPage', 'anim-down'); }
 function updateMSlider() { const s = document.getElementById('mSlider'); const t = document.getElementById(mode === 'price' ? 'tabPrice' : 'tabUC'); if (s && t && t.offsetWidth > 0) { s.style.left = (t.offsetLeft - 4) + 'px'; s.style.width = t.offsetWidth + 'px'; } }
 function setMode(m) { if (mode === m) return; mode = m; resetResult(); document.body.className = platform + ' mode-' + mode; document.getElementById('tabPrice').classList.toggle('active', m === 'price'); document.getElementById('tabUC').classList.toggle('active', m === 'uc'); document.getElementById('inputLabel').textContent = m === 'price' ? '필요한 UC를 입력하세요' : '보유 예산을 입력하세요 (원)'; document.getElementById('mainInput').placeholder = m === 'price' ? '예: 12000' : '예: 50000'; document.getElementById('mainTitle').innerHTML = (m === 'price' ? 'UC 최저가 계산기' : 'UC 예산 계산기') + ' <span class="title-badge">BETA</span>'; document.getElementById('ownedUCGroup').style.display = m === 'price' ? 'block' : 'none'; setTimeout(updateMSlider, 10); document.getElementById('mainInput').focus(); }
@@ -349,9 +357,9 @@ function calcMinPrice() {
             let recoPkgRows = ''; recoCounts.forEach((c, i) => { if (c > 0) recoPkgRows += `<div class="package-item reco-pkg"><span>${pkgs[i].price.toLocaleString()}원 · ${pkgs[i].label}</span><span class="pkg-count">× ${c}</span></div>`; });
             const recoCopyText = `[PUBG MOBILE UC 추천 조합]\n총 결제 금액: ${recoPrice.toLocaleString()}원\n추천 조합:\n${pkgListText(recoCounts, pkgs)}\n총 획득 UC: ${recoFinalUC.toLocaleString()} UC\n\npubginfo.site`;
 
-            html += `<div class="recommend-card"><div class="recommend-header">💡 기왕 살 거면 이 조합이 훨씬 이득!</div><div class="recommend-body"><span class="reco-tag">+${extraCost.toLocaleString()}원만 더 보태면</span><strong>+${extraUC.toLocaleString()} UC</strong>를 추가로 받을 수 있어요</div><div class="recommend-price">${recoPrice.toLocaleString()}원 → <strong>${recoFinalUC.toLocaleString()} UC</strong></div>${recoPkgRows}${shareButtonsHTML(recoCopyText, `PUBG UC 추천: ${recoPrice.toLocaleString()}원`, `총 ${recoFinalUC.toLocaleString()} UC 획득 · pubginfo.site`)}</div>`;
+            html += `<div class="recommend-card"><div class="recommend-header">💡 기왕 살 거면 이 조합이 훨씬 이득!</div><div class="recommend-body"><span class="reco-tag">+${extraCost.toLocaleString()}원만 더 보태면</span><strong>+${extraUC.toLocaleString()} UC</strong>를 추가로 받을 수 있어요</div><div class="recommend-price">${recoPrice.toLocaleString()}원 → <strong>${recoFinalUC.toLocaleString()} UC</strong></div>${recoPkgRows}${shareButtonsHTML(recoCopyText, `PUBG UC 대박 추천: ${recoPrice.toLocaleString()}원`, `단돈 +${extraCost.toLocaleString()}원 보태고 +${extraUC.toLocaleString()} UC 추가 보너스 기회! · pubginfo.site`)}</div>`;
         }
-        html += shareButtonsHTML(copyText, `PUBG UC 최저가: ${bestPrice.toLocaleString()}원`, `총 ${bestFinalUC.toLocaleString()} UC 획득 · pubginfo.site`);
+        html += shareButtonsHTML(copyText, `PUBG UC 최적가: ${bestPrice.toLocaleString()}원`, `총 ${bestFinalUC.toLocaleString()} UC를 획득하는 가장 경제적인 최적 조합 영수증 · pubginfo.site`);
         resultDiv.innerHTML = html; resultDiv.classList.add('show'); btn.innerHTML = '계산하기'; btn.disabled = false;
     }, 300);
 }
@@ -380,7 +388,7 @@ function calcMaxUC() {
         let pkgRows = ''; counts.forEach((c, i) => { if (c > 0) pkgRows += `<div class="package-item"><span>${pkgs[i].price.toLocaleString()}원 · ${pkgs[i].label}</span><span class="pkg-count">× ${c}</span></div>`; });
         const copyText = `[PUBG MOBILE UC 계산 결과]\n예산: ${budget.toLocaleString()}원\n사용 금액: ${bestCost.toLocaleString()}원\n구매 조합:\n${pkgListText(counts, pkgs)}\n총 획득 UC: ${bestTotal.toLocaleString()} UC\n\npubginfo.site`;
 
-        let html = `<h3>최대 UC 획득 방법</h3><div class="price-highlight">${bestTotal.toLocaleString()} UC</div><div class="sub-info">사용: <strong>${bestCost.toLocaleString()}원</strong> / ${budget.toLocaleString()}원<br>${bonusLine}<br>${remain > 0 ? `<span style="color:#6b7280;">잔여: ${remain.toLocaleString()}원</span>` : ''}</div>${pkgRows}${shareButtonsHTML(copyText, `PUBG UC 최대 획득: ${bestTotal.toLocaleString()} UC`, `${bestCost.toLocaleString()}원으로 최대 UC · pubginfo.site`)}`;
+        let html = `<h3>최대 UC 획득 방법</h3><div class="price-highlight">${bestTotal.toLocaleString()} UC</div><div class="sub-info">사용: <strong>${bestCost.toLocaleString()}원</strong> / ${budget.toLocaleString()}원<br>${bonusLine}<br>${remain > 0 ? `<span style="color:#6b7280;">잔여: ${remain.toLocaleString()}원</span>` : ''}</div>${pkgRows}${shareButtonsHTML(copyText, `PUBG UC 최대 획득: ${bestTotal.toLocaleString()} UC`, `${bestCost.toLocaleString()}원의 예산으로 쥐어짜낸 최대 효율 조합 결과 · pubginfo.site`)}`;
         resultDiv.innerHTML = html; resultDiv.classList.add('show'); btn.innerHTML = '계산하기'; btn.disabled = false;
     }, 300);
 }
