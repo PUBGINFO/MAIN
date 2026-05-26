@@ -113,8 +113,8 @@ function copyResult(text) {
 
 // ── 카카오 공유 ───────────────────────────────────────────────
 // ── [종결 버전] 실시간 결과화면 캡쳐 후 카카오톡 공유 ───────────────────
-// ── [에러 수정 버전] 실시간 결과화면 캡쳐 후 카카오톡 공유 ───────────────────
-async function shareKakao(title, desc) {
+// ── [오류 제로 종결 버전] 카카오톡 영수증형(Item) 공식 템플릿 공유 ───────────────────
+function shareKakao(title, desc) {
     if (typeof Kakao !== 'undefined') {
         if (!Kakao.isInitialized()) {
             const KAKAO_APP_KEY = 'b80f2d95ba7e522d696f884635837c5c';
@@ -125,74 +125,37 @@ async function shareKakao(title, desc) {
         return;
     }
 
-    const resultDiv = document.getElementById('result');
-    if (!resultDiv) return;
+    // desc 데이터 예시: "총 1,800 UC 획득 · pubginfo.site" 또는 추천 결과 텍스트
+    // 카톡방에 표 형태로 깔끔하게 매칭하기 위해 데이터를 분리 가공합니다.
+    const currentTimestamp = new Date().getTime();
+    const cleanDesc = desc.replace('· pubginfo.site', '').trim();
 
-    try {
-        // 1. 캡쳐 시 불필요한 UI(버튼 등) 잠시 숨김
-        const shareButtons = resultDiv.querySelector('.share-buttons');
-        if (shareButtons) shareButtons.style.display = 'none';
-
-        // 2. html2canvas 안전 옵션 강화 팩
-        const canvas = await html2canvas(resultDiv, {
-            useCORS: true,          // 외부 이미지(MidasBuy 로고 등)로 인한 CORS 차단 방지 ⚠️ [핵심]
-            allowTaint: true,       // 크로스 오리진 이미지가 캔버스를 오염시키는 것을 허용 ⚠️ [핵심]
-            backgroundColor: '#0a1628', // 사이트 배경색 명시하여 투명화 방지
-            scale: 2,               // 카톡에서 글자가 깨지지 않도록 화질 2배 업스케일링
-            logging: false          // 콘솔 로그 지연 방지
-        });
-
-        // 숨겼던 버튼 복구
-        if (shareButtons) shareButtons.style.display = 'flex';
-
-        // 3. 캡쳐 이미지를 파일로 변환
-        const dataUrl = canvas.toDataURL('image/png');
-        const blob = await (await fetch(dataUrl)).blob();
-        const file = new File([blob], 'uc-result.png', { type: 'image/png' });
-
-        // 4. 카카오 서버에 업로드
-        const uploadRes = await Kakao.API.request({
-            url: '/v2/api/talk/share/image',
-            files: [file]
-        });
-
-        const uploadedImageUrl = uploadRes.infos.original.url;
-        const richDescription = `💰 ${desc}\n🛒 실시간 최저가 패키지 상세 조합 결과입니다. 사이트에서 나만의 맞춤 조합을 다시 계산해 보세요!`;
-
-        // 5. 카카오톡 발송 (캐시 우회를 위해 주소 뒤에 타임스탬프 추가)
-        const currentTimestamp = new Date().getTime();
-        Kakao.Share.sendDefault({
-            objectType: 'feed',
-            content: {
-                title: title,
-                description: richDescription,
-                imageUrl: uploadedImageUrl,
-                imageWidth: 800,
-                imageHeight: 450,
+    Kakao.Share.sendDefault({
+        objectType: 'item', // 💡 리스트/영수증형 레이아웃 공식 적용
+        itemContent: {
+            profileText: 'PUBG MOBILE',
+            profileImageUrl: 'https://github.com/user-attachments/assets/08890d07-42a2-4c4a-a8b7-06d15a9a7c33', // 로고 이미지 유지
+            title: title, // 메인 제목: 예) PUBG UC 최저가: 27,500원
+            description: '유저 맞춤형 최저가 계산 결과',
+            // 📊 캡쳐 화면 대신 카톡방에 영수증 표를 실시간으로 그려줍니다.
+            items: [
+                { item: '결과 안내', itemOp: cleanDesc },
+                { item: '적용 플랫폼', itemOp: platform.toUpperCase() },
+                { item: '보너스 반영', itemOp: '최대치 포함 완료' }
+            ],
+            sum: '최저가 조합',
+            sumOp: '사이트에서 확인'
+        },
+        buttons: [
+            {
+                title: '나도 조합 확인하기 🔗',
                 link: {
                     mobileWebUrl: 'https://pubginfo.site?t=' + currentTimestamp,
                     webUrl: 'https://pubginfo.site?t=' + currentTimestamp
                 }
-            },
-            buttons: [{ title: '나도 계산하러 가기 🔗', link: { mobileWebUrl: 'https://pubginfo.site?t=' + currentTimestamp, webUrl: 'https://pubginfo.site?t=' + currentTimestamp } }]
-        });
-
-    } catch (error) {
-        // 🚨 캡쳐 에러 발생 시 유저가 먹통이라고 느끼지 않게 '텍스트 모드'로 자동 전환해 주는 백업 로직
-        console.error('실시간 캡쳐 에러, 텍스트 모드로 전환합니다:', error);
-        
-        const backupDesc = `💰 ${desc}\n\n배그 모바일 플랫폼별 보너스를 완벽 반영한 최저가 결과입니다. 지금 바로 링크에서 확인해 보세요!`;
-        
-        Kakao.Share.sendDefault({
-            objectType: 'text',
-            text: `${title}\n\n${backupDesc}`,
-            link: {
-                mobileWebUrl: 'https://pubginfo.site',
-                webUrl: 'https://pubginfo.site'
-            },
-            buttons: [{ title: '계산기 바로가기 🎯', link: { mobileWebUrl: 'https://pubginfo.site', webUrl: 'https://pubginfo.site' } }]
-        });
-    }
+            }
+        ]
+    });
 }
 
 // ── 공유 버튼 HTML 생성 ───────────────────────────────────────
