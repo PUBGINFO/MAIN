@@ -1,7 +1,7 @@
 // ────────────────────────────────────────────────────────────
 // 카카오 SDK 초기화 (앱 키를 아래에 입력하세요)
 // ────────────────────────────────────────────────────────────
-const KAKAO_APP_KEY = 'YOUR_KAKAO_APP_KEY';
+const KAKAO_APP_KEY = 'b80f2d95ba7e522d696f884635837c5c';
 if (typeof Kakao !== 'undefined' && !Kakao.isInitialized()) {
     Kakao.init(KAKAO_APP_KEY);
 }
