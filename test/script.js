@@ -94,7 +94,7 @@ function pkgListText(counts, pkgs) {
         .join('\n');
 }
 
-// ── 클립보드 복사 (고유 ID 대응 수정) ──────────────────────────
+// ── 클립보드 복사 (고유 ID 대응) ──────────────────────────────
 function copyResult(text, copyBtnId) {
     navigator.clipboard.writeText(text).then(() => {
         const btn = document.getElementById(copyBtnId);
@@ -127,37 +127,137 @@ function copyResult(text, copyBtnId) {
     });
 }
 
-// ── 캡쳐용 스타일 복원 헬퍼 ───────────────────────────────────
-function copyCaptureStyles(sourceEl, targetEl) {
-    const cs = getComputedStyle(sourceEl);
+// ── 캡쳐 스타일 정리 ─────────────────────────────────────────
+function sanitizeForCapture(root) {
+    const nodes = [root, ...root.querySelectorAll('*')];
 
-    targetEl.style.background = cs.background;
-    targetEl.style.backgroundColor = cs.backgroundColor;
-    targetEl.style.backgroundImage = cs.backgroundImage;
-    targetEl.style.backgroundRepeat = cs.backgroundRepeat;
-    targetEl.style.backgroundSize = cs.backgroundSize;
-    targetEl.style.backgroundPosition = cs.backgroundPosition;
-    targetEl.style.backgroundAttachment = cs.backgroundAttachment;
+    nodes.forEach(el => {
+        const cs = getComputedStyle(el);
 
-    targetEl.style.color = cs.color;
-    targetEl.style.border = cs.border;
-    targetEl.style.borderRadius = cs.borderRadius;
-    targetEl.style.boxShadow = cs.boxShadow;
-    targetEl.style.opacity = '1';
-    targetEl.style.filter = 'none';
-    targetEl.style.backdropFilter = 'none';
-    targetEl.style.mixBlendMode = 'normal';
-    targetEl.style.transform = 'none';
-    targetEl.style.webkitTextFillColor = cs.webkitTextFillColor || cs.color;
-
-    const all = targetEl.querySelectorAll('*');
-    all.forEach(el => {
+        // 색이 죽는 원인 계열 제거
         el.style.opacity = '1';
         el.style.filter = 'none';
         el.style.backdropFilter = 'none';
+        el.style.webkitBackdropFilter = 'none';
         el.style.mixBlendMode = 'normal';
         el.style.transform = 'none';
+        el.style.transition = 'none';
+        el.style.animation = 'none';
+        el.style.textShadow = 'none';
+
+        // 배경/텍스트는 원본 그대로 유지
+        el.style.backgroundColor = cs.backgroundColor;
+        el.style.backgroundImage = cs.backgroundImage;
+        el.style.backgroundRepeat = cs.backgroundRepeat;
+        el.style.backgroundPosition = cs.backgroundPosition;
+        el.style.backgroundSize = cs.backgroundSize;
+        el.style.backgroundAttachment = cs.backgroundAttachment;
+        el.style.backgroundClip = cs.backgroundClip;
+        el.style.color = cs.color;
+
+        // 카드/버튼 형태 유지
+        el.style.borderColor = cs.borderColor;
+        el.style.borderStyle = cs.borderStyle;
+        el.style.borderWidth = cs.borderWidth;
+        el.style.borderRadius = cs.borderRadius;
+        el.style.boxShadow = cs.boxShadow;
+
+        // 렌더링 안정화
+        el.style.webkitFontSmoothing = 'antialiased';
+        el.style.textRendering = 'geometricPrecision';
     });
+}
+
+// ── 캡쳐용 이미지 렌더링 ──────────────────────────────────────
+async function renderShareImage(targetArea) {
+    if (typeof html2canvas === 'undefined') {
+        throw new Error('html2canvas가 로드되지 않았습니다.');
+    }
+
+    const wrapper = document.createElement('div');
+    wrapper.style.position = 'fixed';
+    wrapper.style.left = '-99999px';
+    wrapper.style.top = '0';
+    wrapper.style.margin = '0';
+    wrapper.style.padding = '24px';
+    wrapper.style.background = '#ffffff';
+    wrapper.style.border = '0';
+    wrapper.style.boxSizing = 'border-box';
+    wrapper.style.overflow = 'visible';
+    wrapper.style.display = 'inline-block';
+    wrapper.style.width = 'auto';
+    wrapper.style.maxWidth = '960px';
+
+    const clone = targetArea.cloneNode(true);
+
+    const shareBar = clone.querySelector('.share-buttons');
+    if (shareBar) shareBar.remove();
+
+    // 원본 레이아웃 최대한 유지하되, 캡쳐 방해 요소 제거
+    clone.style.opacity = '1';
+    clone.style.filter = 'none';
+    clone.style.backdropFilter = 'none';
+    clone.style.webkitBackdropFilter = 'none';
+    clone.style.mixBlendMode = 'normal';
+    clone.style.transform = 'none';
+    clone.style.transition = 'none';
+    clone.style.animation = 'none';
+    clone.style.overflow = 'visible';
+    clone.style.height = 'auto';
+    clone.style.minHeight = '0';
+    clone.style.maxHeight = 'none';
+    clone.style.boxSizing = 'border-box';
+
+    // 내부 필터/암전 효과 제거
+    sanitizeForCapture(clone);
+
+    // 캡쳐 전용 스타일 시트
+    const style = document.createElement('style');
+    style.textContent = `
+        *, *::before, *::after {
+            animation: none !important;
+            transition: none !important;
+        }
+    `;
+
+    wrapper.appendChild(style);
+    wrapper.appendChild(clone);
+    document.body.appendChild(wrapper);
+
+    try {
+        await new Promise(requestAnimationFrame);
+        await new Promise(requestAnimationFrame);
+
+        // 내용 길이에 따라 폭 유동 조절
+        const cloneRect = clone.getBoundingClientRect();
+        const scrollH = clone.scrollHeight || cloneRect.height || 0;
+        const scrollW = clone.scrollWidth || cloneRect.width || 0;
+
+        let finalWidth = 420;
+        if (scrollH > 1000) finalWidth = 900;
+        else if (scrollH > 800) finalWidth = 820;
+        else if (scrollH > 650) finalWidth = 720;
+        else if (scrollH > 500) finalWidth = 620;
+        else finalWidth = Math.max(420, Math.min(scrollW + 48, 620));
+
+        wrapper.style.width = finalWidth + 'px';
+        clone.style.width = '100%';
+        clone.style.maxWidth = '100%';
+
+        const canvas = await html2canvas(wrapper, {
+            useCORS: true,
+            allowTaint: true,
+            scale: 2,
+            backgroundColor: '#ffffff',
+            removeContainer: true,
+            scrollX: 0,
+            scrollY: 0
+        });
+
+        return canvas;
+    } finally {
+        if (wrapper.parentNode) wrapper.parentNode.removeChild(wrapper);
+    }
 }
 
 // ── 카카오 공유 버튼 준비 ─────────────────────────────────────
@@ -172,7 +272,7 @@ function prepareKakaoButton(buttonId, kakaoTitle, kakaoDesc) {
     const kakaoBtn = document.getElementById(buttonId);
     if (!kakaoBtn) return;
 
-    kakaoBtn.addEventListener('click', function(e) {
+    kakaoBtn.addEventListener('click', async function(e) {
         if (kakaoBtn.classList.contains('processing')) {
             e.preventDefault();
             return;
@@ -181,107 +281,52 @@ function prepareKakaoButton(buttonId, kakaoTitle, kakaoDesc) {
         kakaoBtn.classList.add('processing');
         kakaoBtn.innerHTML = `⏳ 이미지 생성 중...`;
 
-        // 1) 밝은 배경 도화지 생성
-        const wrapper = document.createElement('div');
-        wrapper.style.position = 'absolute';
-        wrapper.style.top = '-9999px';
-        wrapper.style.left = '-9999px';
-        wrapper.style.width = '800px';
-        wrapper.style.height = '420px';
-        wrapper.style.background = '#ffffff';
-        wrapper.style.display = 'flex';
-        wrapper.style.alignItems = 'center';
-        wrapper.style.justifyContent = 'center';
-        wrapper.style.overflow = 'hidden';
-        wrapper.style.padding = '0';
-        wrapper.style.margin = '0';
-        wrapper.style.border = '0';
+        try {
+            const canvas = await renderShareImage(targetArea);
 
-        // 2) 결과창 복제
-        const clone = targetArea.cloneNode(true);
-        clone.style.width = '380px';
-        clone.style.padding = '24px';
-        clone.style.borderRadius = '20px';
-        clone.style.boxShadow = '0 25px 60px rgba(0,0,0,0.18)';
-        clone.style.border = 'none';
+            const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+            if (!blob) throw new Error('이미지 변환에 실패했습니다.');
 
-        // 실제 화면 스타일 최대한 복원
-        copyCaptureStyles(targetArea, clone);
+            const file = new File([blob], 'pubg_receipt.png', { type: 'image/png' });
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
 
-        // 공유 버튼 바 제거
-        const shareBar = clone.querySelector('.share-buttons');
-        if (shareBar) shareBar.remove();
+            const uploaded = await Kakao.Share.uploadImage({
+                file: dataTransfer.files,
+            });
 
-        // wrapper 안에 넣기 전에 한 번 더 배경 고정
-        clone.style.backgroundColor = getComputedStyle(targetArea).backgroundColor;
-        clone.style.backgroundImage = getComputedStyle(targetArea).backgroundImage;
+            const uploadedImageUrl = uploaded.infos.original.url;
+            const currentTimestamp = Date.now();
 
-        wrapper.appendChild(clone);
-        document.body.appendChild(wrapper);
+            Kakao.Share.sendDefault({
+                objectType: 'feed',
+                content: {
+                    title: kakaoTitle,
+                    description: kakaoDesc,
+                    imageUrl: uploadedImageUrl,
+                    link: {
+                        mobileWebUrl: 'https://pubginfo.site?t=' + currentTimestamp,
+                        webUrl: 'https://pubginfo.site?t=' + currentTimestamp
+                    }
+                },
+                buttons: [
+                    {
+                        title: '나도 최저가 계산하기 🔗',
+                        link: {
+                            mobileWebUrl: 'https://pubginfo.site?t=' + currentTimestamp,
+                            webUrl: 'https://pubginfo.site?t=' + currentTimestamp
+                        }
+                    }
+                ]
+            });
 
-        // 3) 캡쳐
-        html2canvas(wrapper, {
-            useCORS: true,
-            allowTaint: true,
-            scale: 2,
-            backgroundColor: '#ffffff',
-            removeContainer: true
-        }).then(canvas => {
-            document.body.removeChild(wrapper);
-
-            canvas.toBlob(blob => {
-                if (!blob) {
-                    kakaoBtn.classList.remove('processing');
-                    kakaoBtn.innerHTML = `카카오톡 공유`;
-                    return;
-                }
-
-                const file = new File([blob], 'pubg_receipt.png', { type: 'image/png' });
-                const dataTransfer = new DataTransfer();
-                dataTransfer.items.add(file);
-                const standardFileList = dataTransfer.files;
-
-                Kakao.Share.uploadImage({
-                    file: standardFileList,
-                }).then(res => {
-                    const uploadedImageUrl = res.infos.original.url;
-                    const currentTimestamp = new Date().getTime();
-
-                    Kakao.Share.sendDefault({
-                        objectType: 'feed',
-                        content: {
-                            title: kakaoTitle,
-                            description: kakaoDesc,
-                            imageUrl: uploadedImageUrl,
-                            link: {
-                                mobileWebUrl: 'https://pubginfo.site?t=' + currentTimestamp,
-                                webUrl: 'https://pubginfo.site?t=' + currentTimestamp
-                            }
-                        },
-                        buttons: [
-                            {
-                                title: '나도 최저가 계산하기 🔗',
-                                link: {
-                                    mobileWebUrl: 'https://pubginfo.site?t=' + currentTimestamp,
-                                    webUrl: 'https://pubginfo.site?t=' + currentTimestamp
-                                }
-                            }
-                        ]
-                    });
-
-                    kakaoBtn.classList.remove('processing');
-                    kakaoBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.477 3 2 6.477 2 11c0 2.757 1.428 5.185 3.6 6.713L4.5 21l4.2-2.1A10.5 10.5 0 0 0 12 19c5.523 0 10-3.477 10-8S17.523 3 12 3z"/></svg> 카카오톡 공유`;
-                }).catch(err => {
-                    alert('업로드 오류: ' + err.message);
-                    kakaoBtn.classList.remove('processing');
-                    kakaoBtn.innerHTML = `카카오톡 공유`;
-                });
-            }, 'image/png');
-        }).catch(err => {
-            alert('캡쳐 에러: ' + err.message);
+            kakaoBtn.classList.remove('processing');
+            kakaoBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.477 3 2 6.477 2 11c0 2.757 1.428 5.185 3.6 6.713L4.5 21l4.2-2.1A10.5 10.5 0 0 0 12 19c5.523 0 10-3.477 10-8S17.523 3 12 3z"/></svg> 카카오톡 공유`;
+        } catch (err) {
+            alert('공유 처리 중 오류: ' + err.message);
             kakaoBtn.classList.remove('processing');
             kakaoBtn.innerHTML = `카카오톡 공유`;
-        });
+        }
     });
 }
 
@@ -323,6 +368,7 @@ function selectOS(os) {
     platform = os;
     mode = 'price';
     resetResult();
+
     document.getElementById('useBonus').checked = true;
     document.getElementById('tabPrice').classList.add('active');
     document.getElementById('tabUC').classList.remove('active');
@@ -336,11 +382,7 @@ function selectOS(os) {
 
     document.getElementById('ownedUCGroup').style.display = mode === 'price' ? 'block' : 'none';
 
-    const verMap = {
-        ios: 'v4.0 (iOS)',
-        android: 'v4.0 (Android)',
-        midasbuy: 'v4.0 (MidasBuy)'
-    };
+    const verMap = { ios: 'v4.0 (iOS)', android: 'v4.0 (Android)', midasbuy: 'v4.0 (MidasBuy)' };
     document.getElementById('versionTag').textContent = verMap[os];
     document.body.className = platform + ' mode-' + mode;
 
