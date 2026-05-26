@@ -6,13 +6,12 @@ if (typeof Kakao !== 'undefined' && !Kakao.isInitialized()) {
     Kakao.init(KAKAO_APP_KEY);
 }
 
+// 카카오 공유용 데이터를 안전하게 백업할 전역 저장소
+window.kakaoData = { title: '', desc: '' };
+
 let platform = 'ios', mode = 'price';
 
 // ── 패키지 데이터 ─────────────────────────────────────────────
-// baseUC  : 누적 충전 이벤트 달성 기준 UC (보너스 제외 기본 지급 UC)
-// bonusUC : 패키지 자체 보너스 UC
-// totalUC : baseUC + bonusUC (실제 지급량)
-// label   : 인게임 공식 상품명과 동일하게 표기
 const data = {
     ios: [
         { price:1100,   baseUC:60,   bonusUC:0,    totalUC:60,   label:'60 UC' },
@@ -53,7 +52,7 @@ function getBonus(baseUC, on) {
     return b;
 }
 
-// ── DP 빌더: baseUC 기준 인덱싱, Fix1(동가격→더많은UC) 적용 ──
+// ── DP 빌더 ──────────────────────────────────────────────────
 function buildMinCostDP(pkgs, maxBaseUC) {
     const dp      = new Array(maxBaseUC + 1).fill(Infinity);
     const dpTotal = new Array(maxBaseUC + 1).fill(0);
@@ -111,11 +110,8 @@ function copyResult(text) {
     });
 }
 
-// ── 카카오 공유 ───────────────────────────────────────────────
-// ── [종결 버전] 실시간 결과화면 캡쳐 후 카카오톡 공유 ───────────────────
-// ── [진짜 종결] 카카오톡 영수증형(Item) 공식 템플릿 오류 수정 버전 ───────────────────
-function shareKakao(title, desc) {
-    // 1. 카카오 SDK 초기화 및 안전장치 확인
+// ── 카카오 공유 (영수증형 템플릿 완전 수정본) ─────────────────
+function shareKakao() {
     if (typeof Kakao !== 'undefined') {
         if (!Kakao.isInitialized()) {
             const KAKAO_APP_KEY = 'b80f2d95ba7e522d696f884635837c5c';
@@ -126,31 +122,27 @@ function shareKakao(title, desc) {
         return;
     }
 
-    // 2. 텍스트 데이터 가공 (오류 방지용 안전 처리)
+    const title = window.kakaoData.title || 'PUBG MOBILE UC 최저가';
+    const desc = window.kakaoData.desc || '';
     const currentTimestamp = new Date().getTime();
-    const safeTitle = title || 'PUBG MOBILE UC 최저가';
     
-    // desc에서 불필요한 주소 텍스트 제거 및 깔끔하게 정리
     let cleanDesc = '최저가 조합 확인 완료';
     if (desc && typeof desc === 'string') {
         cleanDesc = desc.replace('· pubginfo.site', '').trim();
     }
 
-    // 3. 현재 선택된 플랫폼 이름 추출 (기존 글로벌 변수 platform 활용)
     let currentPlatform = 'iOS';
     if (typeof platform !== 'undefined' && platform) {
         currentPlatform = platform.toUpperCase();
     }
 
-    // 4. 카카오톡 영수증형(item) 템플릿 발송
     Kakao.Share.sendDefault({
         objectType: 'item',
         itemContent: {
             profileText: 'PUBG MOBILE UC 계산기',
             profileImageUrl: 'https://github.com/user-attachments/assets/08890d07-42a2-4c4a-a8b7-06d15a9a7c33',
-            title: safeTitle, // 예: "PUBG UC 최저가: 27,500원"
+            title: title,
             description: '배그 모바일 맞춤형 계산 결과',
-            // 📊 카톡방에 영수증 표 형태로 데이터를 꽂아줍니다.
             items: [
                 { item: '결과 수치', itemOp: cleanDesc },
                 { item: '충전 플랫폼', itemOp: currentPlatform },
@@ -171,11 +163,14 @@ function shareKakao(title, desc) {
     });
 }
 
-
 // ── 공유 버튼 HTML 생성 ───────────────────────────────────────
 function shareButtonsHTML(copyText, kakaoTitle, kakaoDesc) {
+    // 문자열 충돌 우회를 위해 글로벌 객체에 데이터 백업
+    window.kakaoData.title = kakaoTitle;
+    window.kakaoData.desc = kakaoDesc;
+
     return `<div class="share-buttons">
-        <button class="btn-share btn-kakao" onclick='shareKakao(${JSON.stringify(kakaoTitle)}, ${JSON.stringify(kakaoDesc)})'>
+        <button class="btn-share btn-kakao" onclick="shareKakao()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.477 3 2 6.477 2 11c0 2.757 1.428 5.185 3.6 6.713L4.5 21l4.2-2.1A10.5 10.5 0 0 0 12 19c5.523 0 10-3.477 10-8S17.523 3 12 3z"/></svg>
             카카오톡 공유
         </button>
@@ -212,7 +207,6 @@ function selectOS(os) {
     const bonusRow = document.getElementById('bonusRow');
     if (bonusRow) bonusRow.style.display = os === 'ios' ? 'flex' : 'none';
 
-    // 보유UC 입력 표시: 최저가 모드에서만
     document.getElementById('ownedUCGroup').style.display = mode === 'price' ? 'block' : 'none';
 
     const verMap = { ios: 'v4.0 (iOS)', android: 'v4.0 (Android)', midasbuy: 'v4.0 (MidasBuy)' };
@@ -248,7 +242,6 @@ function setMode(m) {
     document.getElementById('inputLabel').textContent = m === 'price' ? '필요한 UC를 입력하세요' : '보유 예산을 입력하세요 (원)';
     document.getElementById('mainInput').placeholder  = m === 'price' ? '예: 12000' : '예: 50000';
     document.getElementById('mainTitle').innerHTML    = (m === 'price' ? 'UC 최저가 계산기' : 'UC 예산 계산기') + ' <span class="title-badge">BETA</span>';
-    // 보유UC 입력: 최저가 모드에서만 표시
     document.getElementById('ownedUCGroup').style.display = m === 'price' ? 'block' : 'none';
     setTimeout(updateMSlider, 10);
     document.getElementById('mainInput').focus();
@@ -278,7 +271,6 @@ function calcMinPrice() {
 
     if (targetUCRaw <= 0) return;
 
-    // 보유 UC가 이미 충분한 경우
     if (targetUC <= 0) {
         resultDiv.innerHTML = `<div class="already-enough">
             ✅ 이미 충분한 UC를 보유하고 있습니다.<br>
@@ -293,12 +285,10 @@ function calcMinPrice() {
     setTimeout(() => {
         const pkgs    = data[platform];
         const maxBase = Math.max(...pkgs.map(p => p.baseUC));
-        // 올림 추천을 위해 15% 더 넓게 탐색
         const searchMax = Math.ceil(targetUC * 1.15) + maxBase * 2;
 
         const { dp, dpTotal, ch } = buildMinCostDP(pkgs, searchMax);
 
-        // ── 메인 최저가 탐색 ─────────────────────────────────
         let bestPrice = Infinity, bestBaseUC = 0, bestEffective = 0;
         for (let b = 0; b <= searchMax; b++) {
             if (dp[b] === Infinity) continue;
@@ -323,9 +313,6 @@ function calcMinPrice() {
         const bestBonus   = bonusOn ? getBonus(bestBaseUC, true) : 0;
         const bestFinalUC = bestPkgUC + bestBonus;
 
-        // ── 올림 가성비 추천 탐색 ────────────────────────────
-        // 기준: 추가비용 ≤ max(5000, bestPrice*8%) 이내에서
-        //        UC가 300 이상 더 많은 조합 탐색
         const extraCostLimit = Math.max(5000, Math.round(bestPrice * 0.08));
         let recoPrice = Infinity, recoBaseUC = 0, recoEffective = 0;
 
@@ -335,7 +322,7 @@ function calcMinPrice() {
             const extraCost = dp[b] - bestPrice;
             const extraUC   = eff - bestFinalUC;
             if (extraCost > extraCostLimit) continue;
-            if (extraUC < 300) continue; // 의미 있는 차이만
+            if (extraUC < 300) continue;
             if (dp[b] < recoPrice || (dp[b] === recoPrice && eff > recoEffective)) {
                 recoPrice     = dp[b];
                 recoBaseUC    = b;
@@ -345,12 +332,10 @@ function calcMinPrice() {
 
         const hasReco = recoPrice !== Infinity && recoPrice !== bestPrice;
 
-        // ── 결과 HTML 빌드 ───────────────────────────────────
         const bonusLine = bonusOn
             ? `<span style="font-size:0.78rem;">(기본 ${bestBaseUC.toLocaleString()} + 패키지보너스 ${(bestPkgUC - bestBaseUC).toLocaleString()} + 누적보너스 ${bestBonus.toLocaleString()})</span>`
             : `<span style="font-size:0.78rem;">패키지 보너스 포함</span>`;
 
-        // 보유 UC 표시
         const ownedLine = ownedUC > 0
             ? `<div class="owned-deduct">보유 UC ${ownedUC.toLocaleString()} 차감 후 ${targetUC.toLocaleString()} UC 필요</div>`
             : '';
@@ -363,7 +348,6 @@ function calcMinPrice() {
             </div>`;
         });
 
-        // 클립보드 / 카카오 텍스트
         const copyText  = `[PUBG MOBILE UC 계산 결과]\n총 결제 금액: ${bestPrice.toLocaleString()}원\n추천 조합:\n${pkgListText(bestCounts, pkgs)}\n총 획득 UC: ${bestFinalUC.toLocaleString()} UC\n\npubginfo.site`;
         const kakaoTitle = `PUBG UC 최저가: ${bestPrice.toLocaleString()}원`;
         const kakaoDesc  = `총 ${bestFinalUC.toLocaleString()} UC 획득 · pubginfo.site`;
@@ -374,7 +358,6 @@ function calcMinPrice() {
             <div class="sub-info">획득 UC: <strong>${bestFinalUC.toLocaleString()}</strong><br>${bonusLine}</div>
             ${pkgRows}`;
 
-        // 추천 카드
         if (hasReco) {
             const recoCounts  = traceback(ch, pkgs, recoBaseUC, 'baseUC');
             const recoPkgUC   = dpTotal[recoBaseUC];
