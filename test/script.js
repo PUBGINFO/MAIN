@@ -104,100 +104,130 @@ function copyResult(text) {
     });
 }
 
-// ── [신세계] 결과 화면 실시간 스크린샷 캡쳐 후 카톡 전송 함수 🎯 ──
-function shareKakaoCapture() {
-    alert('📸 실시간 영수증 캡쳐 공유를 시작합니다!');
-
-    // 1. 카카오 라이브러리 및 초기화 검사
-    if (typeof Kakao !== 'undefined') {
-        if (!Kakao.isInitialized()) {
-            Kakao.init(KAKAO_APP_KEY);
-        }
-    } else {
-        alert('에러: 카카오 SDK 라이브러리를 불러오지 못했습니다.');
-        return;
-    }
-
-    // 2. html2canvas 라이브러리 검사
-    if (typeof html2canvas === 'undefined') {
-        alert('에러: html2canvas 캡쳐 라이브러리가 로드되지 않았습니다.');
-        return;
+// ── 📸 카카오톡 맞춤형 비율(1.91:1) 스크린샷 캡쳐 프로세스 ──
+function prepareKakaoButton(buttonId) {
+    if (typeof Kakao !== 'undefined' && !Kakao.isInitialized()) {
+        Kakao.init(KAKAO_APP_KEY);
     }
 
     const targetArea = document.getElementById('result');
-    if (!targetArea) {
-        alert('에러: 캡쳐할 결과창(result)을 찾을 수 없습니다.');
-        return;
-    }
+    if (!targetArea || typeof html2canvas === 'undefined') return;
 
-    // [보안 핵심] 외부 이미지나 스타일 때문에 캡쳐가 터지는 걸 방지하는 옵션 주입
-    html2canvas(targetArea, {
-        useCORS: true,          // 다른 도메인 이미지 보안 우회 허용
-        allowTaint: true,       // 차단된 이미지 무시하고 계속 진행
-        backgroundColor: '#1e1e2e', // 투명 배경 방지 (영수증 뒷배경 채우기)
-        scale: 2                // 카톡에서 선명하게 보이도록 화질 2배 업
-    }).then(canvas => {
+    const kakaoBtn = document.getElementById(buttonId);
+    if (!kakaoBtn) return;
+
+    kakaoBtn.addEventListener('click', function(e) {
+        if (kakaoBtn.classList.contains('processing')) {
+            e.preventDefault();
+            return;
+        }
+        kakaoBtn.classList.add('processing');
+        kakaoBtn.innerHTML = `⏳ 이미지 매칭 중...`;
+
+        // 🎯 [핵심 수정] 카톡 전용 1.91:1 비율 가상 도화지 컨테이너 동적 생성
+        const wrapper = document.createElement('div');
+        wrapper.style.position = 'absolute';
+        wrapper.style.top = '-9999px';
+        wrapper.style.left = '-9999px';
+        wrapper.style.width = '800px';
+        wrapper.style.height = '420px'; // 800:420 = 정확히 카톡 황금비율 1.91:1
+        wrapper.style.background = 'linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%)'; // 사이트 원래 배경 테마색
+        wrapper.style.display = 'flex';
+        wrapper.style.alignItems = 'center';
+        wrapper.style.justifyContent = 'center';
+        wrapper.style.overflow = 'hidden';
+
+        // 원래 영수증 엘리먼트를 복사해서 가상 가로 도화지 중앙에 때려 박음
+        const clone = targetArea.cloneNode(true);
+        clone.style.width = '360px'; // 영수증 크기가 찌그러지지 않게 적당히 고정
+        clone.style.boxShadow = '0 20px 40px rgba(0,0,0,0.5)';
+        clone.style.borderRadius = '16px';
+        clone.style.padding = '24px';
         
-        // 3. 캡쳐된 이미지 데이터를 파일 조각(Blob) 형태로 변환 (카카오 전송용 규격)
-        canvas.toBlob(blob => {
-            if (!blob) {
-                alert('에러: 스크린샷 이미지 파일 생성에 실패했습니다.');
-                return;
-            }
+        // 복사본 내부에서 공유 버튼 바 영역은 사진에 안 나오게 삭제
+        const shareBar = clone.querySelector('.share-buttons');
+        if (shareBar) shareBar.remove();
 
-            alert('서버 전송용 이미지 파일 변환 완료! 카카오 서버에 임시 업로드합니다.');
+        wrapper.appendChild(clone);
+        document.body.appendChild(wrapper);
 
-            // 파일 형태로 포장하기
-            const file = new File([blob], "pubg_result.png", { type: "image/png" });
+        // 가상 도화지 전체를 캡쳐함 -> 이렇게 하면 카톡이 잘라낼 공간이 없어서 확대 안 됨!
+        html2canvas(wrapper, {
+            useCORS: true,
+            allowTaint: true,
+            scale: 2
+        }).then(canvas => {
+            // 캡쳐 끝났으니 도화지 파괴
+            document.body.removeChild(wrapper);
 
-            // 4. 카카오 전용 서버에 임시 업로드 시도 (파일은 20일간 보관됨)
-            Kakao.Share.uploadImage({
-                file: [file],
-            }).then(res => {
-                const uploadedImageUrl = res.infos.original.url;
-                alert('카카오 서버 업로드 성공! 카톡 공유 팝업을 띄웁니다.');
+            canvas.toBlob(blob => {
+                if (!blob) {
+                    kakaoBtn.classList.remove('processing');
+                    kakaoBtn.innerHTML = `카카오톡 공유`;
+                    return;
+                }
 
-                const currentTimestamp = new Date().getTime();
+                const file = new File([blob], "pubg_receipt.png", { type: "image/png" });
 
-                // 5. 방금 업로드된 실시간 따끈따끈한 이미지 주소를 박아서 피드 전송!
-                Kakao.Share.sendDefault({
-                    objectType: 'feed',
-                    content: {
-                        title: 'PUBG MOBILE UC 계산 결과',
-                        description: '나에게 딱 맞는 최적의 UC 최저가 조합 영수증을 확인하세요!',
-                        imageUrl: uploadedImageUrl, // 📸 실시간으로 캡쳐되어 올라간 영수증 이미지 주소
-                        link: {
-                            mobileWebUrl: 'https://pubginfo.site?t=' + currentTimestamp,
-                            webUrl: 'https://pubginfo.site?t=' + currentTimestamp
-                        }
-                    },
-                    buttons: [
-                        {
-                            title: '나도 최저가 계산하러 가기 🔗',
+                // 카카오 임시 업로드
+                Kakao.Share.uploadImage({
+                    file: [file],
+                }).then(res => {
+                    const uploadedImageUrl = res.infos.original.url;
+                    const currentTimestamp = new Date().getTime();
+
+                    // 다이렉트 트리거 바인딩
+                    Kakao.Share.createDefaultButton({
+                        container: '#' + buttonId,
+                        objectType: 'feed',
+                        content: {
+                            title: 'PUBG MOBILE UC 최적 결과',
+                            description: '최적의 최저가 패키지 조합 영수증이 도착했습니다!',
+                            imageUrl: uploadedImageUrl,
                             link: {
                                 mobileWebUrl: 'https://pubginfo.site?t=' + currentTimestamp,
                                 webUrl: 'https://pubginfo.site?t=' + currentTimestamp
                             }
-                        }
-                    ]
+                        },
+                        buttons: [
+                            {
+                                title: '나도 최저가 계산하기 🔗',
+                                link: {
+                                    mobileWebUrl: 'https://pubginfo.site?t=' + currentTimestamp,
+                                    webUrl: 'https://pubginfo.site?t=' + currentTimestamp
+                                }
+                            }
+                        ]
+                    });
+
+                    kakaoBtn.classList.remove('processing');
+                    kakaoBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.477 3 2 6.477 2 11c0 2.757 1.428 5.185 3.6 6.713L4.5 21l4.2-2.1A10.5 10.5 0 0 0 12 19c5.523 0 10-3.477 10-8S17.523 3 12 3z"/></svg> 카카오톡 공유`;
+                    
+                    // 즉시 강제 터치 작동
+                    kakaoBtn.click();
+
+                }).catch(err => {
+                    alert('업로드 오류: ' + err.message);
+                    kakaoBtn.classList.remove('processing');
                 });
-
-            }).catch(uploadErr => {
-                alert('카카오 서버 업로드 오류: ' + uploadErr.message + '\n도메인 설정이나 앱 키를 확인하세요.');
-            });
-
-        }, 'image/png');
-
-    }).catch(canvasErr => {
-        alert('스크린샷 캡쳐 실패 원인: ' + canvasErr.message);
-    });
+            }, 'image/png');
+        }).catch(err => {
+            alert('캡쳐 에러: ' + err.message);
+            kakaoBtn.classList.remove('processing');
+        });
+    }, { once: true });
 }
 
-// ── 공유 버튼 HTML 생성 (실시간 캡쳐 함수 연결) ────────────────
+// ── 공유 버튼 HTML 생성 (고유 ID 할당) ──────────────────────────
 function shareButtonsHTML(copyText, kakaoTitle, kakaoDesc) {
-    // onclick 대상을 새로 만든 shareKakaoCapture()로 전면 교체
+    const uniqueBtnId = 'kakao-dynamic-btn-' + Math.floor(Math.random() * 100000);
+    
+    setTimeout(() => {
+        prepareKakaoButton(uniqueBtnId);
+    }, 50);
+
     return `<div class="share-buttons">
-        <button class="btn-share btn-kakao" onclick="shareKakaoCapture()">
+        <button class="btn-share btn-kakao" id="${uniqueBtnId}">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.477 3 2 6.477 2 11c0 2.757 1.428 5.185 3.6 6.713L4.5 21l4.2-2.1A10.5 10.5 0 0 0 12 19c5.523 0 10-3.477 10-8S17.523 3 12 3z"/></svg>
             카카오톡 공유
         </button>
