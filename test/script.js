@@ -104,7 +104,7 @@ function copyResult(text) {
     });
 }
 
-// ── 📸 정품 색감 복원 + 1.91:1 비율 맞춤 캡쳐 및 카톡 우회 전송 스크립트 ──
+// ── 📸 [완벽 튜닝] 정품 그라데이션 도화지 투과식 스크린샷 캡쳐 프로세스 ──
 function prepareKakaoButton(buttonId) {
     if (typeof Kakao !== 'undefined' && !Kakao.isInitialized()) {
         Kakao.init(KAKAO_APP_KEY);
@@ -122,52 +122,63 @@ function prepareKakaoButton(buttonId) {
             return;
         }
         kakaoBtn.classList.add('processing');
-        kakaoBtn.innerHTML = `⏳ 이미지 생성 중...`;
+        kakaoBtn.innerHTML = `⏳ 이미지 매칭 중...`;
 
-        // 1. 카톡 황금비율(1.91:1)을 만족하는 거대 가상 도화지 생성
+        // 1. 카톡 황금비율(1.91:1)의 가상 도화지 생성
         const wrapper = document.createElement('div');
         wrapper.style.position = 'absolute';
         wrapper.style.top = '-9999px';
         wrapper.style.left = '-9999px';
         wrapper.style.width = '800px';
         wrapper.style.height = '420px';
-        wrapper.style.background = '#0b0b12'; // 바깥 여백은 깔끔하고 고급스러운 딥 블랙 고정
+        
+        // 🎨 [핵심 변경] 도화지 자체에 사이트 원래 화면과 100% 동일한 그라데이션 조명을 박아넣습니다.
+        let currentGrad = 'linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%)';
+        if (platform === 'ios') {
+            currentGrad = mode === 'price' 
+                ? 'linear-gradient(135deg, #1e1e2e 0%, #2a2d47 100%)' 
+                : 'linear-gradient(135deg, #0f2027 0%, #1a3a2a 100%)';
+        } else if (platform === 'android') {
+            currentGrad = mode === 'price' 
+                ? 'linear-gradient(135deg, #0a1a10 0%, #0f2918 100%)' 
+                : 'linear-gradient(135deg, #1a0f1a 0%, #2d1030 100%)';
+        } else if (platform === 'midasbuy') {
+            currentGrad = mode === 'price' 
+                ? 'linear-gradient(135deg, #1a1400 0%, #2a2000 100%)' 
+                : 'linear-gradient(135deg, #241400 0%, #3a2200 100%)';
+        }
+        
+        wrapper.style.background = currentGrad;
         wrapper.style.display = 'flex';
         wrapper.style.alignItems = 'center';
         wrapper.style.justifyContent = 'center';
         wrapper.style.overflow = 'hidden';
 
-        // 2. 현재 결과창 복제
+        // 2. 결과창 영수증 복제
         const clone = targetArea.cloneNode(true);
         clone.style.width = '380px'; 
-        clone.style.boxShadow = '0 20px 50px rgba(0,0,0,0.6)';
-        clone.style.borderRadius = '16px';
+        clone.style.boxShadow = '0 25px 60px rgba(0,0,0,0.65)';
+        clone.style.borderRadius = '20px';
         clone.style.padding = '24px';
         
-        // 🎨 [핵심] 가상 복제본 내부의 투명도를 원래 테마의 화사한 배경색 그라데이션으로 원상복구
-        if (platform === 'ios') {
-            clone.style.background = mode === 'price' ? '#22253b' : '#142a38';
-        } else if (platform === 'android') {
-            clone.style.background = mode === 'price' ? '#0f2417' : '#241429';
-        } else { // midasbuy
-            clone.style.background = mode === 'price' ? '#241c02' : '#2c2202';
-        }
-        clone.style.border = '1px solid rgba(255, 255, 255, 0.08)';
+        // 💡 영수증 몸통 자체는 완전 투명처리하여 뒷배경의 예쁜 그라데이션 조명이 모든 글자에 화사하게 스며들도록 유도
+        clone.style.background = 'transparent';
+        clone.style.border = 'none';
 
-        // 복사본 내부에서 공유 버튼 바 영역은 사진 캡쳐본에서 지워버림
+        // 복사본 내에서 공유 버튼 바 영역 제거
         const shareBar = clone.querySelector('.share-buttons');
         if (shareBar) shareBar.remove();
 
         wrapper.appendChild(clone);
         document.body.appendChild(wrapper);
 
-        // 3. 캡쳐 연산 수행
+        // 3. 캡쳐 시작
         html2canvas(wrapper, {
             useCORS: true,
             allowTaint: true,
-            scale: 2 // 흐릿하지 않게 선명도 더블 업
+            scale: 2
         }).then(canvas => {
-            document.body.removeChild(wrapper); // 연산 끝난 도화지는 삭제
+            document.body.removeChild(wrapper);
 
             canvas.toBlob(blob => {
                 if (!blob) {
@@ -178,20 +189,20 @@ function prepareKakaoButton(buttonId) {
 
                 const file = new File([blob], "pubg_receipt.png", { type: "image/png" });
 
-                // 4. 카카오 서버 업로드 시도
+                // 카카오 서버 업로드
                 Kakao.Share.uploadImage({
                     file: [file],
                 }).then(res => {
                     const uploadedImageUrl = res.infos.original.url;
                     const currentTimestamp = new Date().getTime();
 
-                    // 5. 버튼에 공식 API 연결해서 인앱 브라우저 팝업 제한 우회 처리
+                    // 브라우저 팝업 차단 우회용 버튼 트리거 주입
                     Kakao.Share.createDefaultButton({
                         container: '#' + buttonId,
                         objectType: 'feed',
                         content: {
                             title: 'PUBG MOBILE UC 최적 결과',
-                            description: '최적의 최저가 패키지 조합 영수증이 도착했습니다!',
+                            description: '나에게 딱 맞는 최적의 UC 최저가 패키지 조합 영수증을 확인하세요!',
                             imageUrl: uploadedImageUrl,
                             link: {
                                 mobileWebUrl: 'https://pubginfo.site?t=' + currentTimestamp,
@@ -212,7 +223,7 @@ function prepareKakaoButton(buttonId) {
                     kakaoBtn.classList.remove('processing');
                     kakaoBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.477 3 2 6.477 2 11c0 2.757 1.428 5.185 3.6 6.713L4.5 21l4.2-2.1A10.5 10.5 0 0 0 12 19c5.523 0 10-3.477 10-8S17.523 3 12 3z"/></svg> 카카오톡 공유`;
                     
-                    // 세팅 끝나자마자 바로 동적 강제 터치 실행
+                    // 강제 동적 터치 발동 (카톡 대화창 바로 팝업)
                     kakaoBtn.click();
 
                 }).catch(err => {
@@ -284,42 +295,11 @@ function selectOS(os) {
     setTimeout(() => document.getElementById('mainInput').focus(), 480);
 }
 
-function goBack() {
-    document.body.className = '';
-    document.getElementById('versionTag').textContent = 'v4.0';
-    showPage('welcomePage', 'calcPage', 'anim-down');
-}
-
-function updateMSlider() {
-    const s = document.getElementById('mSlider');
-    const t = document.getElementById(mode === 'price' ? 'tabPrice' : 'tabUC');
-    if (s && t && t.offsetWidth > 0) {
-        s.style.left  = (t.offsetLeft - 4) + 'px';
-        s.style.width = t.offsetWidth + 'px';
-    }
-}
-
-function setMode(m) {
-    if (mode === m) return;
-    mode = m; resetResult();
-    document.body.className = platform + ' mode-' + mode;
-    document.getElementById('tabPrice').classList.toggle('active', m === 'price');
-    document.getElementById('tabUC').classList.toggle('active', m === 'uc');
-    document.getElementById('inputLabel').textContent = m === 'price' ? '필요한 UC를 입력하세요' : '보유 예산을 입력하세요 (원)';
-    document.getElementById('mainInput').placeholder  = m === 'price' ? '예: 12000' : '예: 50000';
-    document.getElementById('mainTitle').innerHTML    = (m === 'price' ? 'UC 최저가 계산기' : 'UC 예산 계산기') + ' <span class="title-badge">BETA</span>';
-    document.getElementById('ownedUCGroup').style.display = m === 'price' ? 'block' : 'none';
-    setTimeout(updateMSlider, 10);
-    document.getElementById('mainInput').focus();
-}
-
-function resetResult() {
-    const r = document.getElementById('result');
-    if (r) { r.classList.remove('show'); r.innerHTML = ''; }
-    const inp = document.getElementById('mainInput');
-    if (inp) inp.value = '';
-}
-
+// (이하 중복 함수 기존 로직 그대로 유지)
+function goBack() { document.body.className = ''; document.getElementById('versionTag').textContent = 'v4.0'; showPage('welcomePage', 'calcPage', 'anim-down'); }
+function updateMSlider() { const s = document.getElementById('mSlider'); const t = document.getElementById(mode === 'price' ? 'tabPrice' : 'tabUC'); if (s && t && t.offsetWidth > 0) { s.style.left = (t.offsetLeft - 4) + 'px'; s.style.width = t.offsetWidth + 'px'; } }
+function setMode(m) { if (mode === m) return; mode = m; resetResult(); document.body.className = platform + ' mode-' + mode; document.getElementById('tabPrice').classList.toggle('active', m === 'price'); document.getElementById('tabUC').classList.toggle('active', m === 'uc'); document.getElementById('inputLabel').textContent = m === 'price' ? '필요한 UC를 입력하세요' : '보유 예산을 입력하세요 (원)'; document.getElementById('mainInput').placeholder = m === 'price' ? '예: 12000' : '예: 50000'; document.getElementById('mainTitle').innerHTML = (m === 'price' ? 'UC 최저가 계산기' : 'UC 예산 계산기') + ' <span class="title-badge">BETA</span>'; document.getElementById('ownedUCGroup').style.display = m === 'price' ? 'block' : 'none'; setTimeout(updateMSlider, 10); document.getElementById('mainInput').focus(); }
+function resetResult() { const r = document.getElementById('result'); if (r) { r.classList.remove('show'); r.innerHTML = ''; } const inp = document.getElementById('mainInput'); if (inp) inp.value = ''; }
 function handleEnterKey(e) { if (e.key === 'Enter') calculate(); }
 function calculate() { mode === 'price' ? calcMinPrice() : calcMaxUC(); }
 
@@ -327,213 +307,80 @@ function calcMinPrice() {
     const resultDiv = document.getElementById('result');
     const btn       = document.getElementById('calculateBtn');
     const bonusOn   = platform === 'ios' && document.getElementById('useBonus').checked;
-
     const targetUCRaw = parseInt(document.getElementById('mainInput').value) || 0;
     const ownedUC     = parseInt(document.getElementById('ownedUC').value)   || 0;
     const targetUC    = targetUCRaw - ownedUC;
 
     if (targetUCRaw <= 0) return;
-
     if (targetUC <= 0) {
-        resultDiv.innerHTML = `<div class="already-enough">
-            ✅ 이미 충분한 UC를 보유하고 있습니다.<br>
-            <span style="font-size:0.82rem;color:#9ca3af;">보유 UC: ${ownedUC.toLocaleString()} / 목표 UC: ${targetUCRaw.toLocaleString()}</span>
-        </div>`;
-        resultDiv.classList.add('show');
-        return;
+        resultDiv.innerHTML = `<div class="already-enough">✅ 이미 충분한 UC를 보유하고 있습니다.<br><span style="font-size:0.82rem;color:#9ca3af;">보유 UC: ${ownedUC.toLocaleString()} / 목표 UC: ${targetUCRaw.toLocaleString()}</span></div>`;
+        resultDiv.classList.add('show'); return;
     }
 
     btn.innerHTML = '<span class="loading"></span> 계산중...'; btn.disabled = true;
 
     setTimeout(() => {
-        const pkgs    = data[platform];
-        const maxBase = Math.max(...pkgs.map(p => p.baseUC));
-        const searchMax = Math.ceil(targetUC * 1.15) + maxBase * 2;
-
+        const pkgs = data[platform]; const maxBase = Math.max(...pkgs.map(p => p.baseUC)); const searchMax = Math.ceil(targetUC * 1.15) + maxBase * 2;
         const { dp, dpTotal, ch } = buildMinCostDP(pkgs, searchMax);
-
         let bestPrice = Infinity, bestBaseUC = 0, bestEffective = 0;
         for (let b = 0; b <= searchMax; b++) {
-            if (dp[b] === Infinity) continue;
-            const eff = dpTotal[b] + (bonusOn ? getBonus(b, true) : 0);
-            if (eff < targetUC) continue;
-            if (dp[b] < bestPrice || (dp[b] === bestPrice && eff > bestEffective)) {
-                bestPrice     = dp[b];
-                bestBaseUC    = b;
-                bestEffective = eff;
-            }
+            if (dp[b] === Infinity) continue; const eff = dpTotal[b] + (bonusOn ? getBonus(b, true) : 0);
+            if (eff < targetUC) continue; if (dp[b] < bestPrice || (dp[b] === bestPrice && eff > bestEffective)) { bestPrice = dp[b]; bestBaseUC = b; bestEffective = eff; }
         }
+        if (bestPrice === Infinity) { resultDiv.innerHTML = '<p style="color:#f87171;text-align:center;padding:12px;">계산 가능한 조합을 찾지 못했습니다.</p>'; resultDiv.classList.add('show'); btn.innerHTML = '계산하기'; btn.disabled = false; return; }
 
-        if (bestPrice === Infinity) {
-            resultDiv.innerHTML = '<p style="color:#f87171;text-align:center;padding:12px;">계산 가능한 조합을 찾지 못했습니다.</p>';
-            resultDiv.classList.add('show');
-            btn.innerHTML = '계산하기'; btn.disabled = false;
-            return;
-        }
-
-        const bestCounts  = traceback(ch, pkgs, bestBaseUC, 'baseUC');
-        const bestPkgUC   = dpTotal[bestBaseUC];
-        const bestBonus   = bonusOn ? getBonus(bestBaseUC, true) : 0;
-        const bestFinalUC = bestPkgUC + bestBonus;
-
-        const extraCostLimit = Math.max(5000, Math.round(bestPrice * 0.08));
-        let recoPrice = Infinity, recoBaseUC = 0, recoEffective = 0;
-
+        const bestCounts = traceback(ch, pkgs, bestBaseUC, 'baseUC'); const bestPkgUC = dpTotal[bestBaseUC]; const bestBonus = bonusOn ? getBonus(bestBaseUC, true) : 0; const bestFinalUC = bestPkgUC + bestBonus;
+        const extraCostLimit = Math.max(5000, Math.round(bestPrice * 0.08)); let recoPrice = Infinity, recoBaseUC = 0, recoEffective = 0;
         for (let b = bestBaseUC + 1; b <= searchMax; b++) {
-            if (dp[b] === Infinity) continue;
-            const eff      = dpTotal[b] + (bonusOn ? getBonus(b, true) : 0);
-            const extraCost = dp[b] - bestPrice;
-            const extraUC   = eff - bestFinalUC;
-            if (extraCost > extraCostLimit) continue;
-            if (extraUC < 300) continue;
-            if (dp[b] < recoPrice || (dp[b] === recoPrice && eff > recoEffective)) {
-                recoPrice     = dp[b];
-                recoBaseUC    = b;
-                recoEffective = eff;
-            }
+            if (dp[b] === Infinity) continue; const eff = dpTotal[b] + (bonusOn ? getBonus(b, true) : 0); const extraCost = dp[b] - bestPrice; const extraUC = eff - bestFinalUC;
+            if (extraCost > extraCostLimit) continue; if (extraUC < 300) continue; if (dp[b] < recoPrice || (dp[b] === recoPrice && eff > recoEffective)) { recoPrice = dp[b]; recoBaseUC = b; recoEffective = eff; }
         }
-
         const hasReco = recoPrice !== Infinity && recoPrice !== bestPrice;
+        const bonusLine = bonusOn ? `<span style="font-size:0.78rem;">(기본 ${bestBaseUC.toLocaleString()} + 패키지보너스 ${(bestPkgUC - bestBaseUC).toLocaleString()} + 누적보너스 ${bestBonus.toLocaleString()})</span>` : `<span style="font-size:0.78rem;">패키지 보너스 포함</span>`;
+        const ownedLine = ownedUC > 0 ? `<div class="owned-deduct">보유 UC ${ownedUC.toLocaleString()} 차감 후 ${targetUC.toLocaleString()} UC 필요</div>` : '';
 
-        const bonusLine = bonusOn
-            ? `<span style="font-size:0.78rem;">(기본 ${bestBaseUC.toLocaleString()} + 패키지보너스 ${(bestPkgUC - bestBaseUC).toLocaleString()} + 누적보너스 ${bestBonus.toLocaleString()})</span>`
-            : `<span style="font-size:0.78rem;">패키지 보너스 포함</span>`;
+        let pkgRows = ''; bestCounts.forEach((c, i) => { if (c > 0) pkgRows += `<div class="package-item"><span>${pkgs[i].price.toLocaleString()}원 · ${pkgs[i].label}</span><span class="pkg-count">× ${c}</span></div>`; });
+        const copyText = `[PUBG MOBILE UC 계산 결과]\n총 결제 금액: ${bestPrice.toLocaleString()}원\n추천 조합:\n${pkgListText(bestCounts, pkgs)}\n총 획득 UC: ${bestFinalUC.toLocaleString()} UC\n\npubginfo.site`;
 
-        const ownedLine = ownedUC > 0
-            ? `<div class="owned-deduct">보유 UC ${ownedUC.toLocaleString()} 차감 후 ${targetUC.toLocaleString()} UC 필요</div>`
-            : '';
-
-        let pkgRows = '';
-        bestCounts.forEach((c, i) => {
-            if (c > 0) pkgRows += `<div class="package-item">
-                <span>${pkgs[i].price.toLocaleString()}원 · ${pkgs[i].label}</span>
-                <span class="pkg-count">× ${c}</span>
-            </div>`;
-        });
-
-        const copyText  = `[PUBG MOBILE UC 계산 결과]\n총 결제 금액: ${bestPrice.toLocaleString()}원\n추천 조합:\n${pkgListText(bestCounts, pkgs)}\n총 획득 UC: ${bestFinalUC.toLocaleString()} UC\n\npubginfo.site`;
-        const kakaoTitle = `PUBG UC 최저가: ${bestPrice.toLocaleString()}원`;
-        const kakaoDesc  = `총 ${bestFinalUC.toLocaleString()} UC 획득 · pubginfo.site`;
-
-        let html = `<h3>최적 구매 방법</h3>
-            ${ownedLine}
-            <div class="price-highlight">${bestPrice.toLocaleString()}원</div>
-            <div class="sub-info">획득 UC: <strong>${bestFinalUC.toLocaleString()}</strong><br>${bonusLine}</div>
-            ${pkgRows}`;
+        let html = `<h3>최적 구매 방법</h3>${ownedLine}<div class="price-highlight">${bestPrice.toLocaleString()}원</div><div class="sub-info">획득 UC: <strong>${bestFinalUC.toLocaleString()}</strong><br>${bonusLine}</div>${pkgRows}`;
 
         if (hasReco) {
-            const recoCounts  = traceback(ch, pkgs, recoBaseUC, 'baseUC');
-            const recoPkgUC   = dpTotal[recoBaseUC];
-            const recoBonus   = bonusOn ? getBonus(recoBaseUC, true) : 0;
-            const recoFinalUC = recoPkgUC + recoBonus;
-            const extraCost   = recoPrice - bestPrice;
-            const extraUC     = recoFinalUC - bestFinalUC;
-
-            let recoPkgRows = '';
-            recoCounts.forEach((c, i) => {
-                if (c > 0) recoPkgRows += `<div class="package-item reco-pkg">
-                    <span>${pkgs[i].price.toLocaleString()}원 · ${pkgs[i].label}</span>
-                    <span class="pkg-count">× ${c}</span>
-                </div>`;
-            });
-
+            const recoCounts = traceback(ch, pkgs, recoBaseUC, 'baseUC'); const recoPkgUC = dpTotal[recoBaseUC]; const recoBonus = bonusOn ? getBonus(recoBaseUC, true) : 0; const recoFinalUC = recoPkgUC + recoBonus; const extraCost = recoPrice - bestPrice; const extraUC = recoFinalUC - bestFinalUC;
+            let recoPkgRows = ''; recoCounts.forEach((c, i) => { if (c > 0) recoPkgRows += `<div class="package-item reco-pkg"><span>${pkgs[i].price.toLocaleString()}원 · ${pkgs[i].label}</span><span class="pkg-count">× ${c}</span></div>`; });
             const recoCopyText = `[PUBG MOBILE UC 추천 조합]\n총 결제 금액: ${recoPrice.toLocaleString()}원\n추천 조합:\n${pkgListText(recoCounts, pkgs)}\n총 획득 UC: ${recoFinalUC.toLocaleString()} UC\n\npubginfo.site`;
 
-            html += `<div class="recommend-card">
-                <div class="recommend-header">
-                    💡 기왕 살 거면 이 조합이 훨씬 이득!
-                </div>
-                <div class="recommend-body">
-                    <span class="reco-tag">+${extraCost.toLocaleString()}원만 더 보태면</span>
-                    <strong>+${extraUC.toLocaleString()} UC</strong>를 추가로 받을 수 있어요
-                </div>
-                <div class="recommend-price">${recoPrice.toLocaleString()}원 → <strong>${recoFinalUC.toLocaleString()} UC</strong></div>
-                ${recoPkgRows}
-                ${shareButtonsHTML(recoCopyText, `PUBG UC 추천: ${recoPrice.toLocaleString()}원`, `총 ${recoFinalUC.toLocaleString()} UC 획득 · pubginfo.site`)}
-            </div>`;
+            html += `<div class="recommend-card"><div class="recommend-header">💡 기왕 살 거면 이 조합이 훨씬 이득!</div><div class="recommend-body"><span class="reco-tag">+${extraCost.toLocaleString()}원만 더 보태면</span><strong>+${extraUC.toLocaleString()} UC</strong>를 추가로 받을 수 있어요</div><div class="recommend-price">${recoPrice.toLocaleString()}원 → <strong>${recoFinalUC.toLocaleString()} UC</strong></div>${recoPkgRows}${shareButtonsHTML(recoCopyText, `PUBG UC 추천: ${recoPrice.toLocaleString()}원`, `총 ${recoFinalUC.toLocaleString()} UC 획득 · pubginfo.site`)}</div>`;
         }
-
-        html += shareButtonsHTML(copyText, kakaoTitle, kakaoDesc);
-
-        resultDiv.innerHTML = html;
-        resultDiv.classList.add('show');
-        btn.innerHTML = '계산하기'; btn.disabled = false;
+        html += shareButtonsHTML(copyText, `PUBG UC 최저가: ${bestPrice.toLocaleString()}원`, `총 ${bestFinalUC.toLocaleString()} UC 획득 · pubginfo.site`);
+        resultDiv.innerHTML = html; resultDiv.classList.add('show'); btn.innerHTML = '계산하기'; btn.disabled = false;
     }, 300);
 }
 
 function calcMaxUC() {
-    const resultDiv = document.getElementById('result');
-    const btn       = document.getElementById('calculateBtn');
-    const bonusOn   = platform === 'ios' && document.getElementById('useBonus').checked;
-    const budget    = parseInt(document.getElementById('mainInput').value);
-    if (isNaN(budget) || budget <= 0) return;
-
+    const resultDiv = document.getElementById('result'); const btn = document.getElementById('calculateBtn'); const bonusOn = platform === 'ios' && document.getElementById('useBonus').checked; const budget = parseInt(document.getElementById('mainInput').value); if (isNaN(budget) || budget <= 0) return;
     btn.innerHTML = '<span class="loading"></span> 계산중...'; btn.disabled = true;
 
     setTimeout(() => {
-        const pkgs = data[platform];
-
-        const dp     = new Array(budget + 1).fill(-1);
-        const dpBase = new Array(budget + 1).fill(0);
-        const ch     = new Array(budget + 1).fill(-1);
-        dp[0] = 0;
-
+        const pkgs = data[platform]; const dp = new Array(budget + 1).fill(-1); const dpBase = new Array(budget + 1).fill(0); const ch = new Array(budget + 1).fill(-1); dp[0] = 0;
         for (let i = 0; i < pkgs.length; i++) {
             for (let j = pkgs[i].price; j <= budget; j++) {
-                if (dp[j - pkgs[i].price] === -1) continue;
-                const candTotal = dp[j - pkgs[i].price] + pkgs[i].totalUC;
-                const candBase  = dpBase[j - pkgs[i].price] + pkgs[i].baseUC;
-                if (candTotal > dp[j]) {
-                    dp[j] = candTotal; dpBase[j] = candBase; ch[j] = i;
-                }
+                if (dp[j - pkgs[i].price] === -1) continue; const candTotal = dp[j - pkgs[i].price] + pkgs[i].totalUC; const candBase = dpBase[j - pkgs[i].price] + pkgs[i].baseUC;
+                if (candTotal > dp[j]) { dp[j] = candTotal; dpBase[j] = candBase; ch[j] = i; }
             }
         }
-
         let bestTotal = 0, bestCost = 0, bestPkgUC = 0, bestBaseUC = 0;
         for (let c = 0; c <= budget; c++) {
-            if (dp[c] === -1) continue;
-            const bonus = bonusOn ? getBonus(dpBase[c], true) : 0;
-            const total = dp[c] + bonus;
-            if (total > bestTotal || (total === bestTotal && c < bestCost)) {
-                bestTotal = total; bestCost = c; bestPkgUC = dp[c]; bestBaseUC = dpBase[c];
-            }
+            if (dp[c] === -1) continue; const bonus = bonusOn ? getBonus(dpBase[c], true) : 0; const total = dp[c] + bonus;
+            if (total > bestTotal || (total === bestTotal && c < bestCost)) { bestTotal = total; bestCost = c; bestPkgUC = dp[c]; bestBaseUC = dpBase[c]; }
         }
+        if (bestTotal === 0) { resultDiv.innerHTML = '<p style="color:#f87171;text-align:center;padding:12px;">예산이 부족합니다.</p>'; resultDiv.classList.add('show'); btn.innerHTML = '계산하기'; btn.disabled = false; return; }
 
-        if (bestTotal === 0) {
-            resultDiv.innerHTML = '<p style="color:#f87171;text-align:center;padding:12px;">예산이 부족합니다.</p>';
-            resultDiv.classList.add('show');
-            btn.innerHTML = '계산하기'; btn.disabled = false;
-            return;
-        }
+        const counts = traceback(ch, pkgs, bestCost, 'price'); const bonus = bonusOn ? getBonus(bestBaseUC, true) : 0; const remain = budget - bestCost;
+        const bonusLine = bonusOn ? `<span style="font-size:0.78rem;">(패키지 ${bestPkgUC.toLocaleString()} UC + 누적보너스 ${bonus.toLocaleString()} UC)</span>` : `<span style="font-size:0.78rem;">패키지 보너스 포함</span>`;
+        let pkgRows = ''; counts.forEach((c, i) => { if (c > 0) pkgRows += `<div class="package-item"><span>${pkgs[i].price.toLocaleString()}원 · ${pkgs[i].label}</span><span class="pkg-count">× ${c}</span></div>`; });
+        const copyText = `[PUBG MOBILE UC 계산 결과]\n예산: ${budget.toLocaleString()}원\n사용 금액: ${bestCost.toLocaleString()}원\n구매 조합:\n${pkgListText(counts, pkgs)}\n총 획득 UC: ${bestTotal.toLocaleString()} UC\n\npubginfo.site`;
 
-        const counts  = traceback(ch, pkgs, bestCost, 'price');
-        const bonus   = bonusOn ? getBonus(bestBaseUC, true) : 0;
-        const remain  = budget - bestCost;
-        const bonusLine = bonusOn
-            ? `<span style="font-size:0.78rem;">(패키지 ${bestPkgUC.toLocaleString()} UC + 누적보너스 ${bonus.toLocaleString()} UC)</span>`
-            : `<span style="font-size:0.78rem;">패키지 보너스 포함</span>`;
-
-        let pkgRows = '';
-        counts.forEach((c, i) => {
-            if (c > 0) pkgRows += `<div class="package-item">
-                <span>${pkgs[i].price.toLocaleString()}원 · ${pkgs[i].label}</span>
-                <span class="pkg-count">× ${c}</span>
-            </div>`;
-        });
-
-        const copyText  = `[PUBG MOBILE UC 계산 결과]\n예산: ${budget.toLocaleString()}원\n사용 금액: ${bestCost.toLocaleString()}원\n구매 조합:\n${pkgListText(counts, pkgs)}\n총 획득 UC: ${bestTotal.toLocaleString()} UC\n\npubginfo.site`;
-        const kakaoTitle = `PUBG UC 최대 획득: ${bestTotal.toLocaleString()} UC`;
-        const kakaoDesc  = `${bestCost.toLocaleString()}원으로 최대 UC · pubginfo.site`;
-
-        let html = `<h3>최대 UC 획득 방법</h3>
-            <div class="price-highlight">${bestTotal.toLocaleString()} UC</div>
-            <div class="sub-info">사용: <strong>${bestCost.toLocaleString()}원</strong> / ${budget.toLocaleString()}원<br>${bonusLine}<br>
-            ${remain > 0 ? `<span style="color:#6b7280;">잔여: ${remain.toLocaleString()}원</span>` : ''}</div>
-            ${pkgRows}
-            ${shareButtonsHTML(copyText, kakaoTitle, kakaoDesc)}`;
-
-        resultDiv.innerHTML = html;
-        resultDiv.classList.add('show');
-        btn.innerHTML = '계산하기'; btn.disabled = false;
+        let html = `<h3>최대 UC 획득 방법</h3><div class="price-highlight">${bestTotal.toLocaleString()} UC</div><div class="sub-info">사용: <strong>${bestCost.toLocaleString()}원</strong> / ${budget.toLocaleString()}원<br>${bonusLine}<br>${remain > 0 ? `<span style="color:#6b7280;">잔여: ${remain.toLocaleString()}원</span>` : ''}</div>${pkgRows}${shareButtonsHTML(copyText, `PUBG UC 최대 획득: ${bestTotal.toLocaleString()} UC`, `${bestCost.toLocaleString()}원으로 최대 UC · pubginfo.site`)}`;
+        resultDiv.innerHTML = html; resultDiv.classList.add('show'); btn.innerHTML = '계산하기'; btn.disabled = false;
     }, 300);
 }
