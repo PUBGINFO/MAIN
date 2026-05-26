@@ -113,10 +113,24 @@ function copyResult(text) {
 
 // ── 카카오 공유 ───────────────────────────────────────────────
 function shareKakao(title, desc) {
-    if (typeof Kakao === 'undefined' || !Kakao.isInitialized()) {
-        alert('카카오 앱 키를 script.js의 KAKAO_APP_KEY에 입력해 주세요.');
+    // 1. 버튼을 누른 시점에 카카오 SDK가 있는지, 초기화가 안 되어 있다면 여기서 초기화 진행
+    if (typeof Kakao !== 'undefined') {
+        if (!Kakao.isInitialized()) {
+            const KAKAO_APP_KEY = 'b80f2d95ba7e522d696f884635837c5c'; // 여기에 JavaScript 키 유지
+            Kakao.init(KAKAO_APP_KEY);
+            console.log("카카오 SDK가 버튼 클릭 시점에 성공적으로 초기화되었습니다:", Kakao.isInitialized());
+        }
+    } else {
+        alert('카카오 SDK 라이브러리가 아직 로드되지 않았습니다. 잠시 후 다시 시도해 주세요.');
         return;
     }
+
+    // 2. 초기화 확인 후 공유하기 실행
+    if (!Kakao.isInitialized()) {
+        alert('카카오 앱 키 인증에 실패했습니다. 키를 다시 확인해 주세요.');
+        return;
+    }
+
     Kakao.Share.sendDefault({
         objectType: 'feed',
         content: {
