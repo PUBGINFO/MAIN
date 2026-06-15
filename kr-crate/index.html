@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" data-theme="dark">
+<html lang="ko" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -222,9 +222,19 @@
     .gs-chip.selected { box-shadow: 0 0 0 2px var(--accent); }
     .gs-chip.all { color: var(--txt2); background: var(--surface2); border-color: var(--bd2); }
     .gs-chip.all.selected { color: var(--txt); }
+    /* 멀티셀렉트 강조: 선택된 등급 칩은 테두리 두껍게 */
+    .gs-chip:not(.all).selected { box-shadow: 0 0 0 2px currentColor; }
     .gs-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
     .gs-pct  { opacity: .75; }
     .gs-cnt  { opacity: .5; font-size: 9px; }
+    /* 멀티셀렉트 힌트 배지 */
+    .multi-hint {
+      font-size: 9px; font-family: var(--mono); color: var(--accent-lt);
+      background: var(--accent-bg); border: 1px solid var(--accent-bd);
+      border-radius: 20px; padding: 3px 9px; align-self: center;
+      display: none;
+    }
+    .multi-hint.show { display: inline-flex; }
     .filter-row { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
     .filter-search {
       display: flex; align-items: center; gap: 7px;
@@ -248,6 +258,8 @@
     .sort-btn:hover { border-color: var(--bd2); color: var(--txt); }
     .sort-btn.active { border-color: var(--accent-bd); color: var(--accent-lt); background: var(--accent-bg); }
     .sort-btn svg { width: 11px; height: 11px; }
+    /* 방향 아이콘 트랜지션 */
+    .sort-dir-icon { font-size: 11px; opacity: .7; transition: transform .2s; }
     .table-wrap {
       background: var(--surface); border: 1px solid var(--bd);
       border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--sh-sm);
@@ -379,7 +391,7 @@
       <div class="sb-stats">
         <div class="sbs-item"><div class="sbs-val" id="stat-crates">—</div><div class="sbs-lbl">CRATES</div></div>
         <div class="sbs-item"><div class="sbs-val" id="stat-items">—</div><div class="sbs-lbl">ITEMS</div></div>
-        <div class="sbs-item"><div class="sbs-val" id="stat-grades">5</div><div class="sbs-lbl">GRADES</div></div>
+        <div class="sbs-item"><div class="sbs-val" id="stat-grades">6</div><div class="sbs-lbl">GRADES</div></div>
       </div>
     </div>
   </aside>
@@ -402,6 +414,7 @@
           <span id="live-count">0</span>개 로드됨
         </div>
         <button class="icon-btn" onclick="toggleTheme()" title="테마 전환">
+          <!-- 라이트 모드 기본: 달 아이콘(다크로 전환) 표시 -->
           <svg id="ico-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
             <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
           </svg>
@@ -424,21 +437,31 @@
   const SHEET_ID = '1K2Q4loa65fnmIWM70UW4BA_bs894VUIBClE6gqUHOMU';
   const CSV_URL  = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=확률표`;
 
+  // ── 등급 정의: 골드 추가 (GO 배열 = 높은 등급 → 낮은 등급 순서) ──
   const GS = {
+    '골드':  { color:'#e8a020', bg:'rgba(232,160,32,.13)', bd:'rgba(232,160,32,.3)' },
     '레드':  { color:'#f04e4e', bg:'rgba(240,78,78,.13)',  bd:'rgba(240,78,78,.3)'  },
     '핑크':  { color:'#e060a8', bg:'rgba(224,96,168,.13)', bd:'rgba(224,96,168,.3)' },
     '퍼플':  { color:'#9660dc', bg:'rgba(150,96,220,.13)', bd:'rgba(150,96,220,.3)' },
     '블루':  { color:'#4488e8', bg:'rgba(68,136,232,.13)', bd:'rgba(68,136,232,.3)' },
     '그린':  { color:'#38b870', bg:'rgba(56,184,112,.13)', bd:'rgba(56,184,112,.3)' },
   };
-  const GO = ['레드','핑크','퍼플','블루','그린'];
+  const GO = ['골드','레드','핑크','퍼플','블루','그린'];
 
   let sheetData = {}, orderedKeys = [];
   let currentView  = 'all';
   let currentCrate = null;
-  let activeGrade  = 'ALL';
-  let sortMode     = 'grade';
 
+  // ── 등급 멀티셀렉트: 빈 Set = 전체 표시 ──
+  let selectedGrades = new Set();
+
+  // ── 정렬 상태 ──
+  // sortMode: 'grade' | 'prob'
+  // sortDir : 1 = 기본(골드↓ / 높은 확률↓), -1 = 반전(그린↓ / 낮은 확률↓)
+  let sortMode = 'grade';
+  let sortDir  = 1;
+
+  // ─────────────────────────────────────────
   async function loadSheet() {
     try {
       const r = await fetch(CSV_URL);
@@ -558,20 +581,15 @@
     const q = (document.getElementById('all-search-input')?.value || '').toLowerCase().trim();
     const cards = document.querySelectorAll('#all-grid .crate-card');
     let vis = 0;
-
     cards.forEach(card => {
       const key = card.dataset.key;
       const nameMatch = key.toLowerCase().includes(q);
       const matchedItems = q ? (sheetData[key] || []).filter(i => i.item.toLowerCase().includes(q)) : [];
       const itemMatch = matchedItems.length > 0;
       const show = !q || nameMatch || itemMatch;
-
       card.style.display = show ? '' : 'none';
-
-      // 아이템 매칭 뱃지 업데이트
       const prev = card.querySelector('.match-badge');
       if (prev) prev.remove();
-
       if (show && q && itemMatch && !nameMatch) {
         const meta = card.querySelector('.cc-meta');
         if (meta) {
@@ -582,10 +600,8 @@
           meta.appendChild(badge);
         }
       }
-
       if (show) vis++;
     });
-
     const countEl = document.getElementById('all-search-count');
     const emptyEl = document.getElementById('all-empty');
     if (countEl) countEl.textContent = q ? `${vis}개 결과` : '';
@@ -631,7 +647,6 @@
         return `<span class="cc-gtag" style="color:${gs.color};background:${gs.bg};border-color:${gs.bd}">${g} ${pct}%</span>`;
       }).join('');
 
-      // data-key 속성으로 키 저장 (특수문자 문제 없음)
       return `<div class="crate-card" data-key="${key.replace(/"/g,'&quot;')}" onclick="selectCrateByEl(this)">
         <div class="cc-name">${key}</div>
         <div class="cc-meta"><span>아이템 <span class="hl">${items.length}종</span></span><span>합계 <span class="hl">${Math.round(total*100)/100}%</span></span></div>
@@ -659,7 +674,6 @@
       </div>`;
   }
 
-  // onclick에서 this 넘겨받아 data-key로 키 추출 (따옴표 이스케이프 문제 완전 해소)
   function selectCrateByEl(el) {
     const key = el.dataset.key;
     if (key) selectCrate(key);
@@ -681,8 +695,9 @@
   /* ── SELECT CRATE ── */
   function selectCrate(key) {
     currentCrate = key;
-    activeGrade  = 'ALL';
-    sortMode     = 'grade';
+    selectedGrades = new Set(); // 멀티셀렉트 초기화
+    sortMode = 'grade';
+    sortDir  = 1;
     document.querySelectorAll('.crate-item').forEach(el=>el.classList.toggle('active', el.dataset.key===key));
     currentView = 'detail';
     document.getElementById('svt-all').classList.remove('active');
@@ -704,15 +719,20 @@
       return (ai===-1?99:ai)-(bi===-1?99:bi);
     });
 
-    const allChip = `<button class="gs-chip all selected" id="gsc-ALL" onclick="setGrade('ALL')">
+    // ── ALL 칩: selectedGrades 비어있으면 선택 상태 ──
+    const allChipSelected = selectedGrades.size === 0;
+    const allChip = `<button class="gs-chip all ${allChipSelected?'selected':''}" id="gsc-ALL" onclick="setGrade('ALL')">
       <span class="gs-dot" style="background:var(--txt3)"></span>
       <span class="gs-name">ALL</span>
     </button>`;
+
+    // ── 등급 칩: 멀티셀렉트 상태 반영 ──
     const gradeChips = sortedG.map(g => {
       const gs  = GS[g]||{color:'#888',bg:'rgba(128,128,128,.12)',bd:'rgba(128,128,128,.3)'};
       const pct = Math.round(gradeSum[g]*1000)/1000;
       const cnt = gradeCnt[g]||0;
-      return `<button class="gs-chip" id="gsc-${g}"
+      const isSelected = selectedGrades.has(g);
+      return `<button class="gs-chip ${isSelected?'selected':''}" id="gsc-${g}"
         style="color:${gs.color};background:${gs.bg};border-color:${gs.bd}"
         onclick="setGrade('${g}')">
         <span class="gs-dot" style="background:${gs.color}"></span>
@@ -721,6 +741,18 @@
         <span class="gs-cnt">${cnt}종</span>
       </button>`;
     }).join('');
+
+    // ── 멀티셀렉트 힌트 배지 ──
+    const multiHint = `<span class="multi-hint ${selectedGrades.size>1?'show':''}" id="multi-hint">
+      ${selectedGrades.size}개 등급 선택됨
+    </span>`;
+
+    // ── 정렬 버튼 상태 ──
+    const isGradeActive = sortMode === 'grade';
+    const isProbActive  = sortMode === 'prob';
+    // 방향 레이블
+    const gradeDirLabel = (isGradeActive && sortDir === -1) ? '그린→골드 ↑' : '골드→그린 ↓';
+    const probDirLabel  = (isProbActive  && sortDir === -1) ? '낮은순 ↑'    : '높은순 ↓';
 
     document.getElementById('breadcrumb').innerHTML =
       `<span style="color:var(--txt3);cursor:pointer" onclick="renderAllView()">전체 목록</span>
@@ -739,7 +771,7 @@
           <div class="stat-card"><div class="sc-lbl">확률 합계</div><div class="sc-val">${Math.round(total*100)/100}<span>%</span></div></div>
           <div class="stat-card"><div class="sc-lbl">최저 확률</div><div class="sc-val">${Math.min(...items.map(i=>i.prob)).toFixed(2)}<span>%</span></div></div>
         </div>
-        <div class="grade-sum-row">${allChip}${gradeChips}</div>
+        <div class="grade-sum-row">${allChip}${gradeChips}${multiHint}</div>
         <div class="filter-row">
           <div class="filter-search">
             <svg viewBox="0 0 20 20" fill="currentColor">
@@ -747,13 +779,15 @@
             </svg>
             <input type="text" placeholder="아이템 이름 검색..." oninput="filterTable()">
           </div>
-          <button class="sort-btn active" id="sort-grade" onclick="setSort('grade')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
-            등급순
+          <button class="sort-btn ${isGradeActive?'active':''}" id="sort-grade" onclick="setSort('grade')" title="같은 버튼을 다시 누르면 순서 반전">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m4 4l-4-4"/></svg>
+            <span id="sort-grade-lbl">등급순</span>
+            <span class="sort-dir-icon" id="sort-grade-dir">${isGradeActive ? (sortDir===1?'↓':'↑') : '↓'}</span>
           </button>
-          <button class="sort-btn" id="sort-prob" onclick="setSort('prob')">
+          <button class="sort-btn ${isProbActive?'active':''}" id="sort-prob" onclick="setSort('prob')" title="같은 버튼을 다시 누르면 순서 반전">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4h13M3 8h9m-9 4h9m5-4v12m0 0l-4-4m4 4l4-4"/></svg>
-            확률순
+            <span id="sort-prob-lbl">확률순</span>
+            <span class="sort-dir-icon" id="sort-prob-dir">${isProbActive ? (sortDir===1?'↓':'↑') : '↓'}</span>
           </button>
         </div>
         <div class="table-wrap">
@@ -773,12 +807,22 @@
     renderTable(items);
   }
 
+  /* ── 정렬 핵심: sortDir 방향 반영 ── */
   function getSorted(items) {
-    return [...items].sort((a,b) => {
-      if (sortMode === 'prob') return b.prob - a.prob;
-      const ai=GO.indexOf(a.grade), bi=GO.indexOf(b.grade);
-      if (ai===bi) return a.prob-b.prob;
-      return (ai===-1?99:ai)-(bi===-1?99:bi);
+    return [...items].sort((a, b) => {
+      if (sortMode === 'prob') {
+        // sortDir 1 = 높은 확률 먼저, -1 = 낮은 확률 먼저
+        return sortDir === 1 ? b.prob - a.prob : a.prob - b.prob;
+      }
+      // 등급순
+      const ai = GO.indexOf(a.grade), bi = GO.indexOf(b.grade);
+      const diff = (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+      if (diff !== 0) {
+        // sortDir 1 = 골드(인덱스0)→그린(인덱스5) 순, -1 = 반전
+        return sortDir === 1 ? diff : -diff;
+      }
+      // 같은 등급 내에서는 확률 오름차순 (방향 무관)
+      return a.prob - b.prob;
     });
   }
 
@@ -813,26 +857,75 @@
     });
   }
 
+  /* ── 등급 멀티셀렉트 ── */
   function setGrade(g) {
-    activeGrade = g;
-    document.querySelectorAll('.gs-chip').forEach(el=>el.classList.remove('selected'));
-    document.getElementById('gsc-'+g)?.classList.add('selected');
+    if (g === 'ALL') {
+      // ALL 클릭 시 모든 선택 해제 → 전체 표시
+      selectedGrades.clear();
+    } else {
+      // 토글: 있으면 제거, 없으면 추가
+      if (selectedGrades.has(g)) {
+        selectedGrades.delete(g);
+      } else {
+        selectedGrades.add(g);
+      }
+    }
+
+    // ALL 칩: selectedGrades가 비어있을 때만 selected
+    const allChipEl = document.getElementById('gsc-ALL');
+    if (allChipEl) allChipEl.classList.toggle('selected', selectedGrades.size === 0);
+
+    // 각 등급 칩 업데이트
+    document.querySelectorAll('.gs-chip:not(.all)').forEach(el => {
+      const chipGrade = el.id.replace('gsc-', '');
+      el.classList.toggle('selected', selectedGrades.has(chipGrade));
+    });
+
+    // 멀티셀렉트 힌트 배지 업데이트
+    const hintEl = document.getElementById('multi-hint');
+    if (hintEl) {
+      hintEl.textContent = selectedGrades.size > 1 ? `${selectedGrades.size}개 등급 선택됨` : '';
+      hintEl.classList.toggle('show', selectedGrades.size > 1);
+    }
+
     filterTable();
   }
 
+  /* ── 정렬 모드 및 방향 토글 ── */
   function setSort(mode) {
-    sortMode = mode;
-    document.getElementById('sort-grade')?.classList.toggle('active', mode==='grade');
-    document.getElementById('sort-prob')?.classList.toggle('active',  mode==='prob');
+    if (sortMode === mode) {
+      // 같은 버튼 다시 누르면 방향 반전
+      sortDir = sortDir === 1 ? -1 : 1;
+    } else {
+      // 다른 버튼 누르면 해당 모드로 전환, 방향 초기화
+      sortMode = mode;
+      sortDir  = 1;
+    }
+
+    // 버튼 active 상태 업데이트
+    const gradeBtn = document.getElementById('sort-grade');
+    const probBtn  = document.getElementById('sort-prob');
+    if (gradeBtn) gradeBtn.classList.toggle('active', sortMode === 'grade');
+    if (probBtn)  probBtn.classList.toggle('active',  sortMode === 'prob');
+
+    // 방향 아이콘 업데이트
+    const gradeDirEl = document.getElementById('sort-grade-dir');
+    const probDirEl  = document.getElementById('sort-prob-dir');
+    if (gradeDirEl) gradeDirEl.textContent = (sortMode === 'grade' && sortDir === -1) ? '↑' : '↓';
+    if (probDirEl)  probDirEl.textContent  = (sortMode === 'prob'  && sortDir === -1) ? '↑' : '↓';
+
     if (currentCrate) renderTable(sheetData[currentCrate]||[]);
     filterTable();
   }
 
+  /* ── 테이블 필터 (멀티셀렉트 + 이름 검색) ── */
   function filterTable() {
     const q = (document.querySelector('.filter-search input')?.value||'').toLowerCase();
     let vis = 0;
     document.querySelectorAll('#t-body .t-row').forEach(tr => {
-      const ok = (activeGrade==='ALL'||tr.dataset.grade===activeGrade) && (!q||tr.dataset.item.includes(q));
+      // 멀티셀렉트: 선택 Set이 비어있으면 전체, 아니면 포함 여부 확인
+      const gradeOk = selectedGrades.size === 0 || selectedGrades.has(tr.dataset.grade);
+      const ok = gradeOk && (!q || tr.dataset.item.includes(q));
       tr.classList.toggle('hidden', !ok);
       if (ok) vis++;
     });
@@ -840,13 +933,14 @@
     if (empty) empty.classList.toggle('show', vis===0);
   }
 
-  /* ── THEME ── */
-  let dark = true;
+  /* ── THEME (기본: 라이트 모드) ── */
+  let dark = false;
   function toggleTheme() {
     dark = !dark;
     document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
-    document.getElementById('ico-dark').style.display  = dark ? '' : 'none';
-    document.getElementById('ico-light').style.display = dark ? 'none' : '';
+    // dark=true: 달 아이콘 표시 / dark=false: 해 아이콘 표시
+    document.getElementById('ico-dark').style.display  = dark ? 'none' : '';
+    document.getElementById('ico-light').style.display = dark ? '' : 'none';
   }
 
   /* ── MOBILE ── */
