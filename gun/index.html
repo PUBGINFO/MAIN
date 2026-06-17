@@ -1,46 +1,58 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Arsenal Database — PUBG Mobile Wiki</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --accent:#6c63ff; --accent-lt:#9d97ff; --accent-bg:rgba(108,99,255,.1); --accent-bd:rgba(108,99,255,.28);
-    --red:#f04e4e; --green:#38b870; --bg:#0e1117; --surface:#161b24; --surface2:#1c2333; --text:#e2e8f0; --text-muted:#94a3b8; --border:#334155;
-  }
-  body { margin: 0; font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); }
-  header { padding: 20px; text-align: center; border-bottom: 1px solid var(--border); background: var(--surface); }
-  .tabs { display: flex; justify-content: center; gap: 10px; margin-top: 15px; }
-  .tab { padding: 8px 16px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.3s; }
-  .tab.active { background: var(--accent-bg); color: var(--accent-lt); border-color: var(--accent-bd); }
-  #grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; padding: 20px; max-width: 1200px; margin: 0 auto; }
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; transition: 0.3s; }
-  .card:hover { transform: translateY(-5px); border-color: var(--accent); }
-  .card img { max-width: 100%; height: 100px; object-fit: contain; margin-bottom: 10px; }
-  #content { max-width: 800px; margin: 20px auto; padding: 20px; display: none; }
-  .detail-view { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 30px; }
-  .back-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 1rem; margin-bottom: 20px; }
-  .detail-head { display: flex; gap: 30px; align-items: center; margin-bottom: 30px; flex-wrap: wrap; }
-  .detail-img { flex: 1; min-width: 250px; background: var(--surface2); border-radius: 12px; padding: 20px; text-align: center; }
-  .detail-img img { max-width: 100%; height: 150px; object-fit: contain; }
-  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-bottom: 20px; }
-  .stat-card { background: var(--surface2); padding: 15px; border-radius: 12px; text-align: center; }
-  .sc-lbl { font-size: 0.85rem; color: var(--text-muted); }
-  .sc-val { font-size: 1.6rem; font-weight: 700; font-family: 'DM Mono', monospace; }
-  .part-info { background: var(--surface2); padding: 20px; border-radius: 12px; margin-bottom: 20px; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arsenal Database — PUBG Mobile Wiki</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #6c63ff; --accent-lt: #9d97ff; --accent-bg: rgba(108,99,255,.1); --accent-bd: rgba(108,99,255,.28);
+            --red: #f04e4e; --green: #38b870; --bg: #0e1117; --surface: #161b24; --surface2: #1c2333;
+            --text: #e2e8f0; --text-muted: #94a3b8; --border: #334155;
+        }
+        body { margin: 0; font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+        header { padding: 30px 20px; text-align: center; border-bottom: 1px solid var(--border); background: var(--surface); }
+        
+        /* 탭 디자인 */
+        .tabs { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
+        .tab { padding: 10px 25px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
+        .tab.active { background: var(--accent-bg); color: var(--accent-lt); border-color: var(--accent-bd); }
+
+        /* 그리드 시스템 */
+        #grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; padding: 40px 20px; max-width: 1200px; margin: 0 auto; }
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; text-align: center; cursor: pointer; transition: 0.3s; }
+        .card:hover { transform: translateY(-8px); border-color: var(--accent); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .card img { max-width: 100%; height: 120px; object-fit: contain; margin-bottom: 15px; }
+        .card h3 { margin: 0 0 5px 0; font-size: 1.2rem; }
+        .card .type { color: var(--text-muted); font-size: 0.85rem; text-transform: capitalize; }
+
+        /* 상세 페이지 */
+        #content { max-width: 900px; margin: 40px auto; padding: 0 20px; display: none; }
+        .detail-box { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 40px; }
+        .back-btn { background: none; border: 1px solid var(--border); color: var(--text-muted); padding: 8px 20px; border-radius: 8px; cursor: pointer; margin-bottom: 30px; }
+        .detail-head { display: flex; gap: 40px; align-items: center; margin-bottom: 40px; }
+        .detail-img { width: 300px; background: var(--surface2); border-radius: 16px; padding: 20px; text-align: center; }
+        .detail-img img { max-width: 100%; }
+        
+        /* 통계 카드 */
+        .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; margin-top: 30px; }
+        .stat-card { background: var(--surface2); padding: 20px; border-radius: 12px; text-align: center; border: 1px solid var(--border); }
+        .sc-val { font-size: 1.8rem; font-weight: 700; font-family: 'DM Mono', monospace; color: var(--accent-lt); }
+        .sc-lbl { font-size: 0.9rem; color: var(--text-muted); margin-top: 5px; }
+        
+        .part-info { background: var(--surface2); padding: 25px; border-radius: 12px; margin-top: 30px; border: 1px solid var(--border); }
+    </style>
 </head>
 <body>
 
 <header>
-  <h1>Arsenal Database</h1>
-  <div class="tabs">
-    <button class="tab active" onclick="setCategory('weapons', this)">Weapons</button>
-    <button class="tab" onclick="setCategory('vehicles', this)">Vehicles</button>
-    <button class="tab" onclick="setCategory('parts', this)">Parts</button>
-  </div>
+    <h1>Arsenal Database</h1>
+    <div class="tabs">
+        <button class="tab active" onclick="setCategory('weapons', this)">Weapons</button>
+        <button class="tab" onclick="setCategory('vehicles', this)">Vehicles</button>
+        <button class="tab" onclick="setCategory('parts', this)">Parts</button>
+    </div>
 </header>
 
 <div id="grid"></div>
@@ -48,86 +60,89 @@
 
 <script src="gun-data.js"></script>
 <script>
-  let currentCategory = 'weapons';
-
-  function getCategoryData(cat) {
-    if (typeof pubgWeaponData === 'undefined') return [];
-    const all = pubgWeaponData.arms || [];
-    if (cat === 'weapons') return all.filter(i => i.arms_introduce?.hurt);
-    if (cat === 'vehicles') return all.filter(i => i.arms_introduce?.vehicle);
-    if (cat === 'parts') {
-      let parts = (pubgWeaponData.accessories || []).concat(pubgWeaponData.parts || []);
-      return parts.concat(all.filter(i => i.arms_introduce && !i.arms_introduce.hurt && !i.arms_introduce.vehicle && !i.arms_introduce.seat));
-    }
-    return [];
-  }
-
-  function setCategory(cat, btn) {
-    currentCategory = cat;
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    if (btn) btn.classList.add('active');
-    document.getElementById('content').style.display = 'none';
-    document.getElementById('grid').style.display = 'grid';
-    renderGrid();
-  }
-
-  function renderGrid() {
-    const data = getCategoryData(currentCategory);
-    const grid = document.getElementById('grid');
-    grid.innerHTML = data.map(item => `
-      <div class="card" onclick="showDetail(${JSON.stringify(item).replace(/"/g, '&quot;')})">
-        <img src="${item.image || item.arms_introduce?.arms_c || ''}" onerror="this.style.display='none'">
-        <h3 style="margin:0">${item.name}</h3>
-        <div style="color:var(--text-muted); font-size:0.8rem">${item.type?.replace(/_/g, ' ') || 'Attachment'}</div>
-      </div>`).join('');
-  }
-
-  function showDetail(item) {
-    document.getElementById('grid').style.display = 'none';
-    document.getElementById('content').style.display = 'block';
-    const intro = item.arms_introduce || {};
-    const isWeapon = !!intro.hurt;
-    const isVehicle = !!intro.vehicle;
-
-    // 맵 데이터 추출
-    let mapHtml = '';
-    if (item.map) {
-      const maps = item.map.filter(m => Object.values(m)[0] === 1).map(m => Object.keys(m)[0]);
-      if (maps.length > 0) mapHtml = `<div class="part-info"><strong>Available Maps:</strong> ${maps.join(', ')}</div>`;
+    // 카테고리별 데이터 필터링 로직
+    function getCategoryData(cat) {
+        if (typeof pubgWeaponData === 'undefined') return [];
+        const all = pubgWeaponData.arms || [];
+        if (cat === 'weapons') return all.filter(i => i.arms_introduce?.hurt);
+        if (cat === 'vehicles') return all.filter(i => i.arms_introduce?.vehicle);
+        if (cat === 'parts') {
+            let parts = (pubgWeaponData.accessories || []).concat(pubgWeaponData.parts || []);
+            return parts.concat(all.filter(i => i.arms_introduce && !i.arms_introduce.hurt && !i.arms_introduce.vehicle && !i.arms_introduce.seat));
+        }
+        return [];
     }
 
-    // 통계 블록
-    let stats = '';
-    if (isWeapon) {
-      stats = `<div class="stat-grid">
-        <div class="stat-card"><div class="sc-lbl">Damage</div><div class="sc-val">${intro.hurt}</div></div>
-        <div class="stat-card"><div class="sc-lbl">Fire Rate</div><div class="sc-val">${intro.rateoffire}</div></div>
-        <div class="stat-card"><div class="sc-lbl">Range</div><div class="sc-val">${intro.range}</div></div>
-      </div>`;
-    } else if (isVehicle) {
-      stats = `<div class="stat-grid">
-        <div class="stat-card"><div class="sc-lbl">Health</div><div class="sc-val">${intro.blood}</div></div>
-        <div class="stat-card"><div class="sc-lbl">Speed</div><div class="sc-val">${intro.top} km/h</div></div>
-      </div>${mapHtml}`;
-    } else {
-      stats = `<div class="part-info">
-        <p><strong>Pros:</strong> ${intro.advantages || 'None'}</p>
-        <p><strong>Cons:</strong> ${intro.disadvantages || 'None'}</p>
-      </div>`;
+    // 탭 전환
+    function setCategory(cat, btn) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        document.getElementById('content').style.display = 'none';
+        document.getElementById('grid').style.display = 'grid';
+        renderGrid(getCategoryData(cat));
     }
 
-    document.getElementById('content').innerHTML = `
-      <div class="detail-view">
-        <button class="back-btn" onclick="document.getElementById('content').style.display='none'; document.getElementById('grid').style.display='grid';">← Back</button>
-        <div class="detail-head">
-          <div class="detail-img"><img src="${intro.arms_c || item.image || ''}"></div>
-          <div><h2 style="margin:0">${item.name}</h2><p style="color:var(--accent-lt)">${item.type?.replace(/_/g,' ')}</p></div>
-        </div>
-        ${stats}
-      </div>`;
-  }
+    // 그리드 렌더링
+    function renderGrid(data) {
+        const grid = document.getElementById('grid');
+        grid.innerHTML = data.map(item => `
+            <div class="card" onclick="showDetail(${JSON.stringify(item).replace(/"/g, '&quot;')})">
+                <img src="${item.image || item.arms_introduce?.arms_c || ''}" onerror="this.style.display='none'">
+                <h3>${item.name}</h3>
+                <div class="type">${item.type?.replace(/_/g, ' ') || 'Attachment'}</div>
+            </div>`).join('');
+    }
 
-  window.onload = () => renderGrid();
+    // 상세 페이지 렌더링
+    function showDetail(item) {
+        document.getElementById('grid').style.display = 'none';
+        const content = document.getElementById('content');
+        content.style.display = 'block';
+        
+        const intro = item.arms_introduce || {};
+        const isWeapon = !!intro.hurt;
+        const isVehicle = !!intro.vehicle;
+
+        let mapInfo = '';
+        if (item.map) {
+            const active = item.map.filter(m => Object.values(m)[0] === 1).map(m => Object.keys(m)[0]);
+            if(active.length > 0) mapInfo = `<div class="part-info"><strong>Available Maps:</strong> ${active.join(', ')}</div>`;
+        }
+
+        let stats = '';
+        if (isWeapon) {
+            stats = `<div class="stat-grid">
+                <div class="stat-card"><div class="sc-val">${intro.hurt}</div><div class="sc-lbl">Damage</div></div>
+                <div class="stat-card"><div class="sc-val">${intro.rateoffire}</div><div class="sc-lbl">Fire Rate</div></div>
+                <div class="stat-card"><div class="sc-val">${intro.range}</div><div class="sc-lbl">Range</div></div>
+            </div>`;
+        } else if (isVehicle) {
+            stats = `<div class="stat-grid">
+                <div class="stat-card"><div class="sc-val">${intro.blood}</div><div class="sc-lbl">Health</div></div>
+                <div class="stat-card"><div class="sc-val">${intro.top}</div><div class="sc-lbl">Top Speed (km/h)</div></div>
+            </div>${mapInfo}`;
+        } else {
+            stats = `<div class="part-info">
+                <p><strong>Pros:</strong> ${intro.advantages || 'N/A'}</p>
+                <p><strong>Cons:</strong> ${intro.disadvantages || 'N/A'}</p>
+            </div>`;
+        }
+
+        content.innerHTML = `
+            <div class="detail-box">
+                <button class="back-btn" onclick="document.getElementById('content').style.display='none'; document.getElementById('grid').style.display='grid';">← Back to List</button>
+                <div class="detail-head">
+                    <div class="detail-img"><img src="${intro.arms_c || item.image || ''}"></div>
+                    <div>
+                        <h2>${item.name}</h2>
+                        <p style="color:var(--accent-lt); margin:0;">${item.type?.replace(/_/g,' ')}</p>
+                    </div>
+                </div>
+                ${stats}
+            </div>`;
+    }
+
+    window.onload = () => setCategory('weapons');
 </script>
 </body>
 </html>
