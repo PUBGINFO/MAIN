@@ -21,214 +21,218 @@
   --purple: #9660dc;
   --blue:   #4488e8;
   --green:  #38b870;
+  --orange: #f08030;
   --sans:   'DM Sans', sans-serif;
   --mono:   'DM Mono', monospace;
   --ease:   cubic-bezier(.4, 0, .2, 1);
 }
-
 [data-theme="dark"] {
   --bg:       #0e1117;
   --surface:  #161b24;
   --surface2: #1c2333;
   --surface3: #232d42;
-  --bd:       rgba(255, 255, 255, .07);
-  --bd2:      rgba(255, 255, 255, .13);
+  --bd:       rgba(255,255,255,.07);
+  --bd2:      rgba(255,255,255,.13);
   --txt:      #e8edf5;
   --txt2:     #8892a4;
   --txt3:     #4e5a6e;
-  --sh:       0 4px 24px rgba(0, 0, 0, .4);
-  --sh-sm:    0 2px 8px rgba(0, 0, 0, .3);
+  --sh:       0 4px 24px rgba(0,0,0,.4);
+  --sh-sm:    0 2px 8px rgba(0,0,0,.3);
 }
-
 [data-theme="light"] {
   --bg:       #f2f4f8;
   --surface:  #ffffff;
   --surface2: #f8f9fc;
   --surface3: #edf0f7;
-  --bd:       rgba(0, 0, 0, .07);
-  --bd2:      rgba(0, 0, 0, .13);
+  --bd:       rgba(0,0,0,.07);
+  --bd2:      rgba(0,0,0,.13);
   --txt:      #111827;
   --txt2:     #6b7280;
   --txt3:     #9ca3af;
-  --sh:       0 4px 24px rgba(0, 0, 0, .08);
-  --sh-sm:    0 2px 8px rgba(0, 0, 0, .05);
+  --sh:       0 4px 24px rgba(0,0,0,.08);
+  --sh-sm:    0 2px 8px rgba(0,0,0,.05);
 }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--txt);font-family:var(--sans);min-height:100vh;transition:background .3s,color .3s;}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px;}
+.layout{display:flex;min-height:100vh;}
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-body { background: var(--bg); color: var(--txt); font-family: var(--sans); min-height: 100vh; transition: background .3s, color .3s; }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
-.layout { display: flex; min-height: 100vh; }
+/* ── Sidebar ── */
+.sidebar{width:268px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--bd);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;transition:transform .25s var(--ease);}
+.sb-head{padding:20px 18px 16px;border-bottom:1px solid var(--bd);}
+.logo-row{display:flex;align-items:center;gap:10px;margin-bottom:3px;}
+.logo-icon{width:34px;height:34px;background:var(--accent-bg);border:1px solid var(--accent-bd);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.logo-icon svg{width:18px;height:18px;color:var(--accent);}
+.logo-name{font-size:15px;font-weight:700;color:var(--txt);letter-spacing:-.02em;line-height:1.25;}
+.logo-sub{font-size:9.5px;color:var(--txt3);font-family:var(--mono);letter-spacing:.1em;}
+.sb-search{padding:12px 14px;border-bottom:1px solid var(--bd);}
+.sb-search-inner{display:flex;align-items:center;gap:7px;background:var(--surface2);border:1px solid var(--bd);border-radius:var(--radius-sm);padding:8px 10px;transition:border-color .2s;}
+.sb-search-inner:focus-within{border-color:var(--accent);}
+.sb-search-inner svg{width:13px;height:13px;color:var(--txt3);flex-shrink:0;}
+.sb-search-inner input{background:none;border:none;outline:none;font-family:var(--sans);font-size:12.5px;color:var(--txt);width:100%;}
+.sb-search-inner input::placeholder{color:var(--txt3);}
+.sb-nav{padding:10px 10px 8px;border-bottom:1px solid var(--bd);display:flex;flex-direction:column;gap:2px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--radius-sm);cursor:pointer;transition:background .12s,color .12s;color:var(--txt2);position:relative;border:none;background:none;width:100%;text-align:left;font-family:var(--sans);}
+.nav-item:hover{background:var(--surface2);}
+.nav-item.active{background:var(--accent-bg);color:var(--accent-lt);}
+.nav-item.active::before{content:'';position:absolute;left:0;top:6px;bottom:6px;width:3px;background:var(--accent);border-radius:0 2px 2px 0;}
+.nav-icon{width:16px;height:16px;flex-shrink:0;}
+.nav-label{flex:1;font-size:13px;font-weight:500;}
+.nav-count{font-size:9.5px;font-family:var(--mono);color:var(--txt3);background:var(--surface2);padding:2px 6px;border-radius:10px;flex-shrink:0;}
+.nav-item.active .nav-count{color:var(--accent);background:var(--surface);}
+.sb-view-toggle{display:flex;gap:4px;padding:10px 14px 6px;}
+.svt{flex:1;font-size:11px;font-family:var(--mono);padding:6px 0;border:1px solid var(--bd);border-radius:var(--radius-sm);background:transparent;color:var(--txt3);cursor:pointer;transition:all .15s;text-align:center;}
+.svt:hover{color:var(--txt2);border-color:var(--bd2);}
+.svt.active{background:var(--accent-bg);border-color:var(--accent-bd);color:var(--accent-lt);}
+.sb-list{flex:1;overflow-y:auto;padding:4px 0 8px;scrollbar-width:thin;scrollbar-color:var(--bd2) transparent;}
+.sb-list::-webkit-scrollbar{width:3px;}
+.sb-list::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:3px;}
+.sb-section-lbl{font-size:9px;color:var(--txt3);font-family:var(--mono);letter-spacing:.12em;text-transform:uppercase;padding:10px 16px 5px;}
+.crate-item{display:flex;align-items:center;gap:8px;padding:7px 16px;cursor:pointer;transition:background .12s;position:relative;}
+.crate-item:hover{background:var(--surface2);}
+.crate-item.active{background:var(--accent-bg);}
+.crate-item.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);border-radius:0 2px 2px 0;}
+.ci-name{font-size:12.5px;color:var(--txt2);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
+.crate-item.active .ci-name{color:var(--accent-lt);font-weight:500;}
+.ci-count{font-size:10px;font-family:var(--mono);color:var(--txt3);flex-shrink:0;}
+.crate-item.active .ci-count{color:var(--accent);}
+.sb-foot{padding:13px 16px;border-top:1px solid var(--bd);}
+.sb-stats{display:flex;justify-content:space-between;}
+.sbs-item{text-align:center;}
+.sbs-val{font-size:17px;font-weight:700;color:var(--txt);}
+.sbs-lbl{font-size:9px;color:var(--txt3);font-family:var(--mono);}
 
-.sidebar { width: 268px; flex-shrink: 0; background: var(--surface); border-right: 1px solid var(--bd); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; transition: transform .25s var(--ease); }
-.sb-head { padding: 20px 18px 16px; border-bottom: 1px solid var(--bd); }
-.logo-row { display: flex; align-items: center; gap: 10px; margin-bottom: 3px; }
-.logo-icon { width: 34px; height: 34px; background: var(--accent-bg); border: 1px solid var(--accent-bd); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.logo-icon svg { width: 18px; height: 18px; color: var(--accent); }
-.logo-name { font-size: 15px; font-weight: 700; color: var(--txt); letter-spacing: -.02em; line-height: 1.25; }
-.logo-sub { font-size: 9.5px; color: var(--txt3); font-family: var(--mono); letter-spacing: .1em; }
+/* ── Main ── */
+.main{flex:1;margin-left:268px;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{background:var(--surface);border-bottom:1px solid var(--bd);padding:0 26px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.topbar-l{display:flex;align-items:center;gap:10px;min-width:0;}
+.breadcrumb{font-size:13px;color:var(--txt2);display:flex;align-items:center;gap:5px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+.breadcrumb .sep{color:var(--txt3);}
+.breadcrumb .cur{color:var(--txt);font-weight:500;}
+.topbar-r{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.live-badge{display:flex;align-items:center;gap:6px;font-size:11px;font-family:var(--mono);color:var(--green);background:rgba(56,184,112,.1);border:1px solid rgba(56,184,112,.2);border-radius:20px;padding:4px 11px;white-space:nowrap;}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 2s ease infinite;}
+@keyframes blink{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.75);}}
+.icon-btn{width:34px;height:34px;border-radius:var(--radius-sm);border:1px solid var(--bd2);background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;color:var(--txt2);flex-shrink:0;}
+.icon-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg);}
+.icon-btn svg{width:15px;height:15px;}
+.mob-btn{display:none;}
+.content{flex:1;padding:26px;}
 
-.sb-search { padding: 12px 14px; border-bottom: 1px solid var(--bd); }
-.sb-search-inner { display: flex; align-items: center; gap: 7px; background: var(--surface2); border: 1px solid var(--bd); border-radius: var(--radius-sm); padding: 8px 10px; transition: border-color .2s; }
-.sb-search-inner:focus-within { border-color: var(--accent); }
-.sb-search-inner svg { width: 13px; height: 13px; color: var(--txt3); flex-shrink: 0; }
-.sb-search-inner input { background: none; border: none; outline: none; font-family: var(--sans); font-size: 12.5px; color: var(--txt); width: 100%; }
-.sb-search-inner input::placeholder { color: var(--txt3); }
+/* ── Filter row ── */
+.filter-row{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap;}
+.sort-lbl{font-size:10px;font-family:var(--mono);color:var(--txt3);letter-spacing:.08em;text-transform:uppercase;margin-right:2px;}
+.sort-btn{display:flex;align-items:center;gap:5px;padding:7px 13px;background:var(--surface);border:1px solid var(--bd);border-radius:var(--radius-sm);font-family:var(--sans);font-size:12px;color:var(--txt2);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.sort-btn:hover{border-color:var(--bd2);color:var(--txt);}
+.sort-btn.active{border-color:var(--accent-bd);color:var(--accent-lt);background:var(--accent-bg);}
 
-.sb-nav { padding: 10px 10px 8px; border-bottom: 1px solid var(--bd); display: flex; flex-direction: column; gap: 2px; }
-.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: var(--radius-sm); cursor: pointer; transition: background .12s, color .12s; color: var(--txt2); position: relative; border: none; background: none; width: 100%; text-align: left; font-family: var(--sans); }
-.nav-item:hover { background: var(--surface2); }
-.nav-item.active { background: var(--accent-bg); color: var(--accent-lt); }
-.nav-item.active::before { content: ''; position: absolute; left: 0; top: 6px; bottom: 6px; width: 3px; background: var(--accent); border-radius: 0 2px 2px 0; }
-.nav-icon { width: 16px; height: 16px; flex-shrink: 0; }
-.nav-label { flex: 1; font-size: 13px; font-weight: 500; }
-.nav-count { font-size: 9.5px; font-family: var(--mono); color: var(--txt3); background: var(--surface2); padding: 2px 6px; border-radius: 10px; flex-shrink: 0; }
-.nav-item.active .nav-count { color: var(--accent); background: var(--surface); }
+/* ── Grid ── */
+.all-view{animation:fadeUp .3s var(--ease);}
+.view-header{margin-bottom:18px;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.view-title{font-size:21px;font-weight:700;color:var(--txt);letter-spacing:-.02em;}
+.view-sub{font-size:12px;color:var(--txt3);font-family:var(--mono);margin-top:3px;}
+.crate-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;}
+.crate-card{background:var(--surface);border:1px solid var(--bd);border-radius:var(--radius-md);padding:14px;cursor:pointer;transition:all .18s var(--ease);position:relative;overflow:hidden;}
+.crate-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent-bd);border-radius:2px 0 0 2px;transition:background .18s;}
+.crate-card:hover{border-color:var(--accent-bd);transform:translateY(-2px);box-shadow:var(--sh-sm);}
+.crate-card:hover::before{background:var(--accent);}
+.card-visual{height:100px;border-radius:var(--radius-sm);background:linear-gradient(150deg,var(--surface2),var(--surface3));display:flex;align-items:center;justify-content:center;margin-bottom:12px;position:relative;overflow:hidden;}
+.card-visual img{max-height:70px;max-width:90%;object-fit:contain;filter:drop-shadow(0 4px 6px rgba(0,0,0,0.2));}
+.type-badge{position:absolute;top:8px;left:8px;font-size:9px;font-family:var(--mono);font-weight:700;letter-spacing:.04em;padding:3px 7px;border-radius:6px;background:var(--surface);border:1px solid;}
+.cc-name{font-size:13.5px;font-weight:600;color:var(--txt);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cc-meta{font-size:10.5px;font-family:var(--mono);color:var(--txt3);display:flex;gap:10px;flex-wrap:wrap;}
+.cc-meta .hl{color:var(--accent-lt);}
+.grid-empty{padding:70px 20px;text-align:center;color:var(--txt3);grid-column:1/-1;}
+.grid-empty svg{width:38px;height:38px;margin-bottom:14px;opacity:.45;}
+.grid-empty p{font-size:12.5px;font-family:var(--mono);}
 
-.sb-view-toggle { display: flex; gap: 4px; padding: 10px 14px 6px; }
-.svt { flex: 1; font-size: 11px; font-family: var(--mono); padding: 6px 0; border: 1px solid var(--bd); border-radius: var(--radius-sm); background: transparent; color: var(--txt3); cursor: pointer; transition: all .15s; text-align: center; }
-.svt:hover { color: var(--txt2); border-color: var(--bd2); }
-.svt.active { background: var(--accent-bg); border-color: var(--accent-bd); color: var(--accent-lt); }
+/* ── Table ── */
+.table-wrap{background:var(--surface);border:1px solid var(--bd);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--sh-sm);}
+.t-head{display:grid;grid-template-columns:40px 1fr 100px 150px 100px 120px;padding:0 14px;border-bottom:1px solid var(--bd);background:var(--surface2);}
+.th{font-size:9px;font-family:var(--mono);color:var(--txt3);letter-spacing:.1em;text-transform:uppercase;padding:10px 7px;}
+.th.r{text-align:right;}
+.t-row{display:grid;grid-template-columns:40px 1fr 100px 150px 100px 120px;padding:0 14px;border-bottom:1px solid var(--bd);align-items:center;transition:background .12s;cursor:pointer;}
+.t-row:last-child{border-bottom:none;}
+.t-row:hover{background:var(--surface2);}
+.td{padding:9px 7px;}
+.td-rank{font-size:11px;font-family:var(--mono);color:var(--txt3);}
+.td-name{font-size:13px;color:var(--txt);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.grade-pill{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-family:var(--mono);font-weight:500;padding:3px 8px;border-radius:20px;border:1px solid;white-space:nowrap;}
+.td-prob{text-align:right;}
+.prob-num{font-size:13.5px;font-weight:700;color:var(--txt);font-family:var(--mono);}
+.bar-track{height:5px;background:var(--surface3);border-radius:3px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:3px;transition:width .5s var(--ease);}
 
-.sb-list { flex: 1; overflow-y: auto; padding: 4px 0 8px; scrollbar-width: thin; scrollbar-color: var(--bd2) transparent; }
-.sb-list::-webkit-scrollbar { width: 3px; }
-.sb-list::-webkit-scrollbar-thumb { background: var(--bd2); border-radius: 3px; }
-.sb-section-lbl { font-size: 9px; color: var(--txt3); font-family: var(--mono); letter-spacing: .12em; text-transform: uppercase; padding: 10px 16px 5px; }
+/* ── Detail view ── */
+.detail-view{animation:fadeUp .3s var(--ease);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--txt2);background:none;border:none;cursor:pointer;margin-bottom:16px;padding:4px 0;transition:color .15s;font-family:var(--sans);}
+.back-btn:hover{color:var(--accent-lt);}
+.back-btn svg{width:11px;height:11px;}
+.detail-head{margin-bottom:18px;display:flex;gap:18px;align-items:center;flex-wrap:wrap;}
+.detail-visual{width:120px;height:120px;border-radius:var(--radius-md);flex-shrink:0;background:linear-gradient(150deg,var(--surface2),var(--surface3));display:flex;align-items:center;justify-content:center;border:1px solid var(--bd);}
+.detail-visual img{max-height:90px;max-width:90%;object-fit:contain;}
+.detail-eyebrow{font-size:10px;font-family:var(--mono);color:var(--accent);letter-spacing:.15em;text-transform:uppercase;margin-bottom:4px;}
+.detail-title{font-size:23px;font-weight:700;color:var(--txt);letter-spacing:-.02em;line-height:1.2;}
+.detail-meta{font-size:12px;font-family:var(--mono);color:var(--txt3);margin-top:6px;display:flex;gap:10px;flex-wrap:wrap;}
+.detail-meta .hl{color:var(--accent-lt);}
+.stat-cards{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+.stat-card{background:var(--surface);border:1px solid var(--bd);border-radius:var(--radius-md);padding:13px 16px;flex:1;min-width:118px;}
+.sc-lbl{font-size:9px;color:var(--txt3);font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;}
+.sc-val{font-size:21px;font-weight:700;color:var(--txt);line-height:1;}
+.sc-val span{font-size:11px;color:var(--txt3);font-weight:400;margin-left:2px;}
+.sc-bar{margin-top:9px;}
+.section-lbl{font-size:11px;font-family:var(--mono);color:var(--txt3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;margin-top:24px;}
+.section-lbl:first-of-type{margin-top:0;}
+.trait-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:4px;}
+.trait-card{flex:1;min-width:230px;background:var(--surface);border:1px solid var(--bd);border-left:3px solid var(--green);border-radius:var(--radius-md);padding:13px 15px;}
+.trait-card.bad{border-left-color:var(--red);}
+.trait-lbl{font-size:9px;font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--txt3);margin-bottom:6px;}
+.trait-txt{font-size:13px;color:var(--txt2);line-height:1.55;}
 
-.crate-item { display: flex; align-items: center; gap: 8px; padding: 7px 16px; cursor: pointer; transition: background .12s; position: relative; }
-.crate-item:hover { background: var(--surface2); }
-.crate-item.active { background: var(--accent-bg); }
-.crate-item.active::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--accent); border-radius: 0 2px 2px 0; }
-.ci-name { font-size: 12.5px; color: var(--txt2); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3; }
-.crate-item.active .ci-name { color: var(--accent-lt); font-weight: 500; }
-.ci-count { font-size: 10px; font-family: var(--mono); color: var(--txt3); flex-shrink: 0; }
-.crate-item.active .ci-count { color: var(--accent); }
+/* ── Map availability ── */
+.map-grid{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:4px;}
+.map-chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:var(--mono);padding:4px 10px;border-radius:20px;border:1px solid;font-weight:500;}
+.map-chip.yes{color:var(--green);background:rgba(56,184,112,.1);border-color:rgba(56,184,112,.25);}
+.map-chip.no{color:var(--txt3);background:var(--surface2);border-color:var(--bd);}
+.map-dot{width:5px;height:5px;border-radius:50%;}
+.map-chip.yes .map-dot{background:var(--green);}
+.map-chip.no .map-dot{background:var(--txt3);}
 
-.sb-foot { padding: 13px 16px; border-top: 1px solid var(--bd); }
-.sb-stats { display: flex; justify-content: space-between; }
-.sbs-item { text-align: center; }
-.sbs-val { font-size: 17px; font-weight: 700; color: var(--txt); }
-.sbs-lbl { font-size: 9px; color: var(--txt3); font-family: var(--mono); }
+/* ── Attachments ── */
+.attach-grid{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:4px;}
+.attach-chip{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-family:var(--mono);padding:4px 10px;border-radius:var(--radius-sm);border:1px solid var(--bd);background:var(--surface2);color:var(--txt2);}
 
-.main { flex: 1; margin-left: 268px; display: flex; flex-direction: column; min-height: 100vh; }
-.topbar { background: var(--surface); border-bottom: 1px solid var(--bd); padding: 0 26px; height: 54px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
-.topbar-l { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.breadcrumb { font-size: 13px; color: var(--txt2); display: flex; align-items: center; gap: 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-.breadcrumb .sep { color: var(--txt3); }
-.breadcrumb .cur { color: var(--txt); font-weight: 500; }
-.topbar-r { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+/* ── Vehicle stats ── */
+.vehicle-stat-cards{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+.vsc{background:var(--surface);border:1px solid var(--bd);border-radius:var(--radius-md);padding:13px 16px;flex:1;min-width:100px;text-align:center;}
+.vsc-lbl{font-size:9px;color:var(--txt3);font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;}
+.vsc-val{font-size:18px;font-weight:700;color:var(--txt);}
+.vsc-unit{font-size:10px;color:var(--txt3);font-weight:400;margin-left:2px;}
 
-.live-badge { display: flex; align-items: center; gap: 6px; font-size: 11px; font-family: var(--mono); color: var(--green); background: rgba(56, 184, 112, .1); border: 1px solid rgba(56, 184, 112, .2); border-radius: 20px; padding: 4px 11px; white-space: nowrap; }
-.live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: blink 2s ease infinite; }
-@keyframes blink { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .4; transform: scale(.75); } }
+/* ── Loading & overlay ── */
+.loading-overlay{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;z-index:9999;transition:opacity .4s;}
+.loading-overlay.hide{opacity:0;pointer-events:none;}
+.spinner{width:32px;height:32px;border:2.5px solid var(--bd2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-txt{font-size:12px;color:var(--txt2);font-family:var(--mono);}
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99;}
+.sb-overlay.show{display:block;}
 
-.icon-btn { width: 34px; height: 34px; border-radius: var(--radius-sm); border: 1px solid var(--bd2); background: var(--surface2); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .15s; color: var(--txt2); flex-shrink: 0; }
-.icon-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); }
-.icon-btn svg { width: 15px; height: 15px; }
-.mob-btn { display: none; }
-
-.content { flex: 1; padding: 26px; }
-.all-view { animation: fadeUp .3s var(--ease); }
-.view-header { margin-bottom: 18px; display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
-.view-title { font-size: 21px; font-weight: 700; color: var(--txt); letter-spacing: -.02em; }
-.view-sub { font-size: 12px; color: var(--txt3); font-family: var(--mono); margin-top: 3px; }
-
-.filter-row { display: flex; gap: 8px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
-.sort-lbl { font-size: 10px; font-family: var(--mono); color: var(--txt3); letter-spacing: .08em; text-transform: uppercase; margin-right: 2px; }
-.sort-btn { display: flex; align-items: center; gap: 5px; padding: 7px 13px; background: var(--surface); border: 1px solid var(--bd); border-radius: var(--radius-sm); font-family: var(--sans); font-size: 12px; color: var(--txt2); cursor: pointer; transition: all .15s; white-space: nowrap; }
-.sort-btn:hover { border-color: var(--bd2); color: var(--txt); }
-.sort-btn.active { border-color: var(--accent-bd); color: var(--accent-lt); background: var(--accent-bg); }
-.sort-dir-icon { font-size: 11px; opacity: .7; }
-
-.crate-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
-.crate-card { background: var(--surface); border: 1px solid var(--bd); border-radius: var(--radius-md); padding: 14px; cursor: pointer; transition: all .18s var(--ease); position: relative; overflow: hidden; }
-.crate-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--accent-bd); border-radius: 2px 0 0 2px; transition: background .18s; }
-.crate-card:hover { border-color: var(--accent-bd); transform: translateY(-2px); box-shadow: var(--sh-sm); }
-.crate-card:hover::before { background: var(--accent); }
-
-.card-visual { height: 100px; border-radius: var(--radius-sm); background: linear-gradient(150deg, var(--surface2), var(--surface3)); display: flex; align-items: center; justify-content: center; margin-bottom: 12px; position: relative; overflow: hidden; }
-.card-visual img { max-height: 70px; max-width: 90%; object-fit: contain; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); }
-.type-badge { position: absolute; top: 8px; left: 8px; font-size: 9px; font-family: var(--mono); font-weight: 700; letter-spacing: .04em; padding: 3px 7px; border-radius: 6px; background: var(--surface); border: 1px solid; }
-
-.cc-name { font-size: 13.5px; font-weight: 600; color: var(--txt); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.cc-meta { font-size: 10.5px; font-family: var(--mono); color: var(--txt3); display: flex; gap: 10px; flex-wrap: wrap; }
-.cc-meta .hl { color: var(--accent-lt); }
-
-.grid-empty { padding: 70px 20px; text-align: center; color: var(--txt3); grid-column: 1 / -1; }
-.grid-empty svg { width: 38px; height: 38px; margin-bottom: 14px; opacity: .45; }
-.grid-empty p { font-size: 12.5px; font-family: var(--mono); }
-
-.table-wrap { background: var(--surface); border: 1px solid var(--bd); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--sh-sm); }
-.t-head { display: grid; grid-template-columns: 40px 1fr 100px 150px 100px 120px; padding: 0 14px; border-bottom: 1px solid var(--bd); background: var(--surface2); }
-.th { font-size: 9px; font-family: var(--mono); color: var(--txt3); letter-spacing: .1em; text-transform: uppercase; padding: 10px 7px; }
-.th.r { text-align: right; }
-.t-row { display: grid; grid-template-columns: 40px 1fr 100px 150px 100px 120px; padding: 0 14px; border-bottom: 1px solid var(--bd); align-items: center; transition: background .12s; cursor: pointer; }
-.t-row:last-child { border-bottom: none; }
-.t-row:hover { background: var(--surface2); }
-.td { padding: 9px 7px; }
-.td-rank { font-size: 11px; font-family: var(--mono); color: var(--txt3); }
-.td-name { font-size: 13px; color: var(--txt); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.grade-pill { display: inline-flex; align-items: center; gap: 4px; font-size: 9px; font-family: var(--mono); font-weight: 500; padding: 3px 8px; border-radius: 20px; border: 1px solid; white-space: nowrap; }
-.td-prob { text-align: right; }
-.prob-num { font-size: 13.5px; font-weight: 700; color: var(--txt); font-family: var(--mono); }
-.bar-track { height: 5px; background: var(--surface3); border-radius: 3px; overflow: hidden; }
-.bar-fill { height: 100%; border-radius: 3px; transition: width .5s var(--ease); }
-
-.detail-view { animation: fadeUp .3s var(--ease); }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-
-.back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--txt2); background: none; border: none; cursor: pointer; margin-bottom: 16px; padding: 4px 0; transition: color .15s; font-family: var(--sans); }
-.back-btn:hover { color: var(--accent-lt); }
-.back-btn svg { width: 11px; height: 11px; }
-
-.detail-head { margin-bottom: 18px; display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
-.detail-visual { width: 120px; height: 120px; border-radius: var(--radius-md); flex-shrink: 0; background: linear-gradient(150deg, var(--surface2), var(--surface3)); display: flex; align-items: center; justify-content: center; border: 1px solid var(--bd); }
-.detail-visual img { max-height: 90px; max-width: 90%; object-fit: contain; }
-.detail-eyebrow { font-size: 10px; font-family: var(--mono); color: var(--accent); letter-spacing: .15em; text-transform: uppercase; margin-bottom: 4px; }
-.detail-title { font-size: 23px; font-weight: 700; color: var(--txt); letter-spacing: -.02em; line-height: 1.2; }
-.detail-meta { font-size: 12px; font-family: var(--mono); color: var(--txt3); margin-top: 6px; display: flex; gap: 10px; flex-wrap: wrap; }
-.detail-meta .hl { color: var(--accent-lt); }
-
-.stat-cards { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
-.stat-card { background: var(--surface); border: 1px solid var(--bd); border-radius: var(--radius-md); padding: 13px 16px; flex: 1; min-width: 118px; }
-.sc-lbl { font-size: 9px; color: var(--txt3); font-family: var(--mono); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 6px; }
-.sc-val { font-size: 21px; font-weight: 700; color: var(--txt); line-height: 1; }
-.sc-val span { font-size: 11px; color: var(--txt3); font-weight: 400; margin-left: 2px; }
-.sc-bar { margin-top: 9px; }
-
-.section-lbl { font-size: 11px; font-family: var(--mono); color: var(--txt3); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 10px; margin-top: 24px; }
-.section-lbl:first-of-type { margin-top: 0; }
-
-.trait-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
-.trait-card { flex: 1; min-width: 230px; background: var(--surface); border: 1px solid var(--bd); border-left: 3px solid var(--green); border-radius: var(--radius-md); padding: 13px 15px; }
-.trait-card.bad { border-left-color: var(--red); }
-.trait-lbl { font-size: 9px; font-family: var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--txt3); margin-bottom: 6px; }
-.trait-txt { font-size: 13px; color: var(--txt2); line-height: 1.55; }
-
-.loading-overlay { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 14px; z-index: 9999; transition: opacity .4s; }
-.loading-overlay.hide { opacity: 0; pointer-events: none; }
-.spinner { width: 32px; height: 32px; border: 2.5px solid var(--bd2); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-.loading-txt { font-size: 12px; color: var(--txt2); font-family: var(--mono); }
-
-.sb-overlay { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, .5); z-index: 99; }
-.sb-overlay.show { display: block; }
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
-}
-
-@media (max-width: 900px) {
-  .sidebar { transform: translateX(-100%); }
-  .sidebar.open { transform: translateX(0); }
-  .main { margin-left: 0; }
-  .mob-btn { display: flex; }
-  .t-head, .t-row { grid-template-columns: 34px 1fr 76px 84px; }
-  .th:nth-child(5), .td:nth-child(5), .th:nth-child(6), .td:nth-child(6) { display: none; }
-  .content { padding: 16px; }
-  .crate-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
-  .detail-head { gap: 12px; }
-  .detail-title { font-size: 19px; }
+/* ── Responsive ── */
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;}}
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%);}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;}
+  .mob-btn{display:flex;}
+  .t-head,.t-row{grid-template-columns:34px 1fr 76px 84px;}
+  .th:nth-child(5),.td:nth-child(5),.th:nth-child(6),.td:nth-child(6){display:none;}
+  .content{padding:16px;}
+  .crate-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));}
+  .detail-head{gap:12px;}
+  .detail-title{font-size:19px;}
 }
 </style>
 <script src="gun-data.js"></script>
@@ -246,7 +250,13 @@ body { background: var(--bg); color: var(--txt); font-family: var(--sans); min-h
   <aside class="sidebar" id="sidebar">
     <div class="sb-head">
       <div class="logo-row">
-        <div class="logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="3.4"></circle><line x1="12" y1="1.5" x2="12" y2="5"></line><line x1="12" y1="19" x2="12" y2="22.5"></line><line x1="1.5" y1="12" x2="5" y2="12"></line><line x1="19" y1="12" x2="22.5" y2="12"></line></svg></div>
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="3.4"></circle>
+            <line x1="12" y1="1.5" x2="12" y2="5"></line><line x1="12" y1="19" x2="12" y2="22.5"></line>
+            <line x1="1.5" y1="12" x2="5" y2="12"></line><line x1="19" y1="12" x2="22.5" y2="12"></line>
+          </svg>
+        </div>
         <div>
           <div class="logo-name">Arsenal Database</div>
           <div class="logo-sub">PUBG MOBILE WIKI</div>
@@ -278,7 +288,9 @@ body { background: var(--bg); color: var(--txt); font-family: var(--sans); min-h
   <div class="main">
     <div class="topbar">
       <div class="topbar-l">
-        <button class="icon-btn mob-btn" id="mobBtn" aria-label="Open menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+        <button class="icon-btn mob-btn" id="mobBtn" aria-label="Open menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
         <div class="breadcrumb" id="breadcrumb"></div>
       </div>
       <div class="topbar-r">
@@ -286,62 +298,75 @@ body { background: var(--bg); color: var(--txt); font-family: var(--sans); min-h
         <button class="icon-btn" id="themeBtn" aria-label="Toggle theme"></button>
       </div>
     </div>
-
     <div class="content" id="content"></div>
   </div>
 </div>
 
 <script>
-// 메인 UI 처리 컨트롤러 스크립트
+// ── State ──────────────────────────────────────────────
 let weaponDatabase = [];
-let searchQuery = "";
-let currentView = "grid"; 
-let activeItemId = null;
+let searchQuery    = "";
+let currentView    = "grid";
+let activeItemId   = null;
+let activeCategory = "all"; // "all" | type string
 
-const loadingOverlay = document.getElementById('loadingOverlay');
-const contentContainer = document.getElementById('content');
-const searchInput = document.getElementById('searchInput');
-const datasetNav = document.getElementById('datasetNav');
-const liveCount = document.getElementById('liveCount');
-const sbStats = document.getElementById('sbStats');
-const themeBtn = document.getElementById('themeBtn');
-const breadcrumb = document.getElementById('breadcrumb');
+const WEAPON_TYPES  = ["Assault_Rifle","Submachine_Gun","Shotgun","Sniper_Rifle","Light_Machine_Gun","Pistol","Melee","Throwable"];
+const VEHICLE_TYPES = ["Sedan","Truck","Buggy","UAZ","Motorcycle","Boat","Other"];
 
+const MAP_NAMES = ["Erangel","Miramar","Vikendi","Sanhok","Karakin","Nusa","Livik","Air_Drop_Weapon"];
+
+function isVehicle(item) {
+  return VEHICLE_TYPES.includes(item.type) || item.arms_introduce.vehicle !== undefined;
+}
+
+// ── DOM refs ───────────────────────────────────────────
+const loadingOverlay  = document.getElementById('loadingOverlay');
+const contentEl       = document.getElementById('content');
+const searchInput     = document.getElementById('searchInput');
+const datasetNav      = document.getElementById('datasetNav');
+const liveCount       = document.getElementById('liveCount');
+const sbStats         = document.getElementById('sbStats');
+const themeBtn        = document.getElementById('themeBtn');
+const breadcrumb      = document.getElementById('breadcrumb');
+const categoryList    = document.getElementById('categoryList');
+
+// ── Boot ───────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
-  // gun-data.js에 정의된 전역 객체(pubgWeaponData) 바인딩
   if (typeof pubgWeaponData !== 'undefined' && pubgWeaponData.arms) {
     weaponDatabase = pubgWeaponData.arms;
   } else {
-    console.error("gun-data.js 파일을 로드하지 못했거나 데이터 포맷이 다릅니다.");
+    console.error("gun-data.js를 로드하지 못했거나 데이터 포맷이 다릅니다.");
   }
-
-  // 0.3초 후 로딩 화면 제거 및 인터페이스 활성화
-  setTimeout(() => {
-    loadingOverlay.classList.add('hide');
-  }, 300);
-
+  setTimeout(() => loadingOverlay.classList.add('hide'), 300);
   initUI();
   renderSidebar();
   renderContent();
 });
 
+// ── UI init ────────────────────────────────────────────
 function initUI() {
   themeBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
   themeBtn.addEventListener('click', () => {
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', newTheme);
+    const t = document.documentElement.getAttribute('data-theme');
+    document.documentElement.setAttribute('data-theme', t === 'dark' ? 'light' : 'dark');
   });
 
-  searchInput.addEventListener('input', (e) => {
-    searchQuery = e.target.value.toLowerCase();
-    activeItemId = null; 
+  searchInput.addEventListener('input', e => {
+    searchQuery  = e.target.value.toLowerCase();
+    activeItemId = null;
     renderContent();
   });
 
   document.getElementById('viewGridBtn').classList.add('active');
   document.getElementById('viewGridBtn').addEventListener('click', () => switchView('grid'));
   document.getElementById('viewTableBtn').addEventListener('click', () => switchView('table'));
+
+  // Mobile sidebar
+  const mobBtn   = document.getElementById('mobBtn');
+  const sidebar  = document.getElementById('sidebar');
+  const sbOverlay = document.getElementById('sbOverlay');
+  mobBtn.addEventListener('click', () => { sidebar.classList.add('open'); sbOverlay.classList.add('show'); });
+  sbOverlay.addEventListener('click', () => { sidebar.classList.remove('open'); sbOverlay.classList.remove('show'); });
 }
 
 function switchView(view) {
@@ -352,34 +377,95 @@ function switchView(view) {
   renderContent();
 }
 
+// ── Sidebar ────────────────────────────────────────────
 function renderSidebar() {
-  datasetNav.innerHTML = `
-    <button class="nav-item active">
-      <span class="nav-label">All Weapons</span>
-      <span class="nav-count">${weaponDatabase.length}</span>
+  const weapons  = weaponDatabase.filter(i => !isVehicle(i));
+  const vehicles = weaponDatabase.filter(i => isVehicle(i));
+
+  // Top nav: All / Weapons / Vehicles
+  const navItems = [
+    { key: 'all',     label: 'All Items',  count: weaponDatabase.length },
+    { key: 'weapons', label: 'Weapons',    count: weapons.length },
+    { key: 'vehicles',label: 'Vehicles',   count: vehicles.length },
+  ];
+
+  datasetNav.innerHTML = navItems.map(n => `
+    <button class="nav-item ${activeCategory === n.key ? 'active' : ''}" onclick="setCategory('${n.key}')">
+      <span class="nav-label">${n.label}</span>
+      <span class="nav-count">${n.count}</span>
     </button>
-  `;
+  `).join('');
+
+  // Sub-category list
+  let html = '';
+
+  // Weapon sub-types
+  html += `<div class="sb-section-lbl">Weapon Type</div>`;
+  WEAPON_TYPES.forEach(type => {
+    const cnt = weaponDatabase.filter(i => i.type === type).length;
+    if (!cnt) return;
+    html += `
+      <div class="crate-item ${activeCategory === type ? 'active' : ''}" onclick="setCategory('${type}')">
+        <span class="ci-name">${type.replace(/_/g,' ')}</span>
+        <span class="ci-count">${cnt}</span>
+      </div>`;
+  });
+
+  // Vehicle sub-types
+  html += `<div class="sb-section-lbl">Vehicle Type</div>`;
+  VEHICLE_TYPES.forEach(type => {
+    const cnt = weaponDatabase.filter(i => i.type === type).length;
+    if (!cnt) return;
+    html += `
+      <div class="crate-item ${activeCategory === type ? 'active' : ''}" onclick="setCategory('${type}')">
+        <span class="ci-name">${type}</span>
+        <span class="ci-count">${cnt}</span>
+      </div>`;
+  });
+
+  categoryList.innerHTML = html;
 
   sbStats.innerHTML = `
-    <div class="sbs-item"><div class="sbs-val">${weaponDatabase.length}</div><div class="sbs-lbl">WEAPONS</div></div>
-    <div class="sbs-item"><div class="sbs-val">5.56mm</div><div class="sbs-lbl">MAIN AMMO</div></div>
+    <div class="sbs-item"><div class="sbs-val">${weapons.length}</div><div class="sbs-lbl">WEAPONS</div></div>
+    <div class="sbs-item"><div class="sbs-val">${vehicles.length}</div><div class="sbs-lbl">VEHICLES</div></div>
+    <div class="sbs-item"><div class="sbs-val">${weaponDatabase.length}</div><div class="sbs-lbl">TOTAL</div></div>
   `;
 }
 
+function setCategory(key) {
+  activeCategory = key;
+  activeItemId   = null;
+  searchQuery    = "";
+  searchInput.value = "";
+  renderSidebar();
+  renderContent();
+}
+
+// ── Filter helpers ─────────────────────────────────────
+function getFiltered() {
+  return weaponDatabase.filter(item => {
+    const matchCat =
+      activeCategory === 'all' ? true :
+      activeCategory === 'weapons' ? !isVehicle(item) :
+      activeCategory === 'vehicles' ? isVehicle(item) :
+      item.type === activeCategory;
+    const matchSearch = item.name.toLowerCase().includes(searchQuery);
+    return matchCat && matchSearch;
+  });
+}
+
+// ── Render ─────────────────────────────────────────────
 function renderContent() {
-  const filteredData = weaponDatabase.filter(item => item.name.toLowerCase().includes(searchQuery));
-  liveCount.innerText = `${filteredData.length} results`;
+  const filtered = getFiltered();
+  liveCount.innerText = `${filtered.length} results`;
 
   if (activeItemId) {
-    const selectedItem = weaponDatabase.find(i => i.id === activeItemId);
-    if (selectedItem) {
-      renderDetailView(selectedItem);
-      return;
-    }
+    const item = weaponDatabase.find(i => i.id === activeItemId);
+    if (item) { renderDetailView(item); return; }
   }
 
-  breadcrumb.innerHTML = `<span class="cur">Weapon Database</span>`;
-  
+  breadcrumb.innerHTML = `<span class="cur">Database</span>`;
+
   let html = `
     <div class="all-view">
       <div class="view-header">
@@ -387,65 +473,63 @@ function renderContent() {
           <h2 class="view-title">Arsenal Overview</h2>
           <p class="view-sub">PUBG MOBILE LIVE SPECIFICATION</p>
         </div>
-      </div>
-  `;
+      </div>`;
 
-  if (filteredData.length === 0) {
-    html += `
-      <div class="grid-empty">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-        <p>No weapons match your search query.</p>
-      </div>
-    `;
+  if (filtered.length === 0) {
+    html += `<div class="crate-grid"><div class="grid-empty">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <p>No items match your search query.</p>
+    </div></div>`;
   } else if (currentView === 'grid') {
     html += `<div class="crate-grid">`;
-    filteredData.forEach(item => {
+    filtered.forEach(item => {
+      const intro    = item.arms_introduce;
+      const vehicle  = isVehicle(item);
+      const metaHtml = vehicle
+        ? `<span>Seats: <span class="hl">${intro.seat}</span></span><span>Top: <span class="hl">${intro.top} km/h</span></span>`
+        : `<span>Ammo: <span class="hl">${intro.bullet}</span></span><span>Power: <span class="hl">${intro.hurt}</span></span>`;
       html += `
         <div class="crate-card" onclick="viewDetail('${item.id}')">
           <div class="card-visual">
-            <span class="type-badge" style="color:var(--accent-lt); border-color:var(--accent-bd);">${item.type.replace('_', ' ')}</span>
+            <span class="type-badge" style="color:var(--accent-lt);border-color:var(--accent-bd);">${item.type.replace(/_/g,' ')}</span>
             <img src="${item.image}" alt="${item.name}" onerror="this.src='https://img.icons8.com/color/96/m16-assault-rifle.png'">
           </div>
           <div class="cc-name">${item.name}</div>
-          <div class="cc-meta">
-            <span>Ammo: <span class="hl">${item.arms_introduce.bullet}</span></span>
-            <span>Power: <span class="hl">${item.arms_introduce.hurt}</span></span>
-          </div>
-        </div>
-      `;
+          <div class="cc-meta">${metaHtml}</div>
+        </div>`;
     });
     html += `</div>`;
   } else {
     html += `
       <div class="table-wrap">
         <div class="t-head">
-          <div class="th font-mono">ID</div>
-          <div class="th font-mono">NAME</div>
-          <div class="th font-mono">AMMO</div>
-          <div class="th font-mono">FIRE MODE</div>
-          <div class="th font-mono r">DAMAGE</div>
+          <div class="th" style="font-family:var(--mono)">#</div>
+          <div class="th" style="font-family:var(--mono)">NAME</div>
+          <div class="th" style="font-family:var(--mono)">AMMO / TYPE</div>
+          <div class="th" style="font-family:var(--mono)">FIRE MODE / CLASS</div>
+          <div class="th r" style="font-family:var(--mono)">DAMAGE</div>
           <div class="th"></div>
-        </div>
-    `;
-    filteredData.forEach((item, index) => {
+        </div>`;
+    filtered.forEach((item, idx) => {
+      const intro   = item.arms_introduce;
+      const vehicle = isVehicle(item);
       html += `
         <div class="t-row" onclick="viewDetail('${item.id}')">
-          <div class="td td-rank">${index + 1}</div>
-          <div class="td td-name">${item.name}</div>
-          <div class="td"><span class="grade-pill" style="color:var(--green); background:rgba(56,184,112,0.1); border-color:rgba(56,184,112,0.2);">${item.arms_introduce.bullet}</span></div>
-          <div class="td font-mono" style="font-size:11px; color:var(--txt2);">${item.arms_introduce.fireMethod}</div>
-          <div class="td td-prob"><span class="prob-num">${item.arms_introduce.hurt}</span></div>
+          <div class="td" style="font-size:11px;font-family:var(--mono);color:var(--txt3)">${idx + 1}</div>
+          <div class="td" style="font-size:13px;color:var(--txt);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.name}</div>
+          <div class="td"><span class="grade-pill" style="color:var(--green);background:rgba(56,184,112,0.1);border-color:rgba(56,184,112,0.2);">${vehicle ? (intro.vehicle || item.type) : intro.bullet}</span></div>
+          <div class="td" style="font-size:11px;font-family:var(--mono);color:var(--txt2)">${vehicle ? `${intro.seat} seats` : intro.fireMethod}</div>
+          <div class="td" style="text-align:right"><span style="font-size:13.5px;font-weight:700;color:var(--txt);font-family:var(--mono)">${vehicle ? intro.top+'km/h' : intro.hurt}</span></div>
           <div class="td">
-            <div class="bar-track"><div class="bar-fill" style="width: ${item.arms_introduce.hurt}%; background: var(--accent);"></div></div>
+            ${vehicle ? '' : `<div class="bar-track"><div class="bar-fill" style="width:${intro.hurt}%;background:var(--accent)"></div></div>`}
           </div>
-        </div>
-      `;
+        </div>`;
     });
     html += `</div>`;
   }
 
   html += `</div>`;
-  contentContainer.innerHTML = html;
+  contentEl.innerHTML = html;
 }
 
 function viewDetail(id) {
@@ -459,54 +543,63 @@ function closeDetail() {
 }
 
 function renderDetailView(item) {
-  const intro = item.arms_introduce;
-  breadcrumb.innerHTML = `<span class="cur" onclick="closeDetail()" style="cursor:pointer;">Weapons</span> <span class="sep">/</span> <span class="cur">${item.name}</span>`;
+  const intro   = item.arms_introduce;
+  const vehicle = isVehicle(item);
 
-  contentContainer.innerHTML = `
-    <div class="detail-view">
-      <button class="back-btn" onclick="closeDetail()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> Back to Database
-      </button>
+  breadcrumb.innerHTML = `
+    <span class="cur" onclick="closeDetail()" style="cursor:pointer;">Database</span>
+    <span class="sep">/</span>
+    <span class="cur">${item.name}</span>`;
 
-      <div class="detail-head">
-        <div class="detail-visual">
-          <img src="${item.image}" alt="${item.name}" onerror="this.src='https://img.icons8.com/color/96/m16-assault-rifle.png'">
-        </div>
-        <div>
-          <div class="detail-eyebrow">${item.type.replace('_', ' ')}</div>
-          <h2 class="detail-title">${item.name} Specification</h2>
-          <div class="detail-meta">
-            <span>Ammo Type: <span class="hl">${intro.bullet}</span></span>
-            <span>Fire Mode: <span class="hl">${intro.fireMethod}</span></span>
-            <span>Magazine: <span class="hl">${intro.magazine} Rnds</span></span>
-          </div>
-        </div>
-      </div>
+  // Map chips
+  const mapHtml = (item.map || []).map(mapObj => {
+    const [name, val] = Object.entries(mapObj)[0];
+    const label = name.replace(/_/g,' ');
+    return `<span class="map-chip ${val ? 'yes' : 'no'}"><span class="map-dot"></span>${label}</span>`;
+  }).join('');
 
+  // Attachments (weapons only)
+  const attachHtml = (!vehicle && item.arms_accessories && item.arms_accessories.length)
+    ? item.arms_accessories.map(a => `<span class="attach-chip">${a.accessories_name}</span>`).join('')
+    : '';
+
+  let statsHtml = '';
+  if (vehicle) {
+    // Vehicle stats
+    statsHtml = `
+      <div class="section-lbl">Vehicle Specs</div>
+      <div class="vehicle-stat-cards">
+        <div class="vsc"><div class="vsc-lbl">Seats</div><div class="vsc-val">${intro.seat}<span class="vsc-unit">pax</span></div></div>
+        <div class="vsc"><div class="vsc-lbl">Top Speed</div><div class="vsc-val">${intro.top}<span class="vsc-unit">km/h</span></div></div>
+        <div class="vsc"><div class="vsc-lbl">Durability</div><div class="vsc-val">${intro.blood}</div></div>
+        <div class="vsc"><div class="vsc-lbl">Fuel Cap.</div><div class="vsc-val">${intro.fuel !== undefined ? Number(intro.fuel).toLocaleString() : 'N/A'}</div></div>
+      </div>`;
+  } else {
+    // Weapon performance bars
+    statsHtml = `
       <div class="section-lbl">Weapon Performance Ratings</div>
       <div class="stat-cards">
         <div class="stat-card">
           <div class="sc-lbl">Damage Power</div>
           <div class="sc-val">${intro.hurt}<span>/100</span></div>
-          <div class="bar-track sc-bar"><div class="bar-fill" style="width: ${intro.hurt}%; background: var(--red);"></div></div>
+          <div class="bar-track sc-bar"><div class="bar-fill" style="width:${intro.hurt}%;background:var(--red)"></div></div>
         </div>
         <div class="stat-card">
           <div class="sc-lbl">Rate of Fire</div>
           <div class="sc-val">${intro.rateoffire}<span>/100</span></div>
-          <div class="bar-track sc-bar"><div class="bar-fill" style="width: ${intro.rateoffire}%; background: var(--purple);"></div></div>
+          <div class="bar-track sc-bar"><div class="bar-fill" style="width:${intro.rateoffire}%;background:var(--purple)"></div></div>
         </div>
         <div class="stat-card">
           <div class="sc-lbl">Effective Range</div>
           <div class="sc-val">${intro.range}<span>/100</span></div>
-          <div class="bar-track sc-bar"><div class="bar-fill" style="width: ${intro.range}%; background: var(--blue);"></div></div>
+          <div class="bar-track sc-bar"><div class="bar-fill" style="width:${intro.range}%;background:var(--blue)"></div></div>
         </div>
         <div class="stat-card">
-          <div class="sc-lbl">Stability & Precision</div>
+          <div class="sc-lbl">Stability</div>
           <div class="sc-val">${intro.precise}<span>/100</span></div>
-          <div class="bar-track sc-bar"><div class="bar-fill" style="width: ${intro.precise}%; background: var(--green);"></div></div>
+          <div class="bar-track sc-bar"><div class="bar-fill" style="width:${intro.precise}%;background:var(--green)"></div></div>
         </div>
       </div>
-
       <div class="section-lbl">Tactical Evaluation</div>
       <div class="trait-row">
         <div class="trait-card">
@@ -518,42 +611,38 @@ function renderDetailView(item) {
           <div class="trait-txt">${intro.disadvantages}</div>
         </div>
       </div>
-    </div>
-  `;
+      ${attachHtml ? `
+      <div class="section-lbl">Compatible Attachments</div>
+      <div class="attach-grid">${attachHtml}</div>` : ''}`;
+  }
+
+  contentEl.innerHTML = `
+    <div class="detail-view">
+      <button class="back-btn" onclick="closeDetail()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Back to Database
+      </button>
+      <div class="detail-head">
+        <div class="detail-visual">
+          <img src="${intro.arms_c || item.image}" alt="${item.name}" onerror="this.src='https://img.icons8.com/color/96/m16-assault-rifle.png'">
+        </div>
+        <div>
+          <div class="detail-eyebrow">${item.type.replace(/_/g,' ')}</div>
+          <h2 class="detail-title">${item.name}</h2>
+          <div class="detail-meta">
+            ${vehicle
+              ? `<span>Class: <span class="hl">${intro.vehicle || item.type}</span></span>`
+              : `<span>Ammo: <span class="hl">${intro.bullet}</span></span>
+                 <span>Fire Mode: <span class="hl">${intro.fireMethod}</span></span>
+                 <span>Magazine: <span class="hl">${intro.magazine} Rnds</span></span>`}
+          </div>
+        </div>
+      </div>
+      ${statsHtml}
+      <div class="section-lbl">Map Availability</div>
+      <div class="map-grid">${mapHtml}</div>
+    </div>`;
 }
 </script>
 </body>
 </html>
-
-  <script src="gun-data.js"></script>
-
-  <script>
-    // 문서가 모두 로드되면 실행
-    document.addEventListener("DOMContentLoaded", () => {
-      // 1. gun-data.js의 pubgWeaponData 내 'arms' 배열에서 M416 찾기
-      const weapons = pubgWeaponData.arms;
-      const m416 = weapons.find(w => w.name === "M416");
-      
-      if (!m416) return;
-      
-      // 편의를 위해 arms_introduce 객체를 선택
-      const intro = m416.arms_introduce;
-
-      // 2. HTML 요소들에 데이터 집어넣기 (예시)
-      // 본인 HTML 구조의 id나 클래스명에 맞춰 변수를 대입해줍니다.
-      document.getElementById("weapon-name").innerText = m416.name;
-      document.getElementById("bullet-type").innerText = intro.bullet;
-      
-      // 연사력 스탯 바와 텍스트 바인딩 예시
-      const rofVal = document.getElementById("rof-val"); // 수치 표시 구역
-      const rofBar = document.getElementById("rof-bar"); // bar-fill 구역
-      if(rofVal) rofVal.innerHTML = `${intro.rateoffire}<span>/100</span>`;
-      if(rofBar) rofBar.style.width = `${intro.rateoffire}%`;
-      
-      // 장점 및 단점 매핑
-      document.getElementById("advantages-txt").innerText = intro.advantages;
-      document.getElementById("disadvantages-txt").innerText = intro.disadvantages;
-    });
-  </script>
-</body>
-
