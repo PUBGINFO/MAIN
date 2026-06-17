@@ -29,7 +29,22 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);min-height:10
 .layout{display:flex;min-height:100vh;}
 
 /* ── Sidebar ── */
-.sidebar{width:268px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--bd);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;}
+.sidebar{width:268px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--bd);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;transition:transform .25s var(--ease);}
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:99;backdrop-filter:blur(2px);}
+.sb-overlay.show{display:block;}
+.mob-menu-btn{display:none;width:36px;height:36px;border-radius:var(--r-sm);border:1px solid var(--bd2);background:var(--surface);cursor:pointer;align-items:center;justify-content:center;color:var(--txt2);flex-shrink:0;}
+.mob-menu-btn svg{width:16px;height:16px;}
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%);}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0!important;}
+  .mob-menu-btn{display:flex;}
+  .content{padding:16px;}
+  .card-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:9px;}
+  .maps-grid{grid-template-columns:1fr;}
+  .stat-cards{gap:6px;}
+  .stat-card{min-width:90px;}
+}
 .sb-head{padding:18px 16px 14px;border-bottom:1px solid var(--bd);}
 .logo-row{display:flex;align-items:center;gap:10px;}
 .logo-icon{width:34px;height:34px;background:var(--accent-bg);border:1px solid var(--accent-bd);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;}
@@ -189,8 +204,9 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);min-height:10
   <div style="font-family:var(--mono);font-size:13px;color:var(--txt2);">LOADING DATA...</div>
 </div>
 
+<div class="sb-overlay" id="sbOverlay" onclick="closeSidebar()"></div>
 <div class="layout">
-  <aside class="sidebar">
+  <aside class="sidebar" id="sidebar">
     <div class="sb-head">
       <div class="logo-row">
         <div class="logo-icon">
@@ -228,7 +244,14 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);min-height:10
 
   <div class="main">
     <div class="topbar">
-      <div class="breadcrumb" id="breadcrumb"></div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <button class="mob-menu-btn" onclick="openSidebar()" aria-label="메뉴 열기">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+        <div class="breadcrumb" id="breadcrumb"></div>
+      </div>
       <div class="topbar-r">
         <div class="live-badge"><span class="live-dot"></span><span id="liveCount">0 results</span></div>
         <button class="icon-btn" id="themeBtn" aria-label="Toggle theme">
@@ -604,7 +627,7 @@ function renderDetail(item) {
       <button class="back-btn" onclick="closeDetail()">← Back to ${tabLabel}</button>
       <div class="detail-head">
         <div class="detail-img">
-          <img src="${imgSrc(intro.arms_c || item.image)}" alt="${item.name||''}" onerror="this.style.display='none'">
+          <img src="${imgSrc(item.image || intro.arms_c)}" alt="${item.name||''}" onerror="this.style.display='none'">
         </div>
         <div>
           <div class="detail-eyebrow">${(item.type||'').replace(/_/g,' ')}</div>
