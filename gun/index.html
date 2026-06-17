@@ -113,17 +113,15 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);min-height:10
 .t-row:hover{background:var(--surface2);}
 .td{padding:9px 7px;font-size:12.5px;color:var(--txt);}
 .td-rank{color:var(--txt3);font-family:var(--mono);font-size:11px;}
-.td-thumb{display:flex;align-items:center;justify-content:center;width:40px;height:30px;background:var(--surface3);border-radius:var(--r-sm);overflow:hidden;}
-.td-thumb img{max-width:90%;max-height:90%;object-fit:contain;}
 .td-name{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .pill{display:inline-flex;align-items:center;font-size:9.5px;font-family:var(--mono);padding:3px 8px;border-radius:20px;border:1px solid;white-space:nowrap;}
 .bar-track{height:4px;background:var(--surface3);border-radius:3px;overflow:hidden;margin-top:4px;}
 .bar-fill{height:100%;border-radius:3px;transition:width .5s var(--ease);}
 
-/* Weapons cols (썸네일 컬럼용 46px 분할 추가) */
-.t-cols-weapon{grid-template-columns:36px 46px 1fr 90px 130px 110px;}
-/* Vehicles cols (썸네일 컬럼용 46px 분할 추가) */
-.t-cols-vehicle{grid-template-columns:36px 46px 1fr 80px 80px 100px;}
+/* Weapons cols */
+.t-cols-weapon{grid-template-columns:36px 1fr 90px 130px 80px 110px;}
+/* Vehicles cols */
+.t-cols-vehicle{grid-template-columns:36px 1fr 80px 80px 80px 90px;}
 
 /* Detail */
 .detail-view{animation:fadeUp .3s var(--ease);}
@@ -258,17 +256,15 @@ function imgSrc(path) {
   return path.startsWith('/') ? '.' + path : path;
 }
 
-const WEAPON_TYPES = [
-  'Assault_Rifle','Submachine_Gun','Shotgun','Sniper_Rifle',
-  'Designated_Marksman_Rifle','Light_Machine_Gun','Pistol','Melee_Weapon','Crossbow'
-];
-const VEHICLE_TYPES = ['Sedan','Truck','Buggy','UAZ','Motorcycle','Boat','Other'];
+// 데이터 소스의 실제 무기/차량 타입 필드값에 유연하게 대응하도록 초기화
+let WEAPON_TYPES = [];
+let VEHICLE_TYPES = [];
 
 // ── State ─────────────────────────────────────────────
 let state = {
-  tab: 'weapon',       
-  view: 'grid',        
-  category: 'all',     
+  tab: 'weapon',       // 'weapon' | 'vehicle'
+  view: 'grid',        // 'grid' | 'table'
+  category: 'all',     // 'all' | type string
   search: '',
   detailId: null
 };
@@ -278,18 +274,28 @@ window.addEventListener('DOMContentLoaded', () => {
   if (typeof pubgWeaponData !== 'undefined') {
     DB.arms     = pubgWeaponData.arms     || [];
     DB.vehicles = pubgWeaponData.vehicles || [];
+    
+    // 실제 데이터 내부의 고유한 type 값을 추출하여 유동적으로 카테고리 구성 생성
+    WEAPON_TYPES = [...new Set(DB.arms.map(item => item.type).filter(Boolean))];
+    VEHICLE_TYPES = [...new Set(DB.vehicles.map(item => item.type).filter(Boolean))];
   }
-  setTimeout(() => document.getElementById('loadingOverlay').classList.add('hide'), 300);
+  
+  setTimeout(() => {
+    const overlay = document.getElementById('loadingOverlay');
+    if(overlay) overlay.classList.add('hide');
+  }, 300);
 
   document.getElementById('searchInput').addEventListener('input', e => {
     state.search   = e.target.value.toLowerCase();
     state.detailId = null;
     render();
   });
+  
   document.getElementById('themeBtn').addEventListener('click', () => {
     const t = document.documentElement.getAttribute('data-theme');
     document.documentElement.setAttribute('data-theme', t === 'dark' ? 'light' : 'dark');
   });
+  
   const sidebar = document.getElementById('sidebar');
   const sbOverlay = document.getElementById('sbOverlay');
   document.getElementById('mobBtn').addEventListener('click', () => {
@@ -320,7 +326,7 @@ function getPool() {
 function getFiltered() {
   return getPool().filter(item => {
     const matchCat = state.category === 'all' || item.type === state.category;
-    const matchQ   = item.name.toLowerCase().includes(state.search);
+    const matchQ   = item.name && item.name.toLowerCase().includes(state.search);
     return matchCat && matchQ;
   });
 }
@@ -340,11 +346,13 @@ function render() {
 }
 
 function renderSidebar() {
+  // Tabs active toggle
   document.getElementById('tabWeapon').classList.toggle('active', state.tab === 'weapon');
   document.getElementById('tabVehicle').classList.toggle('active', state.tab === 'vehicle');
   document.getElementById('vGrid').classList.toggle('active', state.view === 'grid');
   document.getElementById('vTable').classList.toggle('active', state.view === 'table');
 
+  // Category list 렌더링 수정 (카테고리 미생성 현상 해결)
   const pool  = getPool();
   const types = typeList();
   let html = `
@@ -353,6 +361,7 @@ function renderSidebar() {
       <span class="cat-cnt">${pool.length}</span>
     </div>
     <div class="sb-sec">Type</div>`;
+    
   types.forEach(t => {
     const cnt = pool.filter(i => i.type === t).length;
     if (!cnt) return;
@@ -363,6 +372,7 @@ function renderSidebar() {
   });
   document.getElementById('catList').innerHTML = html;
 
+  // Footer stats
   document.getElementById('sbFoot').innerHTML = `
     <div class="sf-item"><div class="sf-val">${DB.arms.length}</div><div class="sf-lbl">WEAPONS</div></div>
     <div class="sf-item"><div class="sf-val">${DB.vehicles.length}</div><div class="sf-lbl">VEHICLES</div></div>
@@ -394,50 +404,56 @@ function renderList() {
   } else if (state.view === 'grid') {
     html += `<div class="card-grid">`;
     filtered.forEach(item => {
-      const intro = item.arms_introduce;
+      const intro = item.arms_introduce || {};
       const meta  = isWeapon
-        ? `<span>Ammo: <span class="hl">${intro.bullet}</span></span><span>DMG: <span class="hl">${intro.hurt}</span></span>`
-        : `<span>Seats: <span class="hl">${intro.seat}</span></span><span>Top: <span class="hl">${intro.top}km/h</span></span>`;
+        ? `<span>Ammo: <span class="hl">${intro.bullet || '-'}</span></span><span>DMG: <span class="hl">${intro.hurt || '-'}</span></span>`
+        : `<span>Seats: <span class="hl">${intro.seat || '-'}</span></span><span>Top: <span class="hl">${intro.top || '-'}km/h</span></span>`;
+      
+      const itemType = item.type ? item.type.replace(/_/g,' ') : 'Unknown';
       html += `<div class="card" onclick="viewDetail('${item.id}')">
         <div class="card-img">
-          <span class="type-badge">${item.type.replace(/_/g,' ')}</span>
-          <img src="${imgSrc(item.image)}" alt="${item.name}" onerror="this.style.display='none'">
+          <span class="type-badge">${itemType}</span>
+          <img src="${imgSrc(item.image)}" alt="${item.name || ''}" onerror="this.style.display='none'">
         </div>
-        <div class="card-name">${item.name}</div>
+        <div class="card-name">${item.name || 'Unnamed'}</div>
         <div class="card-meta">${meta}</div>
       </div>`;
     });
     html += `</div>`;
   } else {
-    // Table 뷰 로직 (썸네일 컬럼 추가 반영)
+    // Table View
     const cols = isWeapon ? 't-cols-weapon' : 't-cols-vehicle';
     const heads = isWeapon
-      ? ['#','IMG','NAME','AMMO','FIRE MODE','DMG']
-      : ['#','IMG','NAME','TYPE','SEATS','SPEED'];
+      ? ['#','NAME','AMMO','FIRE MODE','DMG','']
+      : ['#','NAME','TYPE','SEATS','SPEED','DURABILITY'];
     html += `<div class="table-wrap">
       <div class="t-head ${cols}">${heads.map(h=>`<div class="th">${h}</div>`).join('')}</div>`;
+    
     filtered.forEach((item, idx) => {
-      const intro = item.arms_introduce;
+      const intro = item.arms_introduce || {};
       if (isWeapon) {
         html += `<div class="t-row ${cols}" onclick="viewDetail('${item.id}')">
           <div class="td td-rank">${idx+1}</div>
-          <div class="td"><div class="td-thumb"><img src="${imgSrc(item.image)}" onerror="this.style.display='none'"></div></div>
-          <div class="td td-name">${item.name}</div>
-          <div class="td"><span class="pill" style="color:var(--green);background:rgba(56,184,112,.1);border-color:rgba(56,184,112,.2)">${intro.bullet}</span></div>
-          <div class="td" style="font-size:11px;font-family:var(--mono);color:var(--txt2)">${intro.fireMethod}</div>
+          <div class="td td-name">${item.name || 'Unnamed'}</div>
+          <div class="td"><span class="pill" style="color:var(--green);background:rgba(56,184,112,.1);border-color:rgba(56,184,112,.2)">${intro.bullet || '-'}</span></div>
+          <div class="td" style="font-size:11px;font-family:var(--mono);color:var(--txt2)">${intro.fireMethod || '-'}</div>
           <div class="td">
-            <div style="font-weight:700;font-family:var(--mono)">${intro.hurt}</div>
-            <div class="bar-track"><div class="bar-fill" style="width:${intro.hurt}%;background:var(--accent)"></div></div>
+            <div style="font-weight:700;font-family:var(--mono)">${intro.hurt || 0}</div>
+            <div class="bar-track"><div class="bar-fill" style="width:${intro.hurt || 0}%;background:var(--accent)"></div></div>
           </div>
+          <div class="td"></div>
         </div>`;
       } else {
         html += `<div class="t-row ${cols}" onclick="viewDetail('${item.id}')">
           <div class="td td-rank">${idx+1}</div>
-          <div class="td"><div class="td-thumb"><img src="${imgSrc(item.image)}" onerror="this.style.display='none'"></div></div>
-          <div class="td td-name">${item.name}</div>
-          <div class="td"><span class="pill" style="color:var(--blue);background:rgba(68,136,232,.1);border-color:rgba(68,136,232,.2)">${intro.vehicle}</span></div>
-          <div class="td" style="font-family:var(--mono);font-weight:700">${intro.seat}</div>
-          <div class="td" style="font-family:var(--mono);font-weight:700">${intro.top}<span style="font-size:10px;color:var(--txt3);margin-left:2px">km/h</span></div>
+          <div class="td td-name">${item.name || 'Unnamed'}</div>
+          <div class="td"><span class="pill" style="color:var(--blue);background:rgba(68,136,232,.1);border-color:rgba(68,136,232,.2)">${intro.vehicle || 'Vehicle'}</span></div>
+          <div class="td" style="font-family:var(--mono);font-weight:700">${intro.seat || '-'}</div>
+          <div class="td" style="font-family:var(--mono);font-weight:700">${intro.top || 0}<span style="font-size:10px;color:var(--txt3);margin-left:2px">km/h</span></div>
+          <div class="td">
+            <div style="font-family:var(--mono);font-weight:700">${intro.blood || 0}</div>
+            <div class="bar-track"><div class="bar-fill" style="width:${Math.min(parseInt(intro.blood || 0)/25,100)}%;background:var(--orange)"></div></div>
+          </div>
         </div>`;
       }
     });
@@ -451,66 +467,88 @@ function viewDetail(id) { state.detailId = id; render(); }
 function closeDetail()  { state.detailId = null; render(); }
 
 function renderDetail(item) {
-  const intro    = item.arms_introduce;
+  const intro    = item.arms_introduce || {};
   const isWeapon = state.tab === 'weapon';
 
   document.getElementById('liveCount').innerText = '1 result';
   document.getElementById('breadcrumb').innerHTML = `
     <span class="cur" onclick="closeDetail()" style="cursor:pointer">${isWeapon ? 'Weapons' : 'Vehicles'}</span>
     <span class="sep">/</span>
-    <span class="cur">${item.name}</span>`;
+    <span class="cur">${item.name || 'Detail'}</span>`;
 
-  // 1. Maps 데이터 파싱 및 칩 렌더링
-  const mapHtml = (item.map || []).map(obj => {
-    const [name, val] = Object.entries(obj)[0];
-    return `<span class="map-chip ${val ? 'yes' : 'no'}"><span class="map-dot"></span>${name.replace(/_/g,' ')}</span>`;
-  }).join('');
+  // 1. Map Availability 파싱 완벽 수정 (오브젝트 배열 및 기본 필드 다중 매핑 대응)
+  let mapHtml = '';
+  if (Array.isArray(item.map)) {
+    mapHtml = item.map.map(obj => {
+      if (!obj) return '';
+      // { Erangel: 1 } 형태 혹은 일반적인 원소 형태 모두 가공 처리
+      const entries = Object.entries(obj);
+      if (entries.length === 0) return '';
+      const [name, val] = entries[0];
+      const hasMap = val == 1 || val === true || val === "1";
+      return `<span class="map-chip ${hasMap ? 'yes' : 'no'}"><span class="map-dot"></span>${name.replace(/_/g,' ')}</span>`;
+    }).join('');
+  } else if (item.map && typeof item.map === 'object') {
+    mapHtml = Object.entries(item.map).map(([name, val]) => {
+      const hasMap = val == 1 || val === true || val === "1";
+      return `<span class="map-chip ${hasMap ? 'yes' : 'no'}"><span class="map-dot"></span>${name.replace(/_/g,' ')}</span>`;
+    }).join('');
+  } else {
+    mapHtml = `<span class="view-sub" style="font-family:var(--mono)">No map data available</span>`;
+  }
 
   let bodyHtml = '';
   if (isWeapon) {
-    // 2. Weapons 탭용 Attachments 데이터 파싱 및 칩 렌더링
-    const attachHtml = (item.arms_accessories || []).map(a =>
-      `<span class="attach-chip"><img src="${imgSrc(a.accessories)}" onerror="this.style.display='none'" alt="">${a.accessories_name}</span>`
-    ).join('');
+    // 2. Attachments 파싱 완벽 수정 (item.arms_accessories 객체 구조 안전 가공)
+    let attachHtml = '';
+    const accList = item.arms_accessories || item.accessories || [];
+    if (Array.isArray(accList) && accList.length > 0) {
+      attachHtml = accList.map(a => {
+        if (!a) return '';
+        const name = a.accessories_name || a.name || 'Attachment';
+        const img = a.accessories || a.image || '';
+        return `<span class="attach-chip"><img src="${imgSrc(img)}" onerror="this.style.display='none'" alt="">${name}</span>`;
+      }).join('');
+    }
 
     bodyHtml = `
       <div class="sec-lbl" style="margin-top:0">Performance Rating</div>
       <div class="stat-cards">
         <div class="stat-card">
           <div class="sc-lbl">Damage</div>
-          <div class="sc-val">${intro.hurt}<span>/100</span></div>
-          <div class="bar-track sc-bar"><div class="bar-fill" style="width:${intro.hurt}%;background:var(--red)"></div></div>
+          <div class="sc-val">${intro.hurt || 0}<span>/100</span></div>
+          <div class="bar-track sc-bar"><div class="bar-fill" style="width:${intro.hurt || 0}%;background:var(--red)"></div></div>
         </div>
         <div class="stat-card">
           <div class="sc-lbl">Rate of Fire</div>
-          <div class="sc-val">${intro.rateoffire}<span>/100</span></div>
-          <div class="bar-track sc-bar"><div class="bar-fill" style="width:${intro.rateoffire}%;background:var(--purple)"></div></div>
+          <div class="sc-val">${intro.rateoffire || 0}<span>/100</span></div>
+          <div class="bar-track sc-bar"><div class="bar-fill" style="width:${intro.rateoffire || 0}%;background:var(--purple)"></div></div>
         </div>
         <div class="stat-card">
           <div class="sc-lbl">Range</div>
-          <div class="sc-val">${intro.range}<span>/100</span></div>
-          <div class="bar-track sc-bar"><div class="bar-fill" style="width:${intro.range}%;background:var(--blue)"></div></div>
+          <div class="sc-val">${intro.range || 0}<span>/100</span></div>
+          <div class="bar-track sc-bar"><div class="bar-fill" style="width:${intro.range || 0}%;background:var(--blue)"></div></div>
         </div>
         <div class="stat-card">
           <div class="sc-lbl">Stability</div>
-          <div class="sc-val">${intro.precise}<span>/100</span></div>
-          <div class="bar-track sc-bar"><div class="bar-fill" style="width:${intro.precise}%;background:var(--green)"></div></div>
+          <div class="sc-val">${intro.precise || 0}<span>/100</span></div>
+          <div class="bar-track sc-bar"><div class="bar-fill" style="width:${intro.precise || 0}%;background:var(--green)"></div></div>
         </div>
         <div class="stat-card">
           <div class="sc-lbl">Reload Speed</div>
-          <div class="sc-val">${intro.loading}<span>/100</span></div>
-          <div class="bar-track sc-bar"><div class="bar-fill" style="width:${intro.loading}%;background:var(--orange)"></div></div>
+          <div class="sc-val">${intro.loading || 0}<span>/100</span></div>
+          <div class="bar-track sc-bar"><div class="bar-fill" style="width:${intro.loading || 0}%;background:var(--orange)"></div></div>
         </div>
       </div>
       <div class="sec-lbl">Evaluation</div>
       <div class="trait-row">
         <div class="trait-card">
           <div class="trait-lbl" style="color:var(--green)">Advantages</div>
-          <div class="trait-txt">${intro.advantages || 'N/A'}</div>
+          <div class="trait-txt">${intro.advantages || 'None'}</div>
         </div>
         <div class="trait-card bad">
           <div class="trait-lbl" style="color:var(--red)">Disadvantages</div>
-          <div class="trait-txt">${intro.disadvantages || 'N/A'}</div>
+          <div class="trait-txt">${intro.disadvantages || 'None'}</div>
         </div>
       </div>
       ${attachHtml ? `<div class="sec-lbl">Attachments</div><div class="attach-grid">${attachHtml}</div>` : ''}`;
@@ -520,30 +558,32 @@ function renderDetail(item) {
       <div class="stat-cards">
         <div class="stat-card">
           <div class="sc-lbl">Seats</div>
-          <div class="sc-val">${intro.seat}<span>pax</span></div>
+          <div class="sc-val">${intro.seat || 0}<span>pax</span></div>
         </div>
         <div class="stat-card">
           <div class="sc-lbl">Top Speed</div>
-          <div class="sc-val">${intro.top}<span>km/h</span></div>
+          <div class="sc-val">${intro.top || 0}<span>km/h</span></div>
         </div>
         <div class="stat-card">
           <div class="sc-lbl">Durability</div>
-          <div class="sc-val">${intro.blood}</div>
-          <div class="bar-track sc-bar"><div class="bar-fill" style="width:${Math.min(parseInt(intro.blood)/25,100)}%;background:var(--orange)"></div></div>
+          <div class="sc-val">${intro.blood || 0}</div>
+          <div class="bar-track sc-bar"><div class="bar-fill" style="width:${Math.min(parseInt(intro.blood || 0)/25,100)}%;background:var(--orange)"></div></div>
         </div>
         <div class="stat-card">
           <div class="sc-lbl">Fuel Capacity</div>
-          <div class="sc-val">${Number(intro.fuel || 0).toLocaleString()}</div>
+          <div class="sc-val">${intro.fuel ? Number(intro.fuel).toLocaleString() : 0}</div>
         </div>
       </div>`;
   }
 
   const metaHtml = isWeapon
-    ? `<span>Ammo: <span class="hl">${intro.bullet}</span></span>
-       <span>Fire Mode: <span class="hl">${intro.fireMethod}</span></span>
-       <span>Magazine: <span class="hl">${intro.magazine} rnd</span></span>`
-    : `<span>Class: <span class="hl">${intro.vehicle}</span></span>
-       <span>Seats: <span class="hl">${intro.seat}</span></span>`;
+    ? `<span>Ammo: <span class="hl">${intro.bullet || '-'}</span></span>
+       <span>Fire Mode: <span class="hl">${intro.fireMethod || '-'}</span></span>
+       <span>Magazine: <span class="hl">${intro.magazine || '-'} rnd</span></span>`
+    : `<span>Class: <span class="hl">${intro.vehicle || '-'}</span></span>
+       <span>Seats: <span class="hl">${intro.seat || '-'}</span></span>`;
+
+  const itemType = item.type ? item.type.replace(/_/g,' ') : 'Unknown';
 
   document.getElementById('content').innerHTML = `
     <div class="detail-view">
@@ -553,11 +593,11 @@ function renderDetail(item) {
       </button>
       <div class="detail-head">
         <div class="detail-img">
-          <img src="${imgSrc(intro.arms_c || item.image)}" alt="${item.name}" onerror="this.style.display='none'">
+          <img src="${imgSrc(intro.arms_c || item.image)}" alt="${item.name || ''}" onerror="this.style.display='none'">
         </div>
         <div>
-          <div class="detail-eyebrow">${item.type.replace(/_/g,' ')}</div>
-          <h2 class="detail-title">${item.name}</h2>
+          <div class="detail-eyebrow">${itemType}</div>
+          <h2 class="detail-title">${item.name || 'Unnamed'}</h2>
           <div class="detail-meta">${metaHtml}</div>
         </div>
       </div>
