@@ -12,7 +12,8 @@
   --sans:'DM Sans',sans-serif;--mono:'DM Mono',monospace;--ease:cubic-bezier(.4,0,.2,1);
   --r-sm:8px;--r-md:12px;--r-lg:16px;
 }
-[data-theme="dark"]{\n  --bg:#0e1117;--surface:#161b24;--surface2:#1c2333;--surface3:#232d42;
+[data-theme="dark"]{
+  --bg:#0e1117;--surface:#161b24;--surface2:#1c2333;--surface3:#232d42;
   --bd:rgba(255,255,255,.07);--bd2:rgba(255,255,255,.13);
   --txt:#e8edf5;--txt2:#8892a4;--txt3:#4e5a6e;
   --sh:0 4px 24px rgba(0,0,0,.4);--sh-sm:0 2px 8px rgba(0,0,0,.3);
@@ -112,15 +113,17 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);min-height:10
 .t-row:hover{background:var(--surface2);}
 .td{padding:9px 7px;font-size:12.5px;color:var(--txt);}
 .td-rank{color:var(--txt3);font-family:var(--mono);font-size:11px;}
+.td-thumb{display:flex;align-items:center;justify-content:center;width:40px;height:30px;background:var(--surface3);border-radius:var(--r-sm);overflow:hidden;}
+.td-thumb img{max-width:90%;max-height:90%;object-fit:contain;}
 .td-name{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .pill{display:inline-flex;align-items:center;font-size:9.5px;font-family:var(--mono);padding:3px 8px;border-radius:20px;border:1px solid;white-space:nowrap;}
 .bar-track{height:4px;background:var(--surface3);border-radius:3px;overflow:hidden;margin-top:4px;}
 .bar-fill{height:100%;border-radius:3px;transition:width .5s var(--ease);}
 
-/* Weapons cols */
-.t-cols-weapon{grid-template-columns:36px 1fr 90px 130px 80px 110px;}
-/* Vehicles cols */
-.t-cols-vehicle{grid-template-columns:36px 1fr 80px 80px 80px 90px;}
+/* Weapons cols (썸네일 컬럼용 46px 분할 추가) */
+.t-cols-weapon{grid-template-columns:36px 46px 1fr 90px 130px 110px;}
+/* Vehicles cols (썸네일 컬럼용 46px 분할 추가) */
+.t-cols-vehicle{grid-template-columns:36px 46px 1fr 80px 80px 100px;}
 
 /* Detail */
 .detail-view{animation:fadeUp .3s var(--ease);}
@@ -263,9 +266,9 @@ const VEHICLE_TYPES = ['Sedan','Truck','Buggy','UAZ','Motorcycle','Boat','Other'
 
 // ── State ─────────────────────────────────────────────
 let state = {
-  tab: 'weapon',       // 'weapon' | 'vehicle'
-  view: 'grid',        // 'grid' | 'table'
-  category: 'all',     // 'all' | type string
+  tab: 'weapon',       
+  view: 'grid',        
+  category: 'all',     
   search: '',
   detailId: null
 };
@@ -337,13 +340,11 @@ function render() {
 }
 
 function renderSidebar() {
-  // Tabs
   document.getElementById('tabWeapon').classList.toggle('active', state.tab === 'weapon');
   document.getElementById('tabVehicle').classList.toggle('active', state.tab === 'vehicle');
   document.getElementById('vGrid').classList.toggle('active', state.view === 'grid');
   document.getElementById('vTable').classList.toggle('active', state.view === 'table');
 
-  // Category list
   const pool  = getPool();
   const types = typeList();
   let html = `
@@ -362,7 +363,6 @@ function renderSidebar() {
   });
   document.getElementById('catList').innerHTML = html;
 
-  // Footer stats
   document.getElementById('sbFoot').innerHTML = `
     <div class="sf-item"><div class="sf-val">${DB.arms.length}</div><div class="sf-lbl">WEAPONS</div></div>
     <div class="sf-item"><div class="sf-val">${DB.vehicles.length}</div><div class="sf-lbl">VEHICLES</div></div>
@@ -409,11 +409,11 @@ function renderList() {
     });
     html += `</div>`;
   } else {
-    // Table
+    // Table 뷰 로직 (썸네일 컬럼 추가 반영)
     const cols = isWeapon ? 't-cols-weapon' : 't-cols-vehicle';
     const heads = isWeapon
-      ? ['#','NAME','AMMO','FIRE MODE','DMG','']
-      : ['#','NAME','TYPE','SEATS','SPEED','DURABILITY'];
+      ? ['#','IMG','NAME','AMMO','FIRE MODE','DMG']
+      : ['#','IMG','NAME','TYPE','SEATS','SPEED'];
     html += `<div class="table-wrap">
       <div class="t-head ${cols}">${heads.map(h=>`<div class="th">${h}</div>`).join('')}</div>`;
     filtered.forEach((item, idx) => {
@@ -421,6 +421,7 @@ function renderList() {
       if (isWeapon) {
         html += `<div class="t-row ${cols}" onclick="viewDetail('${item.id}')">
           <div class="td td-rank">${idx+1}</div>
+          <div class="td"><div class="td-thumb"><img src="${imgSrc(item.image)}" onerror="this.style.display='none'"></div></div>
           <div class="td td-name">${item.name}</div>
           <div class="td"><span class="pill" style="color:var(--green);background:rgba(56,184,112,.1);border-color:rgba(56,184,112,.2)">${intro.bullet}</span></div>
           <div class="td" style="font-size:11px;font-family:var(--mono);color:var(--txt2)">${intro.fireMethod}</div>
@@ -428,19 +429,15 @@ function renderList() {
             <div style="font-weight:700;font-family:var(--mono)">${intro.hurt}</div>
             <div class="bar-track"><div class="bar-fill" style="width:${intro.hurt}%;background:var(--accent)"></div></div>
           </div>
-          <div class="td"></div>
         </div>`;
       } else {
         html += `<div class="t-row ${cols}" onclick="viewDetail('${item.id}')">
           <div class="td td-rank">${idx+1}</div>
+          <div class="td"><div class="td-thumb"><img src="${imgSrc(item.image)}" onerror="this.style.display='none'"></div></div>
           <div class="td td-name">${item.name}</div>
           <div class="td"><span class="pill" style="color:var(--blue);background:rgba(68,136,232,.1);border-color:rgba(68,136,232,.2)">${intro.vehicle}</span></div>
           <div class="td" style="font-family:var(--mono);font-weight:700">${intro.seat}</div>
           <div class="td" style="font-family:var(--mono);font-weight:700">${intro.top}<span style="font-size:10px;color:var(--txt3);margin-left:2px">km/h</span></div>
-          <div class="td">
-            <div style="font-family:var(--mono);font-weight:700">${intro.blood}</div>
-            <div class="bar-track"><div class="bar-fill" style="width:${Math.min(parseInt(intro.blood)/25,100)}%;background:var(--orange)"></div></div>
-          </div>
         </div>`;
       }
     });
@@ -463,6 +460,7 @@ function renderDetail(item) {
     <span class="sep">/</span>
     <span class="cur">${item.name}</span>`;
 
+  // 1. Maps 데이터 파싱 및 칩 렌더링
   const mapHtml = (item.map || []).map(obj => {
     const [name, val] = Object.entries(obj)[0];
     return `<span class="map-chip ${val ? 'yes' : 'no'}"><span class="map-dot"></span>${name.replace(/_/g,' ')}</span>`;
@@ -470,6 +468,7 @@ function renderDetail(item) {
 
   let bodyHtml = '';
   if (isWeapon) {
+    // 2. Weapons 탭용 Attachments 데이터 파싱 및 칩 렌더링
     const attachHtml = (item.arms_accessories || []).map(a =>
       `<span class="attach-chip"><img src="${imgSrc(a.accessories)}" onerror="this.style.display='none'" alt="">${a.accessories_name}</span>`
     ).join('');
@@ -507,11 +506,11 @@ function renderDetail(item) {
       <div class="trait-row">
         <div class="trait-card">
           <div class="trait-lbl" style="color:var(--green)">Advantages</div>
-          <div class="trait-txt">${intro.advantages}</div>
+          <div class="trait-txt">${intro.advantages || 'N/A'}</div>
         </div>
         <div class="trait-card bad">
           <div class="trait-lbl" style="color:var(--red)">Disadvantages</div>
-          <div class="trait-txt">${intro.disadvantages}</div>
+          <div class="trait-txt">${intro.disadvantages || 'N/A'}</div>
         </div>
       </div>
       ${attachHtml ? `<div class="sec-lbl">Attachments</div><div class="attach-grid">${attachHtml}</div>` : ''}`;
@@ -534,7 +533,7 @@ function renderDetail(item) {
         </div>
         <div class="stat-card">
           <div class="sc-lbl">Fuel Capacity</div>
-          <div class="sc-val">${Number(intro.fuel).toLocaleString()}</div>
+          <div class="sc-val">${Number(intro.fuel || 0).toLocaleString()}</div>
         </div>
       </div>`;
   }
