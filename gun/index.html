@@ -147,7 +147,7 @@ body { background: var(--bg); color: var(--txt); font-family: var(--sans); min-h
 .crate-card:hover::before { background: var(--accent); }
 
 .card-visual { height: 100px; border-radius: var(--radius-sm); background: linear-gradient(150deg, var(--surface2), var(--surface3)); display: flex; align-items: center; justify-content: center; margin-bottom: 12px; position: relative; overflow: hidden; }
-.card-visual svg { width: 52%; height: 52%; opacity: .9; }
+.card-visual img { max-height: 70px; max-width: 90%; object-fit: contain; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); }
 .type-badge { position: absolute; top: 8px; left: 8px; font-size: 9px; font-family: var(--mono); font-weight: 700; letter-spacing: .04em; padding: 3px 7px; border-radius: 6px; background: var(--surface); border: 1px solid; }
 
 .cc-name { font-size: 13.5px; font-weight: 600; color: var(--txt); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -159,24 +159,20 @@ body { background: var(--bg); color: var(--txt); font-family: var(--sans); min-h
 .grid-empty p { font-size: 12.5px; font-family: var(--mono); }
 
 .table-wrap { background: var(--surface); border: 1px solid var(--bd); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--sh-sm); }
-.t-head { display: grid; grid-template-columns: 40px 1fr 100px 100px 150px 100px; padding: 0 14px; border-bottom: 1px solid var(--bd); background: var(--surface2); }
+.t-head { display: grid; grid-template-columns: 40px 1fr 100px 150px 100px 120px; padding: 0 14px; border-bottom: 1px solid var(--bd); background: var(--surface2); }
 .th { font-size: 9px; font-family: var(--mono); color: var(--txt3); letter-spacing: .1em; text-transform: uppercase; padding: 10px 7px; }
 .th.r { text-align: right; }
-.t-row { display: grid; grid-template-columns: 40px 1fr 100px 100px 150px 100px; padding: 0 14px; border-bottom: 1px solid var(--bd); align-items: center; transition: background .12s; cursor: pointer; }
+.t-row { display: grid; grid-template-columns: 40px 1fr 100px 150px 100px 120px; padding: 0 14px; border-bottom: 1px solid var(--bd); align-items: center; transition: background .12s; cursor: pointer; }
 .t-row:last-child { border-bottom: none; }
 .t-row:hover { background: var(--surface2); }
 .td { padding: 9px 7px; }
 .td-rank { font-size: 11px; font-family: var(--mono); color: var(--txt3); }
 .td-name { font-size: 13px; color: var(--txt); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .grade-pill { display: inline-flex; align-items: center; gap: 4px; font-size: 9px; font-family: var(--mono); font-weight: 500; padding: 3px 8px; border-radius: 20px; border: 1px solid; white-space: nowrap; }
-.grade-pill-dot { width: 5px; height: 5px; border-radius: 50%; }
 .td-prob { text-align: right; }
 .prob-num { font-size: 13.5px; font-weight: 700; color: var(--txt); font-family: var(--mono); }
-.prob-unit { font-size: 9.5px; color: var(--txt3); margin-left: 1px; }
 .bar-track { height: 5px; background: var(--surface3); border-radius: 3px; overflow: hidden; }
 .bar-fill { height: 100%; border-radius: 3px; transition: width .5s var(--ease); }
-.td-cumul { text-align: right; font-size: 11px; font-family: var(--mono); color: var(--txt3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.t-empty { padding: 36px; text-align: center; font-size: 12px; color: var(--txt3); font-family: var(--mono); }
 
 .detail-view { animation: fadeUp .3s var(--ease); }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
@@ -186,8 +182,8 @@ body { background: var(--bg); color: var(--txt); font-family: var(--sans); min-h
 .back-btn svg { width: 11px; height: 11px; }
 
 .detail-head { margin-bottom: 18px; display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
-.detail-visual { width: 92px; height: 92px; border-radius: var(--radius-md); flex-shrink: 0; background: linear-gradient(150deg, var(--surface2), var(--surface3)); display: flex; align-items: center; justify-content: center; border: 1px solid var(--bd); }
-.detail-visual svg { width: 56%; height: 56%; }
+.detail-visual { width: 120px; height: 120px; border-radius: var(--radius-md); flex-shrink: 0; background: linear-gradient(150deg, var(--surface2), var(--surface3)); display: flex; align-items: center; justify-content: center; border: 1px solid var(--bd); }
+.detail-visual img { max-height: 90px; max-width: 90%; object-fit: contain; }
 .detail-eyebrow { font-size: 10px; font-family: var(--mono); color: var(--accent); letter-spacing: .15em; text-transform: uppercase; margin-bottom: 4px; }
 .detail-title { font-size: 23px; font-weight: 700; color: var(--txt); letter-spacing: -.02em; line-height: 1.2; }
 .detail-meta { font-size: 12px; font-family: var(--mono); color: var(--txt3); margin-top: 6px; display: flex; gap: 10px; flex-wrap: wrap; }
@@ -208,12 +204,6 @@ body { background: var(--bg); color: var(--txt); font-family: var(--sans); min-h
 .trait-card.bad { border-left-color: var(--red); }
 .trait-lbl { font-size: 9px; font-family: var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--txt3); margin-bottom: 6px; }
 .trait-txt { font-size: 13px; color: var(--txt2); line-height: 1.55; }
-
-.grade-sum-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
-.gs-chip { display: flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 11px; padding: 6px 13px; border-radius: 20px; border: 1px solid; font-weight: 500; user-select: none; }
-.gs-chip.dim { opacity: .42; border-color: var(--bd2); color: var(--txt3); }
-.gs-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-.detail-tablewrap { margin-top: 4px; }
 
 .loading-overlay { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 14px; z-index: 9999; transition: opacity .4s; }
 .loading-overlay.hide { opacity: 0; pointer-events: none; }
@@ -241,6 +231,7 @@ body { background: var(--bg); color: var(--txt); font-family: var(--sans); min-h
   .detail-title { font-size: 19px; }
 }
 </style>
+<script src="gun-data.js"></script>
 </head>
 <body>
 
@@ -300,5 +291,236 @@ body { background: var(--bg); color: var(--txt); font-family: var(--sans); min-h
   </div>
 </div>
 
+<script>
+// 메인 UI 처리 컨트롤러 스크립트
+let weaponDatabase = [];
+let searchQuery = "";
+let currentView = "grid"; 
+let activeItemId = null;
+
+const loadingOverlay = document.getElementById('loadingOverlay');
+const contentContainer = document.getElementById('content');
+const searchInput = document.getElementById('searchInput');
+const datasetNav = document.getElementById('datasetNav');
+const liveCount = document.getElementById('liveCount');
+const sbStats = document.getElementById('sbStats');
+const themeBtn = document.getElementById('themeBtn');
+const breadcrumb = document.getElementById('breadcrumb');
+
+window.addEventListener('DOMContentLoaded', () => {
+  // gun-data.js에 정의된 전역 객체(pubgWeaponData) 바인딩
+  if (typeof pubgWeaponData !== 'undefined' && pubgWeaponData.arms) {
+    weaponDatabase = pubgWeaponData.arms;
+  } else {
+    console.error("gun-data.js 파일을 로드하지 못했거나 데이터 포맷이 다릅니다.");
+  }
+
+  // 0.3초 후 로딩 화면 제거 및 인터페이스 활성화
+  setTimeout(() => {
+    loadingOverlay.classList.add('hide');
+  }, 300);
+
+  initUI();
+  renderSidebar();
+  renderContent();
+});
+
+function initUI() {
+  themeBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+  themeBtn.addEventListener('click', () => {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', newTheme);
+  });
+
+  searchInput.addEventListener('input', (e) => {
+    searchQuery = e.target.value.toLowerCase();
+    activeItemId = null; 
+    renderContent();
+  });
+
+  document.getElementById('viewGridBtn').classList.add('active');
+  document.getElementById('viewGridBtn').addEventListener('click', () => switchView('grid'));
+  document.getElementById('viewTableBtn').addEventListener('click', () => switchView('table'));
+}
+
+function switchView(view) {
+  currentView = view;
+  document.getElementById('viewGridBtn').classList.toggle('active', view === 'grid');
+  document.getElementById('viewTableBtn').classList.toggle('active', view === 'table');
+  activeItemId = null;
+  renderContent();
+}
+
+function renderSidebar() {
+  datasetNav.innerHTML = `
+    <button class="nav-item active">
+      <span class="nav-label">All Weapons</span>
+      <span class="nav-count">${weaponDatabase.length}</span>
+    </button>
+  `;
+
+  sbStats.innerHTML = `
+    <div class="sbs-item"><div class="sbs-val">${weaponDatabase.length}</div><div class="sbs-lbl">WEAPONS</div></div>
+    <div class="sbs-item"><div class="sbs-val">5.56mm</div><div class="sbs-lbl">MAIN AMMO</div></div>
+  `;
+}
+
+function renderContent() {
+  const filteredData = weaponDatabase.filter(item => item.name.toLowerCase().includes(searchQuery));
+  liveCount.innerText = `${filteredData.length} results`;
+
+  if (activeItemId) {
+    const selectedItem = weaponDatabase.find(i => i.id === activeItemId);
+    if (selectedItem) {
+      renderDetailView(selectedItem);
+      return;
+    }
+  }
+
+  breadcrumb.innerHTML = `<span class="cur">Weapon Database</span>`;
+  
+  let html = `
+    <div class="all-view">
+      <div class="view-header">
+        <div>
+          <h2 class="view-title">Arsenal Overview</h2>
+          <p class="view-sub">PUBG MOBILE LIVE SPECIFICATION</p>
+        </div>
+      </div>
+  `;
+
+  if (filteredData.length === 0) {
+    html += `
+      <div class="grid-empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <p>No weapons match your search query.</p>
+      </div>
+    `;
+  } else if (currentView === 'grid') {
+    html += `<div class="crate-grid">`;
+    filteredData.forEach(item => {
+      html += `
+        <div class="crate-card" onclick="viewDetail('${item.id}')">
+          <div class="card-visual">
+            <span class="type-badge" style="color:var(--accent-lt); border-color:var(--accent-bd);">${item.type.replace('_', ' ')}</span>
+            <img src="${item.image}" alt="${item.name}" onerror="this.src='https://img.icons8.com/color/96/m16-assault-rifle.png'">
+          </div>
+          <div class="cc-name">${item.name}</div>
+          <div class="cc-meta">
+            <span>Ammo: <span class="hl">${item.arms_introduce.bullet}</span></span>
+            <span>Power: <span class="hl">${item.arms_introduce.hurt}</span></span>
+          </div>
+        </div>
+      `;
+    });
+    html += `</div>`;
+  } else {
+    html += `
+      <div class="table-wrap">
+        <div class="t-head">
+          <div class="th font-mono">ID</div>
+          <div class="th font-mono">NAME</div>
+          <div class="th font-mono">AMMO</div>
+          <div class="th font-mono">FIRE MODE</div>
+          <div class="th font-mono r">DAMAGE</div>
+          <div class="th"></div>
+        </div>
+    `;
+    filteredData.forEach((item, index) => {
+      html += `
+        <div class="t-row" onclick="viewDetail('${item.id}')">
+          <div class="td td-rank">${index + 1}</div>
+          <div class="td td-name">${item.name}</div>
+          <div class="td"><span class="grade-pill" style="color:var(--green); background:rgba(56,184,112,0.1); border-color:rgba(56,184,112,0.2);">${item.arms_introduce.bullet}</span></div>
+          <div class="td font-mono" style="font-size:11px; color:var(--txt2);">${item.arms_introduce.fireMethod}</div>
+          <div class="td td-prob"><span class="prob-num">${item.arms_introduce.hurt}</span></div>
+          <div class="td">
+            <div class="bar-track"><div class="bar-fill" style="width: ${item.arms_introduce.hurt}%; background: var(--accent);"></div></div>
+          </div>
+        </div>
+      `;
+    });
+    html += `</div>`;
+  }
+
+  html += `</div>`;
+  contentContainer.innerHTML = html;
+}
+
+function viewDetail(id) {
+  activeItemId = id;
+  renderContent();
+}
+
+function closeDetail() {
+  activeItemId = null;
+  renderContent();
+}
+
+function renderDetailView(item) {
+  const intro = item.arms_introduce;
+  breadcrumb.innerHTML = `<span class="cur" onclick="closeDetail()" style="cursor:pointer;">Weapons</span> <span class="sep">/</span> <span class="cur">${item.name}</span>`;
+
+  contentContainer.innerHTML = `
+    <div class="detail-view">
+      <button class="back-btn" onclick="closeDetail()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> Back to Database
+      </button>
+
+      <div class="detail-head">
+        <div class="detail-visual">
+          <img src="${item.image}" alt="${item.name}" onerror="this.src='https://img.icons8.com/color/96/m16-assault-rifle.png'">
+        </div>
+        <div>
+          <div class="detail-eyebrow">${item.type.replace('_', ' ')}</div>
+          <h2 class="detail-title">${item.name} Specification</h2>
+          <div class="detail-meta">
+            <span>Ammo Type: <span class="hl">${intro.bullet}</span></span>
+            <span>Fire Mode: <span class="hl">${intro.fireMethod}</span></span>
+            <span>Magazine: <span class="hl">${intro.magazine} Rnds</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-lbl">Weapon Performance Ratings</div>
+      <div class="stat-cards">
+        <div class="stat-card">
+          <div class="sc-lbl">Damage Power</div>
+          <div class="sc-val">${intro.hurt}<span>/100</span></div>
+          <div class="bar-track sc-bar"><div class="bar-fill" style="width: ${intro.hurt}%; background: var(--red);"></div></div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-lbl">Rate of Fire</div>
+          <div class="sc-val">${intro.rateoffire}<span>/100</span></div>
+          <div class="bar-track sc-bar"><div class="bar-fill" style="width: ${intro.rateoffire}%; background: var(--purple);"></div></div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-lbl">Effective Range</div>
+          <div class="sc-val">${intro.range}<span>/100</span></div>
+          <div class="bar-track sc-bar"><div class="bar-fill" style="width: ${intro.range}%; background: var(--blue);"></div></div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-lbl">Stability & Precision</div>
+          <div class="sc-val">${intro.precise}<span>/100</span></div>
+          <div class="bar-track sc-bar"><div class="bar-fill" style="width: ${intro.precise}%; background: var(--green);"></div></div>
+        </div>
+      </div>
+
+      <div class="section-lbl">Tactical Evaluation</div>
+      <div class="trait-row">
+        <div class="trait-card">
+          <div class="trait-lbl" style="color:var(--green)">ADVANTAGES / STRENGTHS</div>
+          <div class="trait-txt">${intro.advantages}</div>
+        </div>
+        <div class="trait-card bad">
+          <div class="trait-lbl" style="color:var(--red)">DISADVANTAGES / WEAKNESSES</div>
+          <div class="trait-txt">${intro.disadvantages}</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+</script>
 </body>
 </html>
