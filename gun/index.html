@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arsenal Database — PUBG Mobile Wiki</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --accent:#6c63ff;--accent-lt:#9d97ff;--accent-bg:rgba(108,99,255,.1);--accent-bd:rgba(108,99,255,.28);
+  --red:#f04e4e;--pink:#e060a8;--purple:#9660dc;--blue:#4488e8;--green:#38b870;--orange:#f08030;
+  --sans:'DM Sans',sans-serif;--mono:'DM Mono',monospace;--ease:cubic-bezier(.4,0,.2,1);
+  --r-sm:8px;--r-md:12px;--r-lg:16px;
+}
+[data-theme="dark"]{
+  --bg:#0e1117;--surface:#161b24;--surface2:#1c2333;--surface3:#232d42;
+  --bd:rgba(255,255,255,.07);--bd2:rgba(255,255,255,.13);
+  --txt:#e8edf5;--txt2:#8892a4;--txt3:#4e5a6e;
+  --sh:0 4px 24px rgba(0,0,0,.4);--sh-sm:0 2px 8px rgba(0,0,0,.3);
+}
+[data-theme="light"]{
+  --bg:#f2f4f8;--surface:#fff;--surface2:#f8f9fc;--surface3:#edf0f7;
+  --bd:rgba(0,0,0,.07);--bd2:rgba(0,0,0,.13);
+  --txt:#111827;--txt2:#6b7280;--txt3:#9ca3af;
+  --sh:0 4px 24px rgba(0,0,0,.08);--sh-sm:0 2px 8px rgba(0,0,0,.05);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--txt);font-family:var(--sans);min-height:100vh;transition:background .3s,color .3s;}
+.layout{display:flex;min-height:100vh;}
+
+/* ── Sidebar ── */
+.sidebar{width:268px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--bd);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;}
+.sb-head{padding:18px 16px 14px;border-bottom:1px solid var(--bd);}
+.logo-row{display:flex;align-items:center;gap:10px;}
+.logo-icon{width:34px;height:34px;background:var(--accent-bg);border:1px solid var(--accent-bd);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;}
+.logo-icon svg{width:18px;height:18px;color:var(--accent);}
+.logo-name{font-size:15px;font-weight:700;letter-spacing:-.02em;}
+.logo-sub{font-size:9px;color:var(--txt3);font-family:var(--mono);letter-spacing:.1em;}
+.sb-search{padding:10px 12px;border-bottom:1px solid var(--bd);}
+.search-inner{display:flex;align-items:center;gap:7px;background:var(--surface2);border:1px solid var(--bd);border-radius:var(--r-sm);padding:7px 10px;transition:border-color .2s;}
+.search-inner:focus-within{border-color:var(--accent);}
+.search-inner svg{width:13px;height:13px;color:var(--txt3);flex-shrink:0;}
+.search-inner input{background:none;border:none;outline:none;font-family:var(--sans);font-size:12.5px;color:var(--txt);width:100%;}
+.search-inner input::placeholder{color:var(--txt3);}
+/* 탭 4개 */
+.sb-tabs{display:flex;padding:8px 8px;gap:3px;border-bottom:1px solid var(--bd);flex-wrap:wrap;}
+.tab{flex:1;min-width:56px;padding:6px 2px;font-size:10.5px;font-weight:500;color:var(--txt3);background:none;border:1px solid transparent;border-radius:var(--r-sm);cursor:pointer;text-align:center;font-family:var(--sans);transition:all .15s;white-space:nowrap;}
+.tab:hover{color:var(--txt2);}
+.tab.active{background:var(--accent-bg);border-color:var(--accent-bd);color:var(--accent-lt);}
+.sb-view{display:flex;gap:4px;padding:8px 12px 4px;}
+.vbtn{flex:1;font-size:11px;font-family:var(--mono);padding:5px 0;border:1px solid var(--bd);border-radius:var(--r-sm);background:transparent;color:var(--txt3);cursor:pointer;transition:all .15s;text-align:center;}
+.vbtn:hover{color:var(--txt2);}
+.vbtn.active{background:var(--accent-bg);border-color:var(--accent-bd);color:var(--accent-lt);}
+/* maps탭일 때 view 토글 숨김 */
+.sb-view.hidden{display:none;}
+.sb-list{flex:1;overflow-y:auto;padding:4px 0 8px;scrollbar-width:thin;scrollbar-color:var(--bd2) transparent;}
+.sb-list::-webkit-scrollbar{width:3px;}
+.sb-list::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:3px;}
+.sb-sec{font-size:9px;color:var(--txt3);font-family:var(--mono);letter-spacing:.12em;text-transform:uppercase;padding:10px 16px 5px;}
+.cat-item{display:flex;align-items:center;gap:8px;padding:7px 16px;cursor:pointer;position:relative;transition:background .12s;}
+.cat-item:hover{background:var(--surface2);}
+.cat-item.active{background:var(--accent-bg);}
+.cat-item.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);border-radius:0 2px 2px 0;}
+.cat-name{font-size:12.5px;color:var(--txt2);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cat-item.active .cat-name{color:var(--accent-lt);font-weight:500;}
+.cat-cnt{font-size:10px;font-family:var(--mono);color:var(--txt3);}
+.cat-item.active .cat-cnt{color:var(--accent);}
+.sb-foot{padding:12px 16px;border-top:1px solid var(--bd);display:flex;justify-content:space-between;}
+.sf-item{text-align:center;}
+.sf-val{font-size:17px;font-weight:700;}
+.sf-lbl{font-size:9px;color:var(--txt3);font-family:var(--mono);}
+
+/* ── Main ── */
+.main{flex:1;margin-left:268px;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{background:var(--surface);border-bottom:1px solid var(--bd);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.breadcrumb{font-size:13px;color:var(--txt2);display:flex;align-items:center;gap:5px;}
+.breadcrumb .cur{color:var(--txt);font-weight:500;}
+.breadcrumb .sep{color:var(--txt3);}
+.topbar-r{display:flex;align-items:center;gap:8px;}
+.live-badge{display:flex;align-items:center;gap:6px;font-size:11px;font-family:var(--mono);color:var(--green);background:rgba(56,184,112,.1);border:1px solid rgba(56,184,112,.2);border-radius:20px;padding:4px 11px;}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 2s ease infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.4;}}
+.icon-btn{width:34px;height:34px;border-radius:var(--r-sm);border:1px solid var(--bd2);background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--txt2);transition:all .15s;}
+.icon-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg);}
+.icon-btn svg{width:15px;height:15px;}
+.content{flex:1;padding:24px;}
+
+/* ── Grid ── */
+.view-header{margin-bottom:16px;}
+.view-title{font-size:20px;font-weight:700;letter-spacing:-.02em;}
+.view-sub{font-size:11px;color:var(--txt3);font-family:var(--mono);margin-top:2px;}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:11px;}
+.card{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r-md);padding:13px;cursor:pointer;position:relative;overflow:hidden;transition:all .18s var(--ease);}
+.card:hover{border-color:var(--accent-bd);transform:translateY(-2px);box-shadow:var(--sh-sm);}
+.card-img{height:96px;border-radius:var(--r-sm);background:linear-gradient(150deg,var(--surface2),var(--surface3));display:flex;align-items:center;justify-content:center;margin-bottom:11px;position:relative;}
+.card-img img{max-height:68px;max-width:88%;object-fit:contain;}
+.type-badge{position:absolute;top:7px;left:7px;font-size:9px;font-family:var(--mono);font-weight:700;padding:2px 7px;border-radius:5px;background:var(--surface);border:1px solid var(--accent-bd);color:var(--accent-lt);}
+.card-name{font-size:13px;font-weight:600;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.card-meta{font-size:10.5px;font-family:var(--mono);color:var(--txt3);display:flex;gap:8px;}
+.card-meta .hl{color:var(--accent-lt);}
+.grid-empty{padding:60px 20px;text-align:center;color:var(--txt3);grid-column:1/-1;}
+
+/* ── Table ── */
+.table-wrap{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r-lg);overflow:hidden;}
+.t-head,.t-row{display:grid;padding:0 14px;align-items:center;}
+.t-head{background:var(--surface2);border-bottom:1px solid var(--bd);}
+.th{font-size:9px;font-family:var(--mono);color:var(--txt3);letter-spacing:.1em;text-transform:uppercase;padding:10px 7px;}
+.t-row{border-bottom:1px solid var(--bd);cursor:pointer;transition:background .12s;}
+.t-row:last-child{border-bottom:none;}
+.t-row:hover{background:var(--surface2);}
+.td{padding:9px 7px;font-size:12.5px;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.td-rank{color:var(--txt3);font-family:var(--mono);font-size:11px;}
+.td-img-box{width:50px;height:32px;background:var(--surface2);border:1px solid var(--bd);border-radius:4px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.td-img-box img{max-width:90%;max-height:90%;object-fit:contain;}
+.pill{display:inline-flex;align-items:center;font-size:9.5px;font-family:var(--mono);padding:3px 8px;border-radius:20px;border:1px solid;white-space:nowrap;}
+.bar-track{height:4px;background:var(--surface3);border-radius:3px;overflow:hidden;margin-top:4px;}
+.bar-fill{height:100%;border-radius:3px;}
+.t-cols-weapon{grid-template-columns:35px 60px 1.2fr 1fr 1.2fr 1fr;}
+.t-cols-vehicle{grid-template-columns:35px 60px 1.2fr 1fr 1fr 1fr;}
+.t-cols-attach{grid-template-columns:35px 60px 1.2fr 1fr 1fr;}
+
+/* ── Maps grid ── */
+.maps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+.map-card{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r-lg);overflow:hidden;cursor:pointer;transition:all .18s var(--ease);}
+.map-card:hover{border-color:var(--accent-bd);transform:translateY(-2px);box-shadow:var(--sh);}
+.map-card-img{height:160px;background:var(--surface2);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}
+.map-card-img img{width:100%;height:100%;object-fit:cover;}
+.map-card-body{padding:14px;}
+.map-card-name{font-size:15px;font-weight:700;margin-bottom:6px;}
+.map-card-size{font-size:11px;font-family:var(--mono);color:var(--txt3);margin-bottom:10px;}
+.map-tags{display:flex;flex-wrap:wrap;gap:5px;}
+.map-tag{font-size:9.5px;font-family:var(--mono);padding:3px 9px;border-radius:20px;border:1px solid;font-weight:600;}
+.map-tag.on{color:var(--green);background:rgba(56,184,112,.1);border-color:rgba(56,184,112,.25);}
+.map-tag.off{color:var(--txt3);background:var(--surface2);border-color:var(--bd);}
+
+/* ── Detail ── */
+.detail-view{animation:fadeUp .3s var(--ease);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--txt2);background:none;border:none;cursor:pointer;margin-bottom:14px;padding:4px 0;font-family:var(--sans);transition:color .15s;}
+.back-btn:hover{color:var(--accent-lt);}
+.detail-head{margin-bottom:16px;display:flex;gap:16px;align-items:center;flex-wrap:wrap;}
+.detail-img{width:116px;height:116px;border-radius:var(--r-md);background:linear-gradient(150deg,var(--surface2),var(--surface3));display:flex;align-items:center;justify-content:center;border:1px solid var(--bd);flex-shrink:0;}
+.detail-img img{max-height:86px;max-width:88%;object-fit:contain;}
+.detail-eyebrow{font-size:10px;font-family:var(--mono);color:var(--accent);letter-spacing:.15em;text-transform:uppercase;margin-bottom:4px;}
+.detail-title{font-size:22px;font-weight:700;letter-spacing:-.02em;}
+.detail-meta{font-size:12px;font-family:var(--mono);color:var(--txt3);margin-top:6px;display:flex;gap:10px;flex-wrap:wrap;}
+.detail-meta .hl{color:var(--accent-lt);}
+.sec-lbl{font-size:10px;font-family:var(--mono);color:var(--txt3);letter-spacing:.1em;text-transform:uppercase;margin:20px 0 9px;}
+.sec-lbl:first-of-type{margin-top:0;}
+.stat-cards{display:flex;gap:8px;flex-wrap:wrap;}
+.stat-card{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r-md);padding:13px 15px;flex:1;min-width:110px;}
+.sc-lbl{font-size:9px;color:var(--txt3);font-family:var(--mono);text-transform:uppercase;margin-bottom:6px;}
+.sc-val{font-size:20px;font-weight:700;}
+.sc-val span{font-size:10px;color:var(--txt3);font-weight:400;margin-left:2px;}
+.sc-bar{margin-top:8px;}
+.trait-row{display:flex;gap:9px;flex-wrap:wrap;}
+.trait-card{flex:1;min-width:220px;background:var(--surface);border:1px solid var(--bd);border-left:3px solid var(--green);border-radius:var(--r-md);padding:12px 14px;}
+.trait-card.bad{border-left-color:var(--red);}
+.trait-lbl{font-size:9px;font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--txt3);margin-bottom:6px;}
+.trait-txt{font-size:12.5px;color:var(--txt2);line-height:1.55;}
+.map-grid{display:flex;flex-wrap:wrap;gap:6px;}
+.map-chip{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-family:var(--mono);padding:4px 10px;border-radius:20px;border:1px solid;}
+.map-chip.yes{color:var(--green);background:rgba(56,184,112,.1);border-color:rgba(56,184,112,.25);}
+.map-chip.no{color:var(--txt3);background:var(--surface2);border-color:var(--bd);}
+.map-dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
+.attach-grid{display:flex;flex-wrap:wrap;gap:6px;}
+.attach-chip{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-family:var(--mono);padding:5px 10px;border-radius:var(--r-sm);border:1px solid var(--bd);background:var(--surface2);color:var(--txt2);}
+.attach-chip img{width:22px;height:22px;object-fit:contain;}
+/* Map detail 이미지 */
+.map-detail-img{width:100%;max-height:320px;border-radius:var(--r-md);object-fit:cover;border:1px solid var(--bd);margin-bottom:4px;}
+.map-feature-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;}
+.map-feat{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r-md);padding:12px 14px;text-align:center;}
+.map-feat-val{font-size:18px;font-weight:700;}
+.map-feat-val.on{color:var(--green);}
+.map-feat-val.off{color:var(--txt3);}
+.map-feat-lbl{font-size:9px;font-family:var(--mono);color:var(--txt3);letter-spacing:.08em;text-transform:uppercase;margin-top:4px;}
+
+/* ── Loading ── */
+.loading-overlay{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity .3s;}
+.loading-overlay.hide{opacity:0;pointer-events:none;}
+
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;}}
+</style>
+<script src="gun-data.js"></script>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div style="font-family:var(--mono);font-size:13px;color:var(--txt2);">LOADING DATA...</div>
+</div>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sb-head">
+      <div class="logo-row">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.4"/>
+            <line x1="12" y1="1.5" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22.5"/>
+            <line x1="1.5" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22.5" y2="12"/>
+          </svg>
+        </div>
+        <div>
+          <div class="logo-name">Arsenal Database</div>
+          <div class="logo-sub">PUBG MOBILE WIKI</div>
+        </div>
+      </div>
+    </div>
+    <div class="sb-search">
+      <div class="search-inner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7.5"/><line x1="21" y1="21" x2="16.2" y2="16.2"/></svg>
+        <input type="text" id="searchInput" placeholder="Search by name…">
+      </div>
+    </div>
+    <div class="sb-tabs">
+      <button class="tab active" id="tabWeapon"     onclick="switchTab('weapon')">Weapons</button>
+      <button class="tab"        id="tabVehicle"    onclick="switchTab('vehicle')">Vehicles</button>
+      <button class="tab"        id="tabAttachment" onclick="switchTab('attachment')">Attach.</button>
+      <button class="tab"        id="tabMap"        onclick="switchTab('map')">Maps</button>
+    </div>
+    <div class="sb-view" id="sbView">
+      <button class="vbtn active" id="vGrid"  onclick="switchView('grid')">Grid</button>
+      <button class="vbtn"        id="vTable" onclick="switchView('table')">Table</button>
+    </div>
+    <div class="sb-list" id="catList"></div>
+    <div class="sb-foot" id="sbFoot"></div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="breadcrumb" id="breadcrumb"></div>
+      <div class="topbar-r">
+        <div class="live-badge"><span class="live-dot"></span><span id="liveCount">0 results</span></div>
+        <button class="icon-btn" id="themeBtn" aria-label="Toggle theme">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="content" id="content"></div>
+  </div>
+</div>
+
+<script>
+// ── Data ────────────────────────────────────────────────
+let DB = { arms:[], vehicles:[], attachments:[], maps:[] };
+let TYPES = { weapon:[], vehicle:[], attachment:[] };
+
+let state = {
+  tab: 'weapon',
+  view: 'grid',
+  category: 'all',
+  search: '',
+  detailId: null
+};
+
+function imgSrc(path) {
+  if (!path) return '';
+  return path.startsWith('/') ? '.' + path : path;
+}
+
+// ── Boot ────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  if (typeof pubgWeaponData !== 'undefined') {
+    DB.arms        = pubgWeaponData.arms        || [];
+    DB.vehicles    = pubgWeaponData.vehicles    || [];
+    DB.attachments = pubgWeaponData.attachments || [];
+    DB.maps        = pubgWeaponData.maps        || [];
+    TYPES.weapon     = [...new Set(DB.arms.map(i => i.type).filter(Boolean))];
+    TYPES.vehicle    = [...new Set(DB.vehicles.map(i => i.type).filter(Boolean))];
+    TYPES.attachment = [...new Set(DB.attachments.map(i => i.type).filter(Boolean))];
+  }
+  document.getElementById('loadingOverlay').classList.add('hide');
+  document.getElementById('searchInput').addEventListener('input', e => {
+    state.search = e.target.value.toLowerCase();
+    state.detailId = null;
+    render();
+  });
+  document.getElementById('themeBtn').addEventListener('click', () => {
+    const t = document.documentElement.getAttribute('data-theme');
+    document.documentElement.setAttribute('data-theme', t === 'dark' ? 'light' : 'dark');
+  });
+  render();
+});
+
+// ── Switches ────────────────────────────────────────────
+function switchTab(tab) {
+  state.tab = tab; state.category = 'all'; state.detailId = null;
+  state.search = ''; document.getElementById('searchInput').value = '';
+  // Maps 탭은 grid/table 토글 숨김
+  document.getElementById('sbView').classList.toggle('hidden', tab === 'map');
+  render();
+}
+function switchView(view) {
+  state.view = view; state.detailId = null; render();
+}
+function setCategory(cat) {
+  state.category = cat; state.detailId = null; render();
+}
+function viewDetail(id) { state.detailId = id; render(); }
+function closeDetail()  { state.detailId = null; render(); }
+
+// ── Pool helpers ─────────────────────────────────────────
+function getPool() {
+  if (state.tab === 'weapon')     return DB.arms;
+  if (state.tab === 'vehicle')    return DB.vehicles;
+  if (state.tab === 'attachment') return DB.attachments;
+  return DB.maps;
+}
+function getFiltered() {
+  return getPool().filter(item => {
+    const matchCat = state.category === 'all' || item.type === state.category;
+    const matchQ   = (item.name || '').toLowerCase().includes(state.search);
+    return matchCat && matchQ;
+  });
+}
+
+// ── Render ───────────────────────────────────────────────
+function render() {
+  renderSidebar();
+  if (state.detailId) {
+    const item = getPool().find(i => i.id === state.detailId);
+    if (item) { renderDetail(item); return; }
+  }
+  if (state.tab === 'map') { renderMaps(); return; }
+  renderList();
+}
+
+function renderSidebar() {
+  ['Weapon','Vehicle','Attachment','Map'].forEach(t => {
+    document.getElementById('tab'+t).classList.toggle('active', state.tab === t.toLowerCase());
+  });
+  document.getElementById('vGrid').classList.toggle('active',  state.view === 'grid');
+  document.getElementById('vTable').classList.toggle('active', state.view === 'table');
+
+  const pool  = getPool();
+  const types = TYPES[state.tab] || [];
+
+  const tabLabel = { weapon:'Weapons', vehicle:'Vehicles', attachment:'Attachments', map:'Maps' }[state.tab];
+
+  let html = `
+    <div class="cat-item ${state.category==='all'?'active':''}" onclick="setCategory('all')">
+      <span class="cat-name">All ${tabLabel}</span>
+      <span class="cat-cnt">${pool.length}</span>
+    </div>`;
+
+  if (types.length) {
+    html += `<div class="sb-sec">Category</div>`;
+    types.forEach(t => {
+      const cnt = pool.filter(i => i.type === t).length;
+      html += `<div class="cat-item ${state.category===t?'active':''}" onclick="setCategory('${t}')">
+        <span class="cat-name">${t.replace(/_/g,' ')}</span>
+        <span class="cat-cnt">${cnt}</span>
+      </div>`;
+    });
+  }
+
+  document.getElementById('catList').innerHTML = html;
+  document.getElementById('sbFoot').innerHTML = `
+    <div class="sf-item"><div class="sf-val">${DB.arms.length}</div><div class="sf-lbl">WEAPONS</div></div>
+    <div class="sf-item"><div class="sf-val">${DB.vehicles.length}</div><div class="sf-lbl">VEHICLES</div></div>
+    <div class="sf-item"><div class="sf-val">${DB.attachments.length}</div><div class="sf-lbl">ATTACH</div></div>
+    <div class="sf-item"><div class="sf-val">${DB.maps.length}</div><div class="sf-lbl">MAPS</div></div>`;
+}
+
+// ── Maps 전용 카드 뷰 ────────────────────────────────────
+function renderMaps() {
+  const filtered = getFiltered();
+  document.getElementById('liveCount').innerText = `${filtered.length} results`;
+  document.getElementById('breadcrumb').innerHTML = `<span class="cur">Maps</span>`;
+
+  let html = `<div style="animation:fadeUp .3s var(--ease)">
+    <div class="view-header">
+      <h2 class="view-title">Battle Maps</h2>
+      <p class="view-sub">PUBG MOBILE · ${filtered.length} MAPS</p>
+    </div>
+    <div class="maps-grid">`;
+
+  filtered.forEach(item => {
+    const tags = [
+      ['Ranked',    item.Ranked],
+      ['Unranked',  item.Unranked],
+      ['Recall',    item.recall],
+      ['Shops',     item.shops],
+    ];
+    html += `<div class="map-card" onclick="viewDetail('${item.id}')">
+      <div class="map-card-img">
+        <img src="${imgSrc(item.image_c || item.image)}" alt="${item.name}" onerror="this.style.display='none'">
+      </div>
+      <div class="map-card-body">
+        <div class="map-card-name">${item.name}</div>
+        <div class="map-card-size">${item.size || ''}</div>
+        <div class="map-tags">
+          ${tags.map(([lbl,val])=>`<span class="map-tag ${val?'on':'off'}">${lbl}</span>`).join('')}
+        </div>
+      </div>
+    </div>`;
+  });
+  html += `</div></div>`;
+  document.getElementById('content').innerHTML = html;
+}
+
+// ── List (weapon / vehicle / attachment) ─────────────────
+function renderList() {
+  const filtered = getFiltered();
+  document.getElementById('liveCount').innerText = `${filtered.length} results`;
+
+  const tabLabel = { weapon:'Weapons', vehicle:'Vehicles', attachment:'Attachments' }[state.tab];
+  document.getElementById('breadcrumb').innerHTML = `<span class="cur">${tabLabel}</span>`;
+
+  const isWeapon  = state.tab === 'weapon';
+  const isVehicle = state.tab === 'vehicle';
+  const isAttach  = state.tab === 'attachment';
+
+  const titles = { weapon:'Weapon Arsenal', vehicle:'Vehicle Garage', attachment:'Attachments' };
+  let html = `<div style="animation:fadeUp .3s var(--ease)">
+    <div class="view-header">
+      <h2 class="view-title">${titles[state.tab]}</h2>
+      <p class="view-sub">PUBG MOBILE · ${filtered.length} ITEMS</p>
+    </div>`;
+
+  if (filtered.length === 0) {
+    html += `<div class="card-grid"><div class="grid-empty"><p style="font-family:var(--mono);font-size:12px;color:var(--txt3);">No items found.</p></div></div>`;
+  } else if (state.view === 'grid') {
+    html += `<div class="card-grid">`;
+    filtered.forEach(item => {
+      const intro = item.arms_introduce || {};
+      let meta = '';
+      if (isWeapon)  meta = `<span>Ammo: <span class="hl">${intro.bullet||'-'}</span></span><span>DMG: <span class="hl">${intro.hurt||'-'}</span></span>`;
+      if (isVehicle) meta = `<span>Seats: <span class="hl">${intro.seat||'-'}</span></span><span>${intro.top||'-'} km/h</span>`;
+      if (isAttach)  meta = `<span>${item.type ? item.type.replace(/_/g,' ') : '-'}</span>`;
+      html += `<div class="card" onclick="viewDetail('${item.id}')">
+        <div class="card-img">
+          <span class="type-badge">${(item.type||'').replace(/_/g,' ')}</span>
+          <img src="${imgSrc(item.image)}" alt="${item.name||''}" onerror="this.style.display='none'">
+        </div>
+        <div class="card-name">${item.name||''}</div>
+        <div class="card-meta">${meta}</div>
+      </div>`;
+    });
+    html += `</div>`;
+  } else {
+    // Table
+    let cls='', heads=[];
+    if (isWeapon)  { cls='t-cols-weapon';  heads=['#','IMG','NAME','AMMO','FIRE MODE','DAMAGE']; }
+    if (isVehicle) { cls='t-cols-vehicle'; heads=['#','IMG','NAME','TYPE','SEATS','TOP SPEED']; }
+    if (isAttach)  { cls='t-cols-attach';  heads=['#','IMG','NAME','CATEGORY','EFFECT']; }
+
+    html += `<div class="table-wrap">
+      <div class="t-head ${cls}">${heads.map(h=>`<div class="th">${h}</div>`).join('')}</div>`;
+
+    filtered.forEach((item, idx) => {
+      const intro = item.arms_introduce || {};
+      if (isWeapon) {
+        html += `<div class="t-row ${cls}" onclick="viewDetail('${item.id}')">
+          <div class="td td-rank">${idx+1}</div>
+          <div class="td"><div class="td-img-box"><img src="${imgSrc(item.image)}" alt="" onerror="this.style.display='none'"></div></div>
+          <div class="td" style="font-weight:600">${item.name||''}</div>
+          <div class="td"><span class="pill" style="color:var(--green);background:rgba(56,184,112,.1);border-color:rgba(56,184,112,.2)">${intro.bullet||'-'}</span></div>
+          <div class="td" style="font-size:11px;font-family:var(--mono)">${intro.fireMethod||'-'}</div>
+          <div class="td">
+            <div style="font-family:var(--mono);font-weight:700">${intro.hurt||0}</div>
+            <div class="bar-track"><div class="bar-fill" style="width:${intro.hurt||0}%;background:var(--accent)"></div></div>
+          </div>
+        </div>`;
+      } else if (isVehicle) {
+        html += `<div class="t-row ${cls}" onclick="viewDetail('${item.id}')">
+          <div class="td td-rank">${idx+1}</div>
+          <div class="td"><div class="td-img-box"><img src="${imgSrc(item.image)}" alt="" onerror="this.style.display='none'"></div></div>
+          <div class="td" style="font-weight:600">${item.name||''}</div>
+          <div class="td"><span class="pill" style="color:var(--blue);background:rgba(68,136,232,.1);border-color:rgba(68,136,232,.2)">${item.type||'-'}</span></div>
+          <div class="td" style="font-family:var(--mono);font-weight:700">${intro.seat||0} seats</div>
+          <div class="td" style="font-family:var(--mono);font-weight:700">${intro.top||0} <span style="font-size:10px;color:var(--txt3)">km/h</span></div>
+        </div>`;
+      } else {
+        html += `<div class="t-row ${cls}" onclick="viewDetail('${item.id}')">
+          <div class="td td-rank">${idx+1}</div>
+          <div class="td"><div class="td-img-box"><img src="${imgSrc(item.image)}" alt="" onerror="this.style.display='none'"></div></div>
+          <div class="td" style="font-weight:600">${item.name||''}</div>
+          <div class="td"><span class="pill" style="color:var(--purple);background:rgba(150,96,220,.1);border-color:rgba(150,96,220,.2)">${(item.type||'-').replace(/_/g,' ')}</span></div>
+          <div class="td" style="font-size:11px;font-family:var(--mono);color:var(--txt2)">${intro.skilldec||'-'}</div>
+        </div>`;
+      }
+    });
+    html += `</div>`;
+  }
+  html += `</div>`;
+  document.getElementById('content').innerHTML = html;
+}
+
+// ── Detail ───────────────────────────────────────────────
+function renderDetail(item) {
+  const intro    = item.arms_introduce || {};
+  const isWeapon = state.tab === 'weapon';
+  const isVehicle= state.tab === 'vehicle';
+  const isAttach = state.tab === 'attachment';
+  const isMap    = state.tab === 'map';
+
+  const tabLabel = { weapon:'Weapons', vehicle:'Vehicles', attachment:'Attachments', map:'Maps' }[state.tab];
+  document.getElementById('liveCount').innerText = '1 result';
+  document.getElementById('breadcrumb').innerHTML = `
+    <span class="cur" onclick="closeDetail()" style="cursor:pointer">${tabLabel}</span>
+    <span class="sep">/</span>
+    <span class="cur">${item.name||''}</span>`;
+
+  // 맵 상세
+  if (isMap) {
+    const feats = [
+      {lbl:'Ranked Mode',  val:item.Ranked},
+      {lbl:'Unranked Mode',val:item.Unranked},
+      {lbl:'Recall System',val:item.recall},
+      {lbl:'Shops',        val:item.shops},
+    ];
+    document.getElementById('content').innerHTML = `
+      <div class="detail-view">
+        <button class="back-btn" onclick="closeDetail()">← Back to Maps</button>
+        <img class="map-detail-img" src="${imgSrc(item.image_c || item.image)}" alt="${item.name}" onerror="this.style.display='none'">
+        <div style="margin-bottom:8px">
+          <div class="detail-eyebrow">Battle Map</div>
+          <h2 class="detail-title">${item.name||''}</h2>
+          <div class="detail-meta"><span>Size: <span class="hl">${item.size||'N/A'}</span></span></div>
+        </div>
+        <div class="sec-lbl">Features</div>
+        <div class="map-feature-grid">
+          ${feats.map(f=>`<div class="map-feat">
+            <div class="map-feat-val ${f.val?'on':'off'}">${f.val?'Yes':'No'}</div>
+            <div class="map-feat-lbl">${f.lbl}</div>
+          </div>`).join('')}
+        </div>
+      </div>`;
+    return;
+  }
+
+  // map chips (weapon / vehicle / attachment 공통)
+  const mapHtml = (item.map||[]).map(obj => {
+    const [name, val] = Object.entries(obj)[0];
+    return `<span class="map-chip ${val?'yes':'no'}"><span class="map-dot"></span>${name.replace(/_/g,' ')}</span>`;
+  }).join('');
+
+  let bodyHtml = '';
+
+  if (isWeapon) {
+    const accHtml = (item.arms_accessories||[]).map(a =>
+      `<span class="attach-chip"><img src="${imgSrc(a.accessories)}" onerror="this.style.display='none'" alt="">${a.accessories_name||''}</span>`
+    ).join('');
+    bodyHtml = `
+      <div class="sec-lbl" style="margin-top:0">Performance</div>
+      <div class="stat-cards">
+        <div class="stat-card"><div class="sc-lbl">Damage</div><div class="sc-val">${intro.hurt||0}<span>/100</span></div>
+          <div class="bar-track sc-bar"><div class="bar-fill" style="width:${intro.hurt||0}%;background:var(--red)"></div></div></div>
+        <div class="stat-card"><div class="sc-lbl">Rate of Fire</div><div class="sc-val">${intro.rateoffire||0}<span>/100</span></div>
+          <div class="bar-track sc-bar"><div class="bar-fill" style="width:${intro.rateoffire||0}%;background:var(--purple)"></div></div></div>
+        <div class="stat-card"><div class="sc-lbl">Range</div><div class="sc-val">${intro.range||0}<span>/100</span></div>
+          <div class="bar-track sc-bar"><div class="bar-fill" style="width:${intro.range||0}%;background:var(--blue)"></div></div></div>
+        <div class="stat-card"><div class="sc-lbl">Stability</div><div class="sc-val">${intro.precise||0}<span>/100</span></div>
+          <div class="bar-track sc-bar"><div class="bar-fill" style="width:${intro.precise||0}%;background:var(--green)"></div></div></div>
+        <div class="stat-card"><div class="sc-lbl">Reload</div><div class="sc-val">${intro.loading||0}<span>/100</span></div>
+          <div class="bar-track sc-bar"><div class="bar-fill" style="width:${intro.loading||0}%;background:var(--orange)"></div></div></div>
+      </div>
+      <div class="sec-lbl">Evaluation</div>
+      <div class="trait-row">
+        <div class="trait-card"><div class="trait-lbl" style="color:var(--green)">Advantages</div>
+          <div class="trait-txt">${intro.advantages||'N/A'}</div></div>
+        <div class="trait-card bad"><div class="trait-lbl" style="color:var(--red)">Disadvantages</div>
+          <div class="trait-txt">${intro.disadvantages||'N/A'}</div></div>
+      </div>
+      ${accHtml ? `<div class="sec-lbl">Compatible Attachments</div><div class="attach-grid">${accHtml}</div>` : ''}`;
+  } else if (isVehicle) {
+    bodyHtml = `
+      <div class="sec-lbl" style="margin-top:0">Specs</div>
+      <div class="stat-cards">
+        <div class="stat-card"><div class="sc-lbl">Seats</div><div class="sc-val">${intro.seat||0}<span>pax</span></div></div>
+        <div class="stat-card"><div class="sc-lbl">Top Speed</div><div class="sc-val">${intro.top||0}<span>km/h</span></div></div>
+        <div class="stat-card"><div class="sc-lbl">Durability</div><div class="sc-val">${intro.blood||0}</div>
+          <div class="bar-track sc-bar"><div class="bar-fill" style="width:${Math.min((intro.blood||0)/25,100)}%;background:var(--orange)"></div></div></div>
+        <div class="stat-card"><div class="sc-lbl">Fuel</div><div class="sc-val" style="font-size:14px">${Number(intro.fuel||0).toLocaleString()}</div></div>
+      </div>`;
+  } else if (isAttach) {
+    // 어태치먼트 상세: 호환 무기 목록
+    const compatHtml = (item.attachments_accessories||[]).map(a =>
+      `<span class="attach-chip"><img src="${imgSrc(a.accessories)}" onerror="this.style.display='none'" alt="">${a.accessories_name||''}</span>`
+    ).join('');
+    bodyHtml = `
+      <div class="sec-lbl" style="margin-top:0">Effect</div>
+      <div class="trait-row">
+        <div class="trait-card">
+          <div class="trait-lbl" style="color:var(--accent)">Description</div>
+          <div class="trait-txt">${intro.skilldec||'N/A'}</div>
+        </div>
+      </div>
+      ${compatHtml ? `<div class="sec-lbl">Compatible Weapons</div><div class="attach-grid">${compatHtml}</div>` : ''}`;
+  }
+
+  const metaHtml = isWeapon
+    ? `<span>Ammo: <span class="hl">${intro.bullet||'-'}</span></span>
+       <span>Fire: <span class="hl">${intro.fireMethod||'-'}</span></span>
+       <span>Mag: <span class="hl">${intro.magazine||'-'} rnd</span></span>`
+    : isVehicle
+    ? `<span>Type: <span class="hl">${item.type||'-'}</span></span>
+       <span>Seats: <span class="hl">${intro.seat||'-'}</span></span>`
+    : `<span>Type: <span class="hl">${(item.type||'-').replace(/_/g,' ')}</span></span>`;
+
+  document.getElementById('content').innerHTML = `
+    <div class="detail-view">
+      <button class="back-btn" onclick="closeDetail()">← Back to ${tabLabel}</button>
+      <div class="detail-head">
+        <div class="detail-img">
+          <img src="${imgSrc(item.image || intro.arms_c)}" alt="${item.name||''}" onerror="this.style.display='none'">
+        </div>
+        <div>
+          <div class="detail-eyebrow">${(item.type||'').replace(/_/g,' ')}</div>
+          <h2 class="detail-title">${item.name||''}</h2>
+          <div class="detail-meta">${metaHtml}</div>
+        </div>
+      </div>
+      ${bodyHtml}
+      ${mapHtml ? `<div class="sec-lbl">Map Availability</div><div class="map-grid">${mapHtml}</div>` : ''}
+    </div>`;
+}
+</script>
+</body>
+</html>
