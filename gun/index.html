@@ -524,3 +524,36 @@ function renderDetailView(item) {
 </script>
 </body>
 </html>
+
+  <script src="gun-data.js"></script>
+
+  <script>
+    // 문서가 모두 로드되면 실행
+    document.addEventListener("DOMContentLoaded", () => {
+      // 1. gun-data.js의 pubgWeaponData 내 'arms' 배열에서 M416 찾기
+      const weapons = pubgWeaponData.arms;
+      const m416 = weapons.find(w => w.name === "M416");
+      
+      if (!m416) return;
+      
+      // 편의를 위해 arms_introduce 객체를 선택
+      const intro = m416.arms_introduce;
+
+      // 2. HTML 요소들에 데이터 집어넣기 (예시)
+      // 본인 HTML 구조의 id나 클래스명에 맞춰 변수를 대입해줍니다.
+      document.getElementById("weapon-name").innerText = m416.name;
+      document.getElementById("bullet-type").innerText = intro.bullet;
+      
+      // 연사력 스탯 바와 텍스트 바인딩 예시
+      const rofVal = document.getElementById("rof-val"); // 수치 표시 구역
+      const rofBar = document.getElementById("rof-bar"); // bar-fill 구역
+      if(rofVal) rofVal.innerHTML = `${intro.rateoffire}<span>/100</span>`;
+      if(rofBar) rofBar.style.width = `${intro.rateoffire}%`;
+      
+      // 장점 및 단점 매핑
+      document.getElementById("advantages-txt").innerText = intro.advantages;
+      document.getElementById("disadvantages-txt").innerText = intro.disadvantages;
+    });
+  </script>
+</body>
+
