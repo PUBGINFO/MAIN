@@ -1,7 +1,5 @@
 // gun-data.js
 const pubgWeaponData = {
-
-
   "arms": [
     {
       "id": "2020031501",
@@ -2758,8 +2756,5714 @@ const pubgWeaponData = {
           "accessories_name": "Laser Sight"
         },
         {
-          "accessories": "/wiki-assets
-
-          ;
-
-export default pubgWeaponData;
+          "accessories": "/wiki-assets/attachments/DJ_Mid_EQ.png",
+          "accessories_name": "Extended Quickdraw Mag (SMG, Pistols)"
+        },
+        {
+          "accessories": "/wiki-assets/attachments/QT_A.png",
+          "accessories_name": "Tactical Stock (Rifles, SMG)"
+        }
+      ]
+    },
+    {
+      "id": "2020032101",
+      "type": "Pistol",
+      "type_index": "7",
+      "name": "Flare Gun",
+      "image": "/wiki-assets/weapons/flaregun_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/weapons/flaregun.png",
+        "name": "Flare Gun",
+        "bullet": "Flare",
+        "fireMethod": "Single-Shot",
+        "magazine": "1",
+        "advantages": "Summons a vehicle and weapon air drop.",
+        "disadvantages": "Exposes your location when used. It is difficult to obtain and only a few of them will spawn on the map.",
+        "hurt": "1",
+        "rateoffire": "34",
+        "loading": "63",
+        "range": "0",
+        "precise": "0"
+      },
+      "map": [
+        {
+          "Erangel": 1
+        },
+        {
+          "Miramar": 1
+        },
+        {
+          "Vikendi": 1
+        },
+        {
+          "Sanhok": 0
+        },
+        {
+          "Karakin": 0
+        },
+        {
+          "Nusa": 0
+        },
+        {
+          "Livik": 0
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ],
+      "arms_accessories": []
+    },
+    {
+      "id": "2020032102",
+      "type": "Pistol",
+      "type_index": "7",
+      "name": "R45",
+      "image": "/wiki-assets/weapons/r45_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/weapons/r45.png",
+        "name": "R45",
+        "bullet": ".45 ACP",
+        "fireMethod": "Single-Shot",
+        "magazine": "6",
+        "advantages": "None",
+        "disadvantages": "Suitable in few situations.",
+        "hurt": "65",
+        "rateoffire": "64",
+        "loading": "64",
+        "range": "46",
+        "precise": "67"
+      },
+      "map": [
+        {
+          "Erangel": 0
+        },
+        {
+          "Miramar": 1
+        },
+        {
+          "Vikendi": 0
+        },
+        {
+          "Sanhok": 1
+        },
+        {
+          "Karakin": 0
+        },
+        {
+          "Nusa": 1
+        },
+        {
+          "Livik": 1
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ],
+      "arms_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments/MZJ_HD.png",
+          "accessories_name": "Red Dot Sight"
+        },
+        {
+          "accessories": "/wiki-assets/attachments/Attach_Lower_LaserPointer.png",
+          "accessories_name": "Laser Sight"
+        }
+      ]
+    },
+    {
+      "id": "2020032103",
+      "type": "Pistol",
+      "type_index": "7",
+      "name": "Desert Eagle",
+      "image": "/wiki-assets/weapons/deserteagle_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/weapons/deserteagle.png",
+        "name": "Desert Eagle",
+        "bullet": ".45 ACP",
+        "fireMethod": "Single-Shot",
+        "magazine": "7",
+        "advantages": "Single shots deal high damage.",
+        "disadvantages": "Large recoil that results in a long firing interval. It is poor for drawn out battles.",
+        "hurt": "62",
+        "rateoffire": "69",
+        "loading": "73",
+        "range": "46",
+        "precise": "62"
+      },
+      "map": [
+        {
+          "Erangel": 1
+        },
+        {
+          "Miramar": 1
+        },
+        {
+          "Vikendi": 1
+        },
+        {
+          "Sanhok": 1
+        },
+        {
+          "Karakin": 1
+        },
+        {
+          "Nusa": 1
+        },
+        {
+          "Livik": 1
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ],
+      "arms_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments/MZJ_HD.png",
+          "accessories_name": "Red Dot Sight"
+        },
+        {
+          "accessories": "/wiki-assets/attachments/Attach_Lower_LaserPointer.png",
+          "accessories_name": "Laser Sight"
+        },
+        {
+          "accessories": "/wiki-assets/attachments/DJ_Mid_EQ.png",
+          "accessories_name": "Extended Quickdraw Mag (SMG, Pistols)"
+        }
+      ]
+    },
+    {
+      "id": "2020032104",
+      "type": "Pistol",
+      "type_index": "7",
+      "name": "Skorpion",
+      "image": "/wiki-assets/weapons/skorpion_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/weapons/skorpion.png",
+        "name": "Skorpion",
+        "bullet": "9mm",
+        "fireMethod": "Single-Shot/Full-Auto",
+        "magazine": "20",
+        "advantages": "Large magazine capacity.",
+        "disadvantages": "Highly reliant on attachments.",
+        "hurt": "22",
+        "rateoffire": "92",
+        "loading": "65",
+        "range": "36",
+        "precise": "62"
+      },
+      "map": [
+        {
+          "Erangel": 1
+        },
+        {
+          "Miramar": 1
+        },
+        {
+          "Vikendi": 1
+        },
+        {
+          "Sanhok": 0
+        },
+        {
+          "Karakin": 1
+        },
+        {
+          "Nusa": 1
+        },
+        {
+          "Livik": 1
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ],
+      "arms_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments/MZJ_HD.png",
+          "accessories_name": "Red Dot Sight"
+        },
+        {
+          "accessories": "/wiki-assets/attachments/QK_Small_Suppressor.png",
+          "accessories_name": "Suppressor (SMG, Pistols)"
+        },
+        {
+          "accessories": "/wiki-assets/attachments/Attach_Lower_LaserPointer.png",
+          "accessories_name": "Laser Sight"
+        },
+        {
+          "accessories": "/wiki-assets/attachments/DJ_Mid_EQ.png",
+          "accessories_name": "Extended Quickdraw Mag (SMG, Pistols)"
+        }
+      ]
+    },
+    {
+      "id": "2020032105",
+      "type": "Pistol",
+      "type_index": "7",
+      "name": "R1895",
+      "image": "/wiki-assets/weapons/r1895_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/weapons/r1895.png",
+        "name": "R1895",
+        "bullet": "7.62mm",
+        "fireMethod": "Single-Shot",
+        "magazine": "7",
+        "advantages": "Single shots deal high damage.",
+        "disadvantages": "Slow reload speed. It is unable to equip a scope and engage in mid to long range battles.",
+        "hurt": "64",
+        "rateoffire": "69",
+        "loading": "86",
+        "range": "46",
+        "precise": "67"
+      },
+      "map": [
+        {
+          "Erangel": 1
+        },
+        {
+          "Miramar": 0
+        },
+        {
+          "Vikendi": 1
+        },
+        {
+          "Sanhok": 1
+        },
+        {
+          "Karakin": 0
+        },
+        {
+          "Nusa": 1
+        },
+        {
+          "Livik": 1
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ],
+      "arms_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments/QK_Small_Suppressor.png",
+          "accessories_name": "Suppressor (SMG, Pistols)"
+        }
+      ]
+    },
+    {
+      "id": "2020032106",
+      "type": "Pistol",
+      "type_index": "7",
+      "name": "P92",
+      "image": "/wiki-assets/weapons/p92_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/weapons/p92.png",
+        "name": "P92",
+        "bullet": "9mm",
+        "fireMethod": "Single-Shot",
+        "magazine": "15",
+        "advantages": "None",
+        "disadvantages": "Suitable in few situations.",
+        "hurt": "34",
+        "rateoffire": "84",
+        "loading": "73",
+        "range": "22",
+        "precise": "62"
+      },
+      "map": [
+        {
+          "Erangel": 1
+        },
+        {
+          "Miramar": 1
+        },
+        {
+          "Vikendi": 1
+        },
+        {
+          "Sanhok": 1
+        },
+        {
+          "Karakin": 1
+        },
+        {
+          "Nusa": 1
+        },
+        {
+          "Livik": 1
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ],
+      "arms_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments/MZJ_HD.png",
+          "accessories_name": "Red Dot Sight"
+        },
+        {
+          "accessories": "/wiki-assets/attachments/QK_Small_Suppressor.png",
+          "accessories_name": "Suppressor (SMG, Pistols)"
+        },
+        {
+          "accessories": "/wiki-assets/attachments/Attach_Lower_LaserPointer.png",
+          "accessories_name": "Laser Sight"
+        },
+        {
+          "accessories": "/wiki-assets/attachments/DJ_Mid_EQ.png",
+          "accessories_name": "Extended Quickdraw Mag (SMG, Pistols)"
+        }
+      ]
+    },
+    {
+      "id": "2020032107",
+      "type": "Pistol",
+      "type_index": "7",
+      "name": "P18C",
+      "image": "/wiki-assets/weapons/p18c_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/weapons/p18c.png",
+        "name": "P18C",
+        "bullet": "9mm",
+        "fireMethod": "Single-Shot/Full-Auto",
+        "magazine": "17",
+        "advantages": "Fires in rapid succession and is compatible with an Extended Quickdraw Mag.",
+        "disadvantages": "Deals relatively low damage.",
+        "hurt": "22",
+        "rateoffire": "95",
+        "loading": "73",
+        "range": "13",
+        "precise": "62"
+      },
+      "map": [
+        {
+          "Erangel": 1
+        },
+        {
+          "Miramar": 1
+        },
+        {
+          "Vikendi": 1
+        },
+        {
+          "Sanhok": 1
+        },
+        {
+          "Karakin": 0
+        },
+        {
+          "Nusa": 1
+        },
+        {
+          "Livik": 1
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ],
+      "arms_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments/MZJ_HD.png",
+          "accessories_name": "Red Dot Sight"
+        },
+        {
+          "accessories": "/wiki-assets/attachments/QK_Small_Suppressor.png",
+          "accessories_name": "Suppressor (SMG, Pistols)"
+        },
+        {
+          "accessories": "/wiki-assets/attachments/Attach_Lower_LaserPointer.png",
+          "accessories_name": "Laser Sight"
+        },
+        {
+          "accessories": "/wiki-assets/attachments/DJ_Mid_EQ.png",
+          "accessories_name": "Extended Quickdraw Mag (SMG, Pistols)"
+        }
+      ]
+    },
+    {
+      "id": "2020032108",
+      "type": "Pistol",
+      "type_index": "7",
+      "name": "P1911",
+      "image": "/wiki-assets/weapons/p1911_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/weapons/p1911.png",
+        "name": "P1911",
+        "bullet": ".45 ACP",
+        "fireMethod": "Single-Shot",
+        "magazine": "7",
+        "advantages": "None",
+        "disadvantages": "Suitable in few situations.",
+        "hurt": "38",
+        "rateoffire": "82",
+        "loading": "72",
+        "range": "22",
+        "precise": "62"
+      },
+      "map": [
+        {
+          "Erangel": 1
+        },
+        {
+          "Miramar": 1
+        },
+        {
+          "Vikendi": 1
+        },
+        {
+          "Sanhok": 1
+        },
+        {
+          "Karakin": 0
+        },
+        {
+          "Nusa": 1
+        },
+        {
+          "Livik": 1
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ],
+      "arms_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments/MZJ_HD.png",
+          "accessories_name": "Red Dot Sight"
+        },
+        {
+          "accessories": "/wiki-assets/attachments/QK_Small_Suppressor.png",
+          "accessories_name": "Suppressor (SMG, Pistols)"
+        },
+        {
+          "accessories": "/wiki-assets/attachments/Attach_Lower_LaserPointer.png",
+          "accessories_name": "Laser Sight"
+        },
+        {
+          "accessories": "/wiki-assets/attachments/DJ_Mid_EQ.png",
+          "accessories_name": "Extended Quickdraw Mag (SMG, Pistols)"
+        }
+      ]
+    },
+    {
+      "id": "2020032109",
+      "type": "Pistol",
+      "type_index": "7",
+      "name": "Sawed-off",
+      "image": "/wiki-assets/weapons/sawedoff_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/weapons/sawedoff.png",
+        "name": "Sawed-off",
+        "bullet": "12 Gauge",
+        "fireMethod": "Single-Shot",
+        "magazine": "2",
+        "advantages": "Deals relatively high pistol damage.",
+        "disadvantages": "Needs to be reloaded frequently.",
+        "hurt": "80",
+        "rateoffire": "69",
+        "loading": "60",
+        "range": "22",
+        "precise": "67"
+      },
+      "map": [
+        {
+          "Erangel": 0
+        },
+        {
+          "Miramar": 1
+        },
+        {
+          "Vikendi": 0
+        },
+        {
+          "Sanhok": 1
+        },
+        {
+          "Karakin": 0
+        },
+        {
+          "Nusa": 1
+        },
+        {
+          "Livik": 1
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ],
+      "arms_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments/QK_Choke.png",
+          "accessories_name": "Choke (SG)"
+        }
+      ]
+    },
+    {
+      "id": "2020032110",
+      "type": "Pistol",
+      "type_index": "7",
+      "name": "DUAL MP7",
+      "image": "/wiki-assets/weapons/MP7_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/weapons/MP7.png",
+        "name": "DUAL MP7",
+        "bullet": "9mm",
+        "fireMethod": "Full-Auto/Two Shot Burst",
+        "magazine": "40",
+        "advantages": "SUITABLE FOR CLOSE COMBAT, FAST RATE OF FIRE, HIGH AMMO CAPACITY",
+        "disadvantages": "CANNOT AIM DOWN SIGHTS, HARD TO USE AT LONG RANGE, RELOADS SLOWLY",
+        "hurt": "22",
+        "rateoffire": "100",
+        "loading": "53",
+        "range": "22",
+        "precise": "85"
+      },
+      "map": [
+        {
+          "Erangel": 1
+        },
+        {
+          "Miramar": 1
+        },
+        {
+          "Vikendi": 1
+        },
+        {
+          "Sanhok": 1
+        },
+        {
+          "Karakin": 1
+        },
+        {
+          "Nusa": 1
+        },
+        {
+          "Livik": 1
+        },
+        {
+          "Air_Drop_Weapon": 1
+        }
+      ],
+      "arms_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments/QK_Mid_Suppressor1.png",
+          "accessories_name": "Extended Mag (SMG, Pistols)"
+        },
+        {
+          "accessories": "/wiki-assets/attachments/QK_Mid_Suppressor2.png",
+          "accessories_name": "Quickdraw Mag (SMG, Pistols)"
+        },
+        {
+          "accessories": "/wiki-assets/attachments/DJ_Mid_EQ.png",
+          "accessories_name": "Extended Quickdraw Mag (SMG, Pistols)"
+        },
+        {
+          "accessories": "/wiki-assets/attachments/QK_Mid_Suppressor.png",
+          "accessories_name": "Suppressor (SMG, Pistols)"
+        },
+        {
+          "accessories": "/wiki-assets/attachments/Attach_Lower_LaserPointer.png",
+          "accessories_name": "Laser Sight"
+        }
+      ]
+    },
+    {
+      "id": "2020032201",
+      "type": "Crossbow",
+      "type_index": "8",
+      "name": "Crossbow",
+      "image": "/wiki-assets/weapons/crossbow_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/weapons/crossbow.png",
+        "name": "Crossbow",
+        "bullet": "Bolt",
+        "fireMethod": "Single-Shot",
+        "magazine": "1",
+        "advantages": "Fires shots silently and does not expose your location.",
+        "disadvantages": "Significant Arrow drop. Arrows need to be reloaded frequently, and each reload is slow.",
+        "hurt": "85",
+        "rateoffire": "90",
+        "loading": "62",
+        "range": "30",
+        "precise": "27"
+      },
+      "map": [
+        {
+          "Erangel": 1
+        },
+        {
+          "Miramar": 1
+        },
+        {
+          "Vikendi": 1
+        },
+        {
+          "Sanhok": 1
+        },
+        {
+          "Karakin": 1
+        },
+        {
+          "Nusa": 0
+        },
+        {
+          "Livik": 1
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ],
+      "arms_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments/MZJ_HD.png",
+          "accessories_name": "Red Dot Sight"
+        },
+        {
+          "accessories": "/wiki-assets/attachments/MZJ_3X.png",
+          "accessories_name": "3x Scope"
+        },
+        {
+          "accessories": "/wiki-assets/attachments/MZJ_4X.png",
+          "accessories_name": "4x Scope"
+        },
+        {
+          "accessories": "/wiki-assets/attachments/MZJ_6X.png",
+          "accessories_name": "6x Scope"
+        },
+        {
+          "accessories": "/wiki-assets/attachments/DJ_Crossbow_Q.png",
+          "accessories_name": "Quiver (Crossbow)"
+        }
+      ]
+    },
+    {
+      "id": "2020032202",
+      "type": "Crossbow",
+      "type_index": "8",
+      "name": "Tactical Crossbow",
+      "image": "/wiki-assets/weapons/crossbowv2_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/weapons/crossbowv2.png",
+        "name": "Tactical Crossbow",
+        "bullet": "Bolt",
+        "fireMethod": "Single-Shot",
+        "magazine": "1",
+        "advantages": "Uses 2 types of ammo. Fire bolts can deal continuous damage and have relatively long range.",
+        "disadvantages": "Slow reload speed. It has poor combat capability in close quarters.",
+        "hurt": "85",
+        "rateoffire": "90",
+        "loading": "69",
+        "range": "30",
+        "precise": "27"
+      },
+      "map": [
+        {
+          "Erangel": 0
+        },
+        {
+          "Miramar": 0
+        },
+        {
+          "Vikendi": 0
+        },
+        {
+          "Sanhok": 0
+        },
+        {
+          "Karakin": 0
+        },
+        {
+          "Nusa": 1
+        },
+        {
+          "Livik": 0
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ],
+      "arms_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments/MZJ_HD.png",
+          "accessories_name": "Red Dot Sight"
+        },
+        {
+          "accessories": "/wiki-assets/attachments/MZJ_3X.png",
+          "accessories_name": "3x Scope"
+        },
+        {
+          "accessories": "/wiki-assets/attachments/MZJ_4X.png",
+          "accessories_name": "4x Scope"
+        },
+        {
+          "accessories": "/wiki-assets/attachments/MZJ_6X.png",
+          "accessories_name": "6x Scope"
+        },
+        {
+          "accessories": "/wiki-assets/attachments/DJ_Crossbow_Q.png",
+          "accessories_name": "Quiver (Crossbow)"
+        }
+      ]
+    },
+    {
+      "id": "2020032301",
+      "type": "Melee_Weapon",
+      "type_index": "9",
+      "name": "Machete",
+      "image": "/wiki-assets/weapons/machete_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/weapons/machete.png",
+        "name": "Machete",
+        "bullet": "",
+        "fireMethod": "-",
+        "magazine": "-",
+        "advantages": "Can be thrown silently.",
+        "disadvantages": "Suitable in few situations.",
+        "hurt": "60",
+        "rateoffire": "34",
+        "loading": "0",
+        "range": "0",
+        "precise": "0"
+      },
+      "map": [
+        {
+          "Erangel": 1
+        },
+        {
+          "Miramar": 1
+        },
+        {
+          "Vikendi": 1
+        },
+        {
+          "Sanhok": 1
+        },
+        {
+          "Karakin": 1
+        },
+        {
+          "Nusa": 1
+        },
+        {
+          "Livik": 1
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ],
+      "arms_accessories": []
+    },
+    {
+      "id": "2020032304",
+      "type": "Melee_Weapon",
+      "type_index": "9",
+      "name": "Pan",
+      "image": "/wiki-assets/weapons/pan_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/weapons/pan.png",
+        "name": "Pan",
+        "bullet": "",
+        "fireMethod": "-",
+        "magazine": "-",
+        "advantages": "Blocks enemy gunfire and can be thrown silently.",
+        "disadvantages": "Exposes your location when Ghillie Suit is equipped.",
+        "hurt": "80",
+        "rateoffire": "34",
+        "loading": "0",
+        "range": "0",
+        "precise": "0"
+      },
+      "map": [
+        {
+          "Erangel": 1
+        },
+        {
+          "Miramar": 1
+        },
+        {
+          "Vikendi": 1
+        },
+        {
+          "Sanhok": 1
+        },
+        {
+          "Karakin": 1
+        },
+        {
+          "Nusa": 1
+        },
+        {
+          "Livik": 1
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ],
+      "arms_accessories": []
+    },
+    {
+      "id": "Dagger",
+      "type": "Melee_Weapon",
+      "type_index": "9",
+      "name": "Dagger",
+      "image": "/wiki-assets/weapons/bishou_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/weapons/bishou.png",
+        "name": "Dagger",
+        "bullet": "",
+        "fireMethod": "-",
+        "magazine": "-",
+        "advantages": "The dagger has exceptional attack speed,",
+        "disadvantages": "but its attack range is also limited.",
+        "hurt": "90",
+        "rateoffire": "40",
+        "loading": "0",
+        "range": "0",
+        "precise": "0"
+      },
+      "map": [
+        {
+          "Erangel": 1
+        },
+        {
+          "Miramar": 1
+        },
+        {
+          "Vikendi": 1
+        },
+        {
+          "Sanhok": 1
+        },
+        {
+          "Karakin": 1
+        },
+        {
+          "Nusa": 1
+        },
+        {
+          "Livik": 1
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ],
+      "arms_accessories": []
+    }
+  ],
+  "attachments": [
+    {
+      "id": "2023060701",
+      "type": "Muzzle_Rifle",
+      "type_index": "1",
+      "name": "Choke (SG)",
+      "image": "/wiki-assets/attachments/Icon_QK_Choke_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_QK_Choke.png",
+        "name": "Choke (SG)",
+        "magazine": "5",
+        "skilldec": "Reduces shotgun spread."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/S686.png",
+          "accessories_name": "S686"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/S1897.png",
+          "accessories_name": "S1897"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M1014.png",
+          "accessories_name": "M1014"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Sawed-off_Shotgun.png",
+          "accessories_name": "Sawed-off Shotgun"
+        }
+      ]
+    },
+    {
+      "id": "2023060702",
+      "type": "Muzzle_Rifle",
+      "type_index": "1",
+      "name": "Compensator (SMG)",
+      "image": "/wiki-assets/attachments/Icon_QK_Mid_Compensator_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_QK_Mid_Compensator.png",
+        "name": "Compensator (SMG)",
+        "magazine": "8",
+        "skilldec": "Reduces horizontal recoil and vertical recoil."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/UZI.png",
+          "accessories_name": "UZI"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/UMP9.png",
+          "accessories_name": "UMP45"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Vector.png",
+          "accessories_name": "Vector"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/PP19.png",
+          "accessories_name": "PP19"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/MP5K.png",
+          "accessories_name": "MP5K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/P90.png",
+          "accessories_name": "P90"
+        }
+      ]
+    },
+    {
+      "id": "2023060703",
+      "type": "Muzzle_Rifle",
+      "type_index": "1",
+      "name": "Compensator (Snipers)",
+      "image": "/wiki-assets/attachments/Icon_QK_Sniper_Compensator_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_QK_Sniper_Compensator.png",
+        "name": "Compensator (Snipers)",
+        "magazine": "12",
+        "skilldec": "Reduces horizontal recoil and vertical recoil."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Kar98K.png",
+          "accessories_name": "Kar98K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M24.png",
+          "accessories_name": "M24"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AWM.png",
+          "accessories_name": "AWM"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SKS.png",
+          "accessories_name": "SKS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mini14.png",
+          "accessories_name": "Mini14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk14.png",
+          "accessories_name": "Mk14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SLR.png",
+          "accessories_name": "SLR"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBU.png",
+          "accessories_name": "QBU"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mosin-Nagant.png",
+          "accessories_name": "Mosin-Nagant"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk12.png",
+          "accessories_name": "Mk12"
+        }
+      ]
+    },
+    {
+      "id": "2023060704",
+      "type": "Muzzle_Rifle",
+      "type_index": "1",
+      "name": "Flash Hider (SMG)",
+      "image": "/wiki-assets/attachments/Icon_QK_Mid_FlashHider_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_QK_Mid_FlashHider.png",
+        "name": "Flash Hider (SMG)",
+        "magazine": "8",
+        "skilldec": "Eliminates muzzle flash and slightly reduces horizontal/vertical recoil."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/UZI.png",
+          "accessories_name": "UZI"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/UMP9.png",
+          "accessories_name": "UMP45"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Vector.png",
+          "accessories_name": "Vector"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/PP19.png",
+          "accessories_name": "PP19"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/MP5K.png",
+          "accessories_name": "MP5K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/P90.png",
+          "accessories_name": "P90"
+        }
+      ]
+    },
+    {
+      "id": "2023060705",
+      "type": "Muzzle_Rifle",
+      "type_index": "1",
+      "name": "Flash Hider (Snipers)",
+      "image": "/wiki-assets/attachments/Icon_QK_Sniper_FlashHider_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_QK_Sniper_FlashHider.png",
+        "name": "Flash Hider (Snipers)",
+        "magazine": "12",
+        "skilldec": "Eliminates muzzle flash and slightly reduces horizontal/vertical recoil."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Kar98K.png",
+          "accessories_name": "Kar98K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M24.png",
+          "accessories_name": "M24"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AWM.png",
+          "accessories_name": "AWM"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SKS.png",
+          "accessories_name": "SKS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mini14.png",
+          "accessories_name": "Mini14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk14.png",
+          "accessories_name": "Mk14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SLR.png",
+          "accessories_name": "SLR"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBU.png",
+          "accessories_name": "QBU"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mosin-Nagant.png",
+          "accessories_name": "Mosin-Nagant"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk12.png",
+          "accessories_name": "Mk12"
+        }
+      ]
+    },
+    {
+      "id": "2023060706",
+      "type": "Muzzle_Rifle",
+      "type_index": "1",
+      "name": "Suppressor (SMG, Pistols)",
+      "image": "/wiki-assets/attachments/Icon_QK_Mid_Suppressor_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_QK_Mid_Suppressor.png",
+        "name": "Suppressor (SMG, Pistols)",
+        "magazine": "15",
+        "skilldec": "Reduces gunshot volume and eliminates muzzle flash."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/UZI.png",
+          "accessories_name": "UZI"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/UMP9.png",
+          "accessories_name": "UMP45"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Vector.png",
+          "accessories_name": "Vector"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Thompson_SMG.png",
+          "accessories_name": "Thompson SMG"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/PP19.png",
+          "accessories_name": "PP19"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/MP5K.png",
+          "accessories_name": "MP5K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/P90.png",
+          "accessories_name": "P90"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/P92.png",
+          "accessories_name": "P92"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/P1911.png",
+          "accessories_name": "P1911"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/R1895.png",
+          "accessories_name": "R1895"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/P18C.png",
+          "accessories_name": "P18C"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Skorpion.png",
+          "accessories_name": "Skorpion"
+        }
+      ]
+    },
+    {
+      "id": "2023060707",
+      "type": "Muzzle_Rifle",
+      "type_index": "1",
+      "name": "Suppressor (Snipers)",
+      "image": "/wiki-assets/attachments/Icon_QK_Sniper_Suppressor_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_QK_Sniper_Suppressor.png",
+        "name": "Suppressor (Snipers)",
+        "magazine": "23",
+        "skilldec": "Reduces gunshot volume and eliminates muzzle flash."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Kar98K.png",
+          "accessories_name": "Kar98K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M24.png",
+          "accessories_name": "M24"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AWM.png",
+          "accessories_name": "AWM"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SKS.png",
+          "accessories_name": "SKS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mini14.png",
+          "accessories_name": "Mini14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk14.png",
+          "accessories_name": "Mk14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SLR.png",
+          "accessories_name": "SLR"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBU.png",
+          "accessories_name": "QBU"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mosin-Nagant.png",
+          "accessories_name": "Mosin-Nagant"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk12.png",
+          "accessories_name": "Mk12"
+        }
+      ]
+    },
+    {
+      "id": "2023060708",
+      "type": "Muzzle_Rifle",
+      "type_index": "1",
+      "name": "Compensator (AR)",
+      "image": "/wiki-assets/attachments/Icon_QK_Large_Compensator_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_QK_Large_Compensator.png",
+        "name": "Compensator (AR)",
+        "magazine": "10",
+        "skilldec": "Reduces horizontal recoil and vertical recoil."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AKM.png",
+          "accessories_name": "AKM"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M16A4.png",
+          "accessories_name": "M16A4"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SCAR-L.png",
+          "accessories_name": "SCAR-L"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M416.png",
+          "accessories_name": "M416"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AUG.png",
+          "accessories_name": "AUG"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBZ.png",
+          "accessories_name": "QBZ"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M762.png",
+          "accessories_name": "M762"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk47.png",
+          "accessories_name": "Mk47"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/G36C.png",
+          "accessories_name": "G36C"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/FAMAS.png",
+          "accessories_name": "FAMAS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Honey_Badger.png",
+          "accessories_name": "Honey Badger"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SKS.png",
+          "accessories_name": "SKS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mini14.png",
+          "accessories_name": "Mini14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk14.png",
+          "accessories_name": "Mk14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SLR.png",
+          "accessories_name": "SLR"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBU.png",
+          "accessories_name": "QBU"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk12.png",
+          "accessories_name": "Mk12"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/S12K.png",
+          "accessories_name": "S12K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/ace32.png",
+          "accessories_name": "ACE32"
+        }
+      ]
+    },
+    {
+      "id": "2023060709",
+      "type": "Muzzle_Rifle",
+      "type_index": "1",
+      "name": "Flash Hider (AR)",
+      "image": "/wiki-assets/attachments/Icon_QK_Large_FlashHider_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_QK_Large_FlashHider.png",
+        "name": "Flash Hider (AR)",
+        "magazine": "10",
+        "skilldec": "Eliminates muzzle flash and slightly reduces horizontal/vertical recoil."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AKM.png",
+          "accessories_name": "AKM"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M16A4.png",
+          "accessories_name": "M16A4"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SCAR-L.png",
+          "accessories_name": "SCAR-L"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M416.png",
+          "accessories_name": "M416"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AUG.png",
+          "accessories_name": "AUG"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBZ.png",
+          "accessories_name": "QBZ"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M762.png",
+          "accessories_name": "M762"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk47.png",
+          "accessories_name": "Mk47"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/G36C.png",
+          "accessories_name": "G36C"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/FAMAS.png",
+          "accessories_name": "FAMAS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Honey_Badger.png",
+          "accessories_name": "Honey Badger"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SKS.png",
+          "accessories_name": "SKS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mini14.png",
+          "accessories_name": "Mini14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk14.png",
+          "accessories_name": "Mk14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SLR.png",
+          "accessories_name": "SLR"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBU.png",
+          "accessories_name": "QBU"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk12.png",
+          "accessories_name": "Mk12"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/S12K.png",
+          "accessories_name": "S12K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/ace32.png",
+          "accessories_name": "ACE32"
+        }
+      ]
+    },
+    {
+      "id": "2023060710",
+      "type": "Muzzle_Rifle",
+      "type_index": "1",
+      "name": "Suppressor (AR)",
+      "image": "/wiki-assets/attachments/Icon_QK_Large_Suppressor_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_QK_Large_Suppressor.png",
+        "name": "Suppressor (AR)",
+        "magazine": "20",
+        "skilldec": "Reduces gunshot volume and eliminates muzzle flash."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AKM.png",
+          "accessories_name": "AKM"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M16A4.png",
+          "accessories_name": "M16A4"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SCAR-L.png",
+          "accessories_name": "SCAR-L"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M416.png",
+          "accessories_name": "M416"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Groza.png",
+          "accessories_name": "Groza"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AUG.png",
+          "accessories_name": "AUG"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBZ.png",
+          "accessories_name": "QBZ"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M762.png",
+          "accessories_name": "M762"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk47.png",
+          "accessories_name": "Mk47"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/G36C.png",
+          "accessories_name": "G36C"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/FAMAS.png",
+          "accessories_name": "FAMAS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Honey_Badger.png",
+          "accessories_name": "Honey Badger"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SKS.png",
+          "accessories_name": "SKS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mini14.png",
+          "accessories_name": "Mini14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk14.png",
+          "accessories_name": "Mk14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SLR.png",
+          "accessories_name": "SLR"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBU.png",
+          "accessories_name": "QBU"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk12.png",
+          "accessories_name": "Mk12"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/S12K.png",
+          "accessories_name": "S12K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/ace32.png",
+          "accessories_name": "ACE32"
+        }
+      ]
+    },
+    {
+      "id": "2023060711",
+      "type": "Muzzle_Rifle",
+      "type_index": "1",
+      "name": "Duckbill (Shotguns)",
+      "image": "/wiki-assets/attachments/Icon_QK_DuckBill_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_QK_DuckBill.png",
+        "name": "Duckbill (Shotguns)",
+        "magazine": "5",
+        "skilldec": "Significantly reduces the horizontal spread of shotguns, but slightly increases vertical spread."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/S1897.png",
+          "accessories_name": "S1897"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/S12K.png",
+          "accessories_name": "S12K"
+        }
+      ]
+    },
+    {
+      "id": "2023060712",
+      "type": "Muzzle_Rifle",
+      "type_index": "1",
+      "name": "Barrel Extender (SMG)",
+      "image": "/wiki-assets/attachments/Icon_QK_Small_ExtendedBarrel_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_QK_Small_ExtendedBarrel.png",
+        "name": "Barrel Extender (SMG)",
+        "magazine": "8",
+        "skilldec": "Improves the effective range of bullets by reducing damage reduction due to distance."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/UZI.png",
+          "accessories_name": "UZI"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/UMP9.png",
+          "accessories_name": "UMP45"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Vector.png",
+          "accessories_name": "Vector"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/PP19.png",
+          "accessories_name": "PP19"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/MP5K.png",
+          "accessories_name": "MP5K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/P90.png",
+          "accessories_name": "P90"
+        }
+      ]
+    },
+    {
+      "id": "2023060713",
+      "type": "Muzzle_Rifle",
+      "type_index": "1",
+      "name": "Barrel Extender (AR, Snipers)",
+      "image": "/wiki-assets/attachments/Icon_QK_Large_ExtendedBarrel_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_QK_Large_ExtendedBarrel.png",
+        "name": "Barrel Extender (AR, Snipers)",
+        "magazine": "12",
+        "skilldec": "Improves the effective range of bullets by reducing damage reduction due to distance."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AKM.png",
+          "accessories_name": "AKM"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M16A4.png",
+          "accessories_name": "M16A4"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SCAR-L.png",
+          "accessories_name": "SCAR-L"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M416.png",
+          "accessories_name": "M416"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Groza.png",
+          "accessories_name": "Groza"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AUG.png",
+          "accessories_name": "AUG"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBZ.png",
+          "accessories_name": "QBZ"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M762.png",
+          "accessories_name": "M762"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk47.png",
+          "accessories_name": "Mk47"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/G36C.png",
+          "accessories_name": "G36C"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/FAMAS.png",
+          "accessories_name": "FAMAS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Honey_Badger.png",
+          "accessories_name": "Honey Badger"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Kar98K.png",
+          "accessories_name": "Kar98K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M24.png",
+          "accessories_name": "M24"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AWM.png",
+          "accessories_name": "AWM"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SKS.png",
+          "accessories_name": "SKS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mini14.png",
+          "accessories_name": "Mini14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk14.png",
+          "accessories_name": "Mk14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SLR.png",
+          "accessories_name": "SLR"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBU.png",
+          "accessories_name": "QBU"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mosin-Nagant.png",
+          "accessories_name": "Mosin-Nagant"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk12.png",
+          "accessories_name": "Mk12"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/ace32.png",
+          "accessories_name": "ACE32"
+        }
+      ]
+    },
+    {
+      "id": "2023060714",
+      "type": "Muzzle_Rifle",
+      "type_index": "1",
+      "name": "Muzzle Brake (Snipers)",
+      "image": "/wiki-assets/attachments/Icon_Muzzle_Brake_Snipers_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_Muzzle_Brake_Snipers.png",
+        "name": "Muzzle Brake (Snipers)",
+        "magazine": "12",
+        "skilldec": "Significantly reduces horizontal recoil and vertical recoil."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Kar98K.png",
+          "accessories_name": "Kar98K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M24.png",
+          "accessories_name": "M24"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AWM.png",
+          "accessories_name": "AWM"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SKS.png",
+          "accessories_name": "SKS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mini14.png",
+          "accessories_name": "Mini14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk14.png",
+          "accessories_name": "Mk14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SLR.png",
+          "accessories_name": "SLR"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBU.png",
+          "accessories_name": "QBU"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mosin-Nagant.png",
+          "accessories_name": "Mosin-Nagant"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk12.png",
+          "accessories_name": "Mk12"
+        }
+      ]
+    },
+    {
+      "id": "2023060715",
+      "type": "Muzzle_Rifle",
+      "type_index": "1",
+      "name": "Muzzle Brake (AR)",
+      "image": "/wiki-assets/attachments/Icon_Muzzle_Brake_AR_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_Muzzle_Brake_AR.png",
+        "name": "Muzzle Brake (AR)",
+        "magazine": "10",
+        "skilldec": "Significantly reduces horizontal recoil and vertical recoil."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AKM.png",
+          "accessories_name": "AKM"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M16A4.png",
+          "accessories_name": "M16A4"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SCAR-L.png",
+          "accessories_name": "SCAR-L"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M416.png",
+          "accessories_name": "M416"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AUG.png",
+          "accessories_name": "AUG"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBZ.png",
+          "accessories_name": "QBZ"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M762.png",
+          "accessories_name": "M762"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk47.png",
+          "accessories_name": "Mk47"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/G36C.png",
+          "accessories_name": "G36C"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/FAMAS.png",
+          "accessories_name": "FAMAS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Honey_Badger.png",
+          "accessories_name": "Honey Badger"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SKS.png",
+          "accessories_name": "SKS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mini14.png",
+          "accessories_name": "Mini14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk14.png",
+          "accessories_name": "Mk14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SLR.png",
+          "accessories_name": "SLR"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBU.png",
+          "accessories_name": "QBU"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk12.png",
+          "accessories_name": "Mk12"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/ace32.png",
+          "accessories_name": "ACE32"
+        }
+      ]
+    },
+    {
+      "id": "2023060716",
+      "type": "Muzzle_Rifle",
+      "type_index": "1",
+      "name": "Muzzle Brake (SMG)",
+      "image": "/wiki-assets/attachments/Icon_Muzzle_Brake_SMG_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_Muzzle_Brake_SMG.png",
+        "name": "Muzzle Brake (SMG)",
+        "magazine": "8",
+        "skilldec": "Significantly reduces horizontal recoil and vertical recoil."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/UZI.png",
+          "accessories_name": "UZI"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/UMP9.png",
+          "accessories_name": "UMP45"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Vector.png",
+          "accessories_name": "Vector"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/PP19.png",
+          "accessories_name": "PP19"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/MP5K.png",
+          "accessories_name": "MP5K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/P90.png",
+          "accessories_name": "P90"
+        }
+      ]
+    },
+    {
+      "id": "2023060801",
+      "type": "Foregrip_Rifle",
+      "type_index": "2",
+      "name": "Angled Foregrip",
+      "image": "/wiki-assets/attachments/Icon_WB_Angled_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_WB_Angled.png",
+        "name": "Angled Foregrip",
+        "magazine": "10",
+        "skilldec": "Reduces horizontal recoil and makes it faster to aim down sight (ADS)."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SCAR-L.png",
+          "accessories_name": "SCAR-L"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M416.png",
+          "accessories_name": "M416"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AUG.png",
+          "accessories_name": "AUG"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBZ.png",
+          "accessories_name": "QBZ"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M762.png",
+          "accessories_name": "M762"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk47.png",
+          "accessories_name": "Mk47"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/G36C.png",
+          "accessories_name": "G36C"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/UMP9.png",
+          "accessories_name": "UMP45"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/MP5K.png",
+          "accessories_name": "MP5K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SKS.png",
+          "accessories_name": "SKS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk12.png",
+          "accessories_name": "Mk12"
+        }
+      ]
+    },
+    {
+      "id": "2023060802",
+      "type": "Foregrip_Rifle",
+      "type_index": "2",
+      "name": "Vertical Foregrip",
+      "image": "/wiki-assets/attachments/Icon_WB_Vertical_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_WB_Vertical.png",
+        "name": "Vertical Foregrip",
+        "magazine": "10",
+        "skilldec": "Reduces vertical recoil."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SCAR-L.png",
+          "accessories_name": "SCAR-L"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M416.png",
+          "accessories_name": "M416"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AUG.png",
+          "accessories_name": "AUG"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBZ.png",
+          "accessories_name": "QBZ"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M762.png",
+          "accessories_name": "M762"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk47.png",
+          "accessories_name": "Mk47"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/G36C.png",
+          "accessories_name": "G36C"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/UMP9.png",
+          "accessories_name": "UMP45"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Vector.png",
+          "accessories_name": "Vector"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Thompson_SMG.png",
+          "accessories_name": "Thompson SMG"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/MP5K.png",
+          "accessories_name": "MP5K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SKS.png",
+          "accessories_name": "SKS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk12.png",
+          "accessories_name": "Mk12"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Skorpion.png",
+          "accessories_name": "Skorpion"
+        }
+      ]
+    },
+    {
+      "id": "2023060803",
+      "type": "Foregrip_Rifle",
+      "type_index": "2",
+      "name": "Light Grip",
+      "image": "/wiki-assets/attachments/Icon_WB_LightGrip_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_WB_LightGrip.png",
+        "name": "Light Grip",
+        "magazine": "10",
+        "skilldec": "Significantly increases the speed and stability of aiming after running."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SCAR-L.png",
+          "accessories_name": "SCAR-L"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M416.png",
+          "accessories_name": "M416"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AUG.png",
+          "accessories_name": "AUG"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBZ.png",
+          "accessories_name": "QBZ"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M762.png",
+          "accessories_name": "M762"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk47.png",
+          "accessories_name": "Mk47"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/G36C.png",
+          "accessories_name": "G36C"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/UMP9.png",
+          "accessories_name": "UMP45"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Vector.png",
+          "accessories_name": "Vector"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/MP5K.png",
+          "accessories_name": "MP5K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SKS.png",
+          "accessories_name": "SKS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk12.png",
+          "accessories_name": "Mk12"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Skorpion.png",
+          "accessories_name": "Skorpion"
+        }
+      ]
+    },
+    {
+      "id": "2023060804",
+      "type": "Foregrip_Rifle",
+      "type_index": "2",
+      "name": "Half Grip",
+      "image": "/wiki-assets/attachments/Icon_WB_HalfGrip_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_WB_HalfGrip.png",
+        "name": "Half Grip",
+        "magazine": "10",
+        "skilldec": "Reduces recoil, increases recoil recovery speed, and reduces stability when firing."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SCAR-L.png",
+          "accessories_name": "SCAR-L"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M416.png",
+          "accessories_name": "M416"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AUG.png",
+          "accessories_name": "AUG"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBZ.png",
+          "accessories_name": "QBZ"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M762.png",
+          "accessories_name": "M762"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk47.png",
+          "accessories_name": "Mk47"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/G36C.png",
+          "accessories_name": "G36C"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/UMP9.png",
+          "accessories_name": "UMP45"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Vector.png",
+          "accessories_name": "Vector"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/MP5K.png",
+          "accessories_name": "MP5K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SKS.png",
+          "accessories_name": "SKS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk12.png",
+          "accessories_name": "Mk12"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Skorpion.png",
+          "accessories_name": "Skorpion"
+        }
+      ]
+    },
+    {
+      "id": "2023060805",
+      "type": "Foregrip_Rifle",
+      "type_index": "2",
+      "name": "Thumb Grip",
+      "image": "/wiki-assets/attachments/Icon_WB_ThumbGrip_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_WB_ThumbGrip.png",
+        "name": "Thumb Grip",
+        "magazine": "10",
+        "skilldec": "Significantly reduces time to aim down sight (ADS), slightly reduces vertical recoil, and slightly increases stability."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SCAR-L.png",
+          "accessories_name": "SCAR-L"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M416.png",
+          "accessories_name": "M416"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AUG.png",
+          "accessories_name": "AUG"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBZ.png",
+          "accessories_name": "QBZ"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M762.png",
+          "accessories_name": "M762"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk47.png",
+          "accessories_name": "Mk47"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/G36C.png",
+          "accessories_name": "G36C"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/UMP9.png",
+          "accessories_name": "UMP45"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/MP5K.png",
+          "accessories_name": "MP5K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SKS.png",
+          "accessories_name": "SKS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk12.png",
+          "accessories_name": "Mk12"
+        }
+      ]
+    },
+    {
+      "id": "2023060806",
+      "type": "Foregrip_Rifle",
+      "type_index": "2",
+      "name": "Laser Sight",
+      "image": "/wiki-assets/attachments/Icon_attach_Lower_LaserPointer_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_attach_Lower_LaserPointer.png",
+        "name": "Laser Sight",
+        "magazine": "10",
+        "skilldec": "Reduces hip fire spread."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SCAR-L.png",
+          "accessories_name": "SCAR-L"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M416.png",
+          "accessories_name": "M416"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AUG.png",
+          "accessories_name": "AUG"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBZ.png",
+          "accessories_name": "QBZ"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M762.png",
+          "accessories_name": "M762"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk47.png",
+          "accessories_name": "Mk47"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/G36C.png",
+          "accessories_name": "G36C"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/UMP9.png",
+          "accessories_name": "UMP45"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Vector.png",
+          "accessories_name": "Vector"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/MP5K.png",
+          "accessories_name": "MP5K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/P90.png",
+          "accessories_name": "P90"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SKS.png",
+          "accessories_name": "SKS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/P92.png",
+          "accessories_name": "P92"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/P1911.png",
+          "accessories_name": "P1911"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/P18C.png",
+          "accessories_name": "P18C"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/R45.png",
+          "accessories_name": "R45"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Skorpion.png",
+          "accessories_name": "Skorpion"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Desert_Eagle.png",
+          "accessories_name": "Desert Eagle"
+        }
+      ]
+    },
+    {
+      "id": "2023060807",
+      "type": "Foregrip_Rifle",
+      "type_index": "2",
+      "name": "Ergonomic Grip",
+      "image": "/wiki-assets/attachments/Icon_Ergonomic_Grip_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_Ergonomic_Grip.png",
+        "name": "Ergonomic Grip",
+        "magazine": "10",
+        "skilldec": "Significantly improves the stability of firearms."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SCAR-L.png",
+          "accessories_name": "SCAR-L"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M416.png",
+          "accessories_name": "M416"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AUG.png",
+          "accessories_name": "AUG"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBZ.png",
+          "accessories_name": "QBZ"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M762.png",
+          "accessories_name": "M762"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk47.png",
+          "accessories_name": "Mk47"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/G36C.png",
+          "accessories_name": "G36C"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/UMP9.png",
+          "accessories_name": "UMP45"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/MP5K.png",
+          "accessories_name": "MP5K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SKS.png",
+          "accessories_name": "SKS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk12.png",
+          "accessories_name": "Mk12"
+        }
+      ]
+    },
+    {
+      "id": "2023060808",
+      "type": "Foregrip_Rifle",
+      "type_index": "2",
+      "name": "Quiver (Crossbow)",
+      "image": "/wiki-assets/attachments/Icon_DJ_Crossbow_Q_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_DJ_Crossbow_Q.png",
+        "name": "Quiver (Crossbow)",
+        "magazine": "14",
+        "skilldec": "Increases the reload speed of crossbows."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Crossbow.png",
+          "accessories_name": "Crossbow"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Tactical_Crossbow.png",
+          "accessories_name": "Tactical Crossbow"
+        }
+      ]
+    },
+    {
+      "id": "2023060901",
+      "type": "Sight_Rifle",
+      "type_index": "3",
+      "name": "Red Dot Sight",
+      "image": "/wiki-assets/attachments/Icon_MZJ_HD_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_MZJ_HD.png",
+        "name": "Red Dot Sight",
+        "magazine": "10",
+        "skilldec": "Red Dot Sight"
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AKM.png",
+          "accessories_name": "AKM"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M16A4.png",
+          "accessories_name": "M16A4"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SCAR-L.png",
+          "accessories_name": "SCAR-L"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M416.png",
+          "accessories_name": "M416"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Groza.png",
+          "accessories_name": "Groza"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AUG.png",
+          "accessories_name": "AUG"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBZ.png",
+          "accessories_name": "QBZ"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M762.png",
+          "accessories_name": "M762"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk47.png",
+          "accessories_name": "Mk47"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/G36C.png",
+          "accessories_name": "G36C"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/FAMAS.png",
+          "accessories_name": "FAMAS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Honey_Badger.png",
+          "accessories_name": "Honey Badger"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/UZI.png",
+          "accessories_name": "UZI"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/UMP9.png",
+          "accessories_name": "UMP45"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Vector.png",
+          "accessories_name": "Vector"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Thompson_SMG.png",
+          "accessories_name": "Thompson SMG"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/PP19.png",
+          "accessories_name": "PP19"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/MP5K.png",
+          "accessories_name": "MP5K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/P90.png",
+          "accessories_name": "P90"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Kar98K.png",
+          "accessories_name": "Kar98K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M24.png",
+          "accessories_name": "M24"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AWM.png",
+          "accessories_name": "AWM"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SKS.png",
+          "accessories_name": "SKS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mini14.png",
+          "accessories_name": "Mini14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk14.png",
+          "accessories_name": "Mk14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SLR.png",
+          "accessories_name": "SLR"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBU.png",
+          "accessories_name": "QBU"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mosin-Nagant.png",
+          "accessories_name": "Mosin-Nagant"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AMR.png",
+          "accessories_name": "AMR"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk12.png",
+          "accessories_name": "Mk12"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/S12K.png",
+          "accessories_name": "S12K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/DBS.png",
+          "accessories_name": "DBS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/NS2000.png",
+          "accessories_name": "NS2000"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M249.png",
+          "accessories_name": "M249"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/DP-28.png",
+          "accessories_name": "DP-28"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/MG3.png",
+          "accessories_name": "MG3"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/P92.png",
+          "accessories_name": "P92"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/P1911.png",
+          "accessories_name": "P1911"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/P18C.png",
+          "accessories_name": "P18C"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/R45.png",
+          "accessories_name": "R45"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Skorpion.png",
+          "accessories_name": "Skorpion"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Desert_Eagle.png",
+          "accessories_name": "Desert Eagle"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Crossbow.png",
+          "accessories_name": "Crossbow"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Tactical_Crossbow.png",
+          "accessories_name": "Tactical Crossbow"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/ace32.png",
+          "accessories_name": "ACE32"
+        }
+      ]
+    },
+    {
+      "id": "2023060902",
+      "type": "Sight_Rifle",
+      "type_index": "3",
+      "name": "Holographic Sight",
+      "image": "/wiki-assets/attachments/Icon_MZJ_QX_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_MZJ_QX.png",
+        "name": "Holographic Sight",
+        "magazine": "10",
+        "skilldec": "Holographic Sight"
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AKM.png",
+          "accessories_name": "AKM"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M16A4.png",
+          "accessories_name": "M16A4"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SCAR-L.png",
+          "accessories_name": "SCAR-L"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M416.png",
+          "accessories_name": "M416"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Groza.png",
+          "accessories_name": "Groza"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AUG.png",
+          "accessories_name": "AUG"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBZ.png",
+          "accessories_name": "QBZ"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M762.png",
+          "accessories_name": "M762"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk47.png",
+          "accessories_name": "Mk47"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/G36C.png",
+          "accessories_name": "G36C"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/FAMAS.png",
+          "accessories_name": "FAMAS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Honey_Badger.png",
+          "accessories_name": "Honey Badger"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/UZI.png",
+          "accessories_name": "UZI"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/UMP9.png",
+          "accessories_name": "UMP45"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Vector.png",
+          "accessories_name": "Vector"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Thompson_SMG.png",
+          "accessories_name": "Thompson SMG"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/PP19.png",
+          "accessories_name": "PP19"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/MP5K.png",
+          "accessories_name": "MP5K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/P90.png",
+          "accessories_name": "P90"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Kar98K.png",
+          "accessories_name": "Kar98K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M24.png",
+          "accessories_name": "M24"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AWM.png",
+          "accessories_name": "AWM"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SKS.png",
+          "accessories_name": "SKS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mini14.png",
+          "accessories_name": "Mini14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk14.png",
+          "accessories_name": "Mk14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SLR.png",
+          "accessories_name": "SLR"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBU.png",
+          "accessories_name": "QBU"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mosin-Nagant.png",
+          "accessories_name": "Mosin-Nagant"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AMR.png",
+          "accessories_name": "AMR"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk12.png",
+          "accessories_name": "Mk12"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/S12K.png",
+          "accessories_name": "S12K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/DBS.png",
+          "accessories_name": "DBS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/NS2000.png",
+          "accessories_name": "NS2000"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M249.png",
+          "accessories_name": "M249"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/DP-28.png",
+          "accessories_name": "DP-28"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/MG3.png",
+          "accessories_name": "MG3"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/P92.png",
+          "accessories_name": "P92"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/P1911.png",
+          "accessories_name": "P1911"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/P18C.png",
+          "accessories_name": "P18C"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/R45.png",
+          "accessories_name": "R45"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Skorpion.png",
+          "accessories_name": "Skorpion"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Desert_Eagle.png",
+          "accessories_name": "Desert Eagle"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Crossbow.png",
+          "accessories_name": "Crossbow"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Tactical_Crossbow.png",
+          "accessories_name": "Tactical Crossbow"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/ace32.png",
+          "accessories_name": "ACE32"
+        }
+      ]
+    },
+    {
+      "id": "2023060903",
+      "type": "Sight_Rifle",
+      "type_index": "3",
+      "name": "2x Scope",
+      "image": "/wiki-assets/attachments/Icon_MZJ_2X_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_MZJ_2X.png",
+        "name": "2x Scope",
+        "magazine": "15",
+        "skilldec": "2x Red Dot Sight"
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AKM.png",
+          "accessories_name": "AKM"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M16A4.png",
+          "accessories_name": "M16A4"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SCAR-L.png",
+          "accessories_name": "SCAR-L"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M416.png",
+          "accessories_name": "M416"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Groza.png",
+          "accessories_name": "Groza"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AUG.png",
+          "accessories_name": "AUG"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBZ.png",
+          "accessories_name": "QBZ"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M762.png",
+          "accessories_name": "M762"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk47.png",
+          "accessories_name": "Mk47"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/G36C.png",
+          "accessories_name": "G36C"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/FAMAS.png",
+          "accessories_name": "FAMAS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Honey_Badger.png",
+          "accessories_name": "Honey Badger"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/UMP9.png",
+          "accessories_name": "UMP45"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Vector.png",
+          "accessories_name": "Vector"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/PP19.png",
+          "accessories_name": "PP19"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/MP5K.png",
+          "accessories_name": "MP5K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/P90.png",
+          "accessories_name": "P90"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Kar98K.png",
+          "accessories_name": "Kar98K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M24.png",
+          "accessories_name": "M24"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AWM.png",
+          "accessories_name": "AWM"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SKS.png",
+          "accessories_name": "SKS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mini14.png",
+          "accessories_name": "Mini14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk14.png",
+          "accessories_name": "Mk14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SLR.png",
+          "accessories_name": "SLR"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBU.png",
+          "accessories_name": "QBU"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mosin-Nagant.png",
+          "accessories_name": "Mosin-Nagant"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AMR.png",
+          "accessories_name": "AMR"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk12.png",
+          "accessories_name": "Mk12"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/S12K.png",
+          "accessories_name": "S12K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/DBS.png",
+          "accessories_name": "DBS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/NS2000.png",
+          "accessories_name": "NS2000"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M249.png",
+          "accessories_name": "M249"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/DP-28.png",
+          "accessories_name": "DP-28"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/MG3.png",
+          "accessories_name": "MG3"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Crossbow.png",
+          "accessories_name": "Crossbow"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Tactical_Crossbow.png",
+          "accessories_name": "Tactical Crossbow"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/ace32.png",
+          "accessories_name": "ACE32"
+        }
+      ]
+    },
+    {
+      "id": "2023060904",
+      "type": "Sight_Rifle",
+      "type_index": "3",
+      "name": "4x Scope",
+      "image": "/wiki-assets/attachments/Icon_MZJ_4X_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_MZJ_4X.png",
+        "name": "4x Scope",
+        "magazine": "15",
+        "skilldec": "4x ACOG Scope"
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AKM.png",
+          "accessories_name": "AKM"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M16A4.png",
+          "accessories_name": "M16A4"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SCAR-L.png",
+          "accessories_name": "SCAR-L"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M416.png",
+          "accessories_name": "M416"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Groza.png",
+          "accessories_name": "Groza"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AUG.png",
+          "accessories_name": "AUG"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBZ.png",
+          "accessories_name": "QBZ"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M762.png",
+          "accessories_name": "M762"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk47.png",
+          "accessories_name": "Mk47"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/G36C.png",
+          "accessories_name": "G36C"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/FAMAS.png",
+          "accessories_name": "FAMAS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Honey_Badger.png",
+          "accessories_name": "Honey Badger"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/UMP9.png",
+          "accessories_name": "UMP45"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Vector.png",
+          "accessories_name": "Vector"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/PP19.png",
+          "accessories_name": "PP19"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/MP5K.png",
+          "accessories_name": "MP5K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/P90.png",
+          "accessories_name": "P90"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Kar98K.png",
+          "accessories_name": "Kar98K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M24.png",
+          "accessories_name": "M24"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AWM.png",
+          "accessories_name": "AWM"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SKS.png",
+          "accessories_name": "SKS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mini14.png",
+          "accessories_name": "Mini14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk14.png",
+          "accessories_name": "Mk14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SLR.png",
+          "accessories_name": "SLR"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBU.png",
+          "accessories_name": "QBU"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mosin-Nagant.png",
+          "accessories_name": "Mosin-Nagant"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AMR.png",
+          "accessories_name": "AMR"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk12.png",
+          "accessories_name": "Mk12"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/S12K.png",
+          "accessories_name": "S12K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/DBS.png",
+          "accessories_name": "DBS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/NS2000.png",
+          "accessories_name": "NS2000"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M249.png",
+          "accessories_name": "M249"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/DP-28.png",
+          "accessories_name": "DP-28"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/MG3.png",
+          "accessories_name": "MG3"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Crossbow.png",
+          "accessories_name": "Crossbow"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Tactical_Crossbow.png",
+          "accessories_name": "Tactical Crossbow"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/ace32.png",
+          "accessories_name": "ACE32"
+        }
+      ]
+    },
+    {
+      "id": "2023060905",
+      "type": "Sight_Rifle",
+      "type_index": "3",
+      "name": "8x Scope",
+      "image": "/wiki-assets/attachments/Icon_MZJ_8X_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_MZJ_8X.png",
+        "name": "8x Scope",
+        "magazine": "20",
+        "skilldec": "8x CQBSS Scope"
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Kar98K.png",
+          "accessories_name": "Kar98K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M24.png",
+          "accessories_name": "M24"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AWM.png",
+          "accessories_name": "AWM"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SKS.png",
+          "accessories_name": "SKS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mini14.png",
+          "accessories_name": "Mini14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk14.png",
+          "accessories_name": "Mk14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SLR.png",
+          "accessories_name": "SLR"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBU.png",
+          "accessories_name": "QBU"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mosin-Nagant.png",
+          "accessories_name": "Mosin-Nagant"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AMR.png",
+          "accessories_name": "AMR"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk12.png",
+          "accessories_name": "Mk12"
+        }
+      ]
+    },
+    {
+      "id": "2023060906",
+      "type": "Sight_Rifle",
+      "type_index": "3",
+      "name": "3x Scope",
+      "image": "/wiki-assets/attachments/Icon_MZJ_3X_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_MZJ_3X.png",
+        "name": "3x Scope",
+        "magazine": "15",
+        "skilldec": "3x Optical Gunsight"
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AKM.png",
+          "accessories_name": "AKM"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M16A4.png",
+          "accessories_name": "M16A4"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SCAR-L.png",
+          "accessories_name": "SCAR-L"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M416.png",
+          "accessories_name": "M416"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Groza.png",
+          "accessories_name": "Groza"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AUG.png",
+          "accessories_name": "AUG"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBZ.png",
+          "accessories_name": "QBZ"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M762.png",
+          "accessories_name": "M762"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk47.png",
+          "accessories_name": "Mk47"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/G36C.png",
+          "accessories_name": "G36C"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/FAMAS.png",
+          "accessories_name": "FAMAS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Honey_Badger.png",
+          "accessories_name": "Honey Badger"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/UMP9.png",
+          "accessories_name": "UMP45"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Vector.png",
+          "accessories_name": "Vector"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/PP19.png",
+          "accessories_name": "PP19"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/MP5K.png",
+          "accessories_name": "MP5K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/P90.png",
+          "accessories_name": "P90"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Kar98K.png",
+          "accessories_name": "Kar98K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M24.png",
+          "accessories_name": "M24"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AWM.png",
+          "accessories_name": "AWM"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SKS.png",
+          "accessories_name": "SKS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mini14.png",
+          "accessories_name": "Mini14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk14.png",
+          "accessories_name": "Mk14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SLR.png",
+          "accessories_name": "SLR"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBU.png",
+          "accessories_name": "QBU"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mosin-Nagant.png",
+          "accessories_name": "Mosin-Nagant"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AMR.png",
+          "accessories_name": "AMR"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk12.png",
+          "accessories_name": "Mk12"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/S12K.png",
+          "accessories_name": "S12K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/DBS.png",
+          "accessories_name": "DBS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/NS2000.png",
+          "accessories_name": "NS2000"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M249.png",
+          "accessories_name": "M249"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/DP-28.png",
+          "accessories_name": "DP-28"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/MG3.png",
+          "accessories_name": "MG3"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Crossbow.png",
+          "accessories_name": "Crossbow"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Tactical_Crossbow.png",
+          "accessories_name": "Tactical Crossbow"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/ace32.png",
+          "accessories_name": "ACE32"
+        }
+      ]
+    },
+    {
+      "id": "2023060907",
+      "type": "Sight_Rifle",
+      "type_index": "3",
+      "name": "6x Scope",
+      "image": "/wiki-assets/attachments/Icon_MZJ_6X_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_MZJ_6X.png",
+        "name": "6x Scope",
+        "magazine": "20",
+        "skilldec": "6x ACOG Scope"
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AKM.png",
+          "accessories_name": "AKM"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M16A4.png",
+          "accessories_name": "M16A4"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SCAR-L.png",
+          "accessories_name": "SCAR-L"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M416.png",
+          "accessories_name": "M416"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Groza.png",
+          "accessories_name": "Groza"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AUG.png",
+          "accessories_name": "AUG"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBZ.png",
+          "accessories_name": "QBZ"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M762.png",
+          "accessories_name": "M762"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk47.png",
+          "accessories_name": "Mk47"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/G36C.png",
+          "accessories_name": "G36C"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/FAMAS.png",
+          "accessories_name": "FAMAS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Honey_Badger.png",
+          "accessories_name": "Honey Badger"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/UMP9.png",
+          "accessories_name": "UMP45"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Vector.png",
+          "accessories_name": "Vector"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/PP19.png",
+          "accessories_name": "PP19"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/MP5K.png",
+          "accessories_name": "MP5K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/P90.png",
+          "accessories_name": "P90"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Kar98K.png",
+          "accessories_name": "Kar98K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M24.png",
+          "accessories_name": "M24"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AWM.png",
+          "accessories_name": "AWM"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SKS.png",
+          "accessories_name": "SKS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mini14.png",
+          "accessories_name": "Mini14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk14.png",
+          "accessories_name": "Mk14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SLR.png",
+          "accessories_name": "SLR"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBU.png",
+          "accessories_name": "QBU"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mosin-Nagant.png",
+          "accessories_name": "Mosin-Nagant"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AMR.png",
+          "accessories_name": "AMR"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk12.png",
+          "accessories_name": "Mk12"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/S12K.png",
+          "accessories_name": "S12K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/DBS.png",
+          "accessories_name": "DBS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/NS2000.png",
+          "accessories_name": "NS2000"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M249.png",
+          "accessories_name": "M249"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/DP-28.png",
+          "accessories_name": "DP-28"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/MG3.png",
+          "accessories_name": "MG3"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Crossbow.png",
+          "accessories_name": "Crossbow"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Tactical_Crossbow.png",
+          "accessories_name": "Tactical Crossbow"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/ace32.png",
+          "accessories_name": "ACE32"
+        }
+      ]
+    },
+    {
+      "id": "2023060908",
+      "type": "Sight_Rifle",
+      "type_index": "3",
+      "name": "Canted Sight",
+      "image": "/wiki-assets/attachments/icon_MZJ_CantedRMR_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/icon_MZJ_CantedRMR.png",
+        "name": "Canted Sight",
+        "magazine": "10",
+        "skilldec": "Canted Sight"
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AKM.png",
+          "accessories_name": "AKM"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M16A4.png",
+          "accessories_name": "M16A4"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SCAR-L.png",
+          "accessories_name": "SCAR-L"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M416.png",
+          "accessories_name": "M416"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AUG.png",
+          "accessories_name": "AUG"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBZ.png",
+          "accessories_name": "QBZ"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M762.png",
+          "accessories_name": "M762"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk47.png",
+          "accessories_name": "Mk47"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/G36C.png",
+          "accessories_name": "G36C"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/FAMAS.png",
+          "accessories_name": "FAMAS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Honey_Badger.png",
+          "accessories_name": "Honey Badger"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/UMP9.png",
+          "accessories_name": "UMP45"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Vector.png",
+          "accessories_name": "Vector"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/PP19.png",
+          "accessories_name": "PP19"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/MP5K.png",
+          "accessories_name": "MP5K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Kar98K.png",
+          "accessories_name": "Kar98K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M24.png",
+          "accessories_name": "M24"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SKS.png",
+          "accessories_name": "SKS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AWM.png",
+          "accessories_name": "AWM"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mini14.png",
+          "accessories_name": "Mini14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk14.png",
+          "accessories_name": "Mk14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SLR.png",
+          "accessories_name": "SLR"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBU.png",
+          "accessories_name": "QBU"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mosin-Nagant.png",
+          "accessories_name": "Mosin-Nagant"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk12.png",
+          "accessories_name": "Mk12"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/S12K.png",
+          "accessories_name": "S12K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/DBS.png",
+          "accessories_name": "DBS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/NS2000.png",
+          "accessories_name": "NS2000"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M249.png",
+          "accessories_name": "M249"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/ace32.png",
+          "accessories_name": "ACE32"
+        }
+      ]
+    },
+    {
+      "id": "2023061001",
+      "type": "Magazine_Rifle",
+      "type_index": "4",
+      "name": "Extended Mag (SMG, Pistols)",
+      "image": "/wiki-assets/attachments/Icon_DJ_Mid_E_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_DJ_Mid_E.png",
+        "name": "Extended Mag (SMG, Pistols)",
+        "magazine": "13",
+        "skilldec": "Increases magazine capacity."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/UZI.png",
+          "accessories_name": "UZI"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/UMP9.png",
+          "accessories_name": "UMP45"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Vector.png",
+          "accessories_name": "Vector"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Thompson_SMG.png",
+          "accessories_name": "Thompson SMG"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/MP5K.png",
+          "accessories_name": "MP5K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/P92.png",
+          "accessories_name": "P92"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/P1911.png",
+          "accessories_name": "P1911"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/P18C.png",
+          "accessories_name": "P18C"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Skorpion.png",
+          "accessories_name": "Skorpion"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Desert_Eagle.png",
+          "accessories_name": "Desert Eagle"
+        }
+      ]
+    },
+    {
+      "id": "2023061002",
+      "type": "Magazine_Rifle",
+      "type_index": "4",
+      "name": "Quickdraw Mag (SMG, Pistols)",
+      "image": "/wiki-assets/attachments/Icon_DJ_Mid_Q_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_DJ_Mid_Q.png",
+        "name": "Quickdraw Mag (SMG, Pistols)",
+        "magazine": "12",
+        "skilldec": "Increases reload speed."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/UZI.png",
+          "accessories_name": "UZI"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/UMP9.png",
+          "accessories_name": "UMP45"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Vector.png",
+          "accessories_name": "Vector"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Thompson_SMG.png",
+          "accessories_name": "Thompson SMG"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/MP5K.png",
+          "accessories_name": "MP5K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/P92.png",
+          "accessories_name": "P92"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/P1911.png",
+          "accessories_name": "P1911"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/P18C.png",
+          "accessories_name": "P18C"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Desert_Eagle.png",
+          "accessories_name": "Desert Eagle"
+        }
+      ]
+    },
+    {
+      "id": "2023061003",
+      "type": "Magazine_Rifle",
+      "type_index": "4",
+      "name": "Extended Quickdraw Mag (SMG, Pistols)",
+      "image": "/wiki-assets/attachments/Icon_DJ_Mid_EQ_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_DJ_Mid_EQ.png",
+        "name": "Extended Quickdraw Mag (SMG, Pistols)",
+        "magazine": "17",
+        "skilldec": "Increases reload speed and magazine capacity."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/UZI.png",
+          "accessories_name": "UZI"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/UMP9.png",
+          "accessories_name": "UMP45"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Vector.png",
+          "accessories_name": "Vector"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Thompson_SMG.png",
+          "accessories_name": "Thompson SMG"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/MP5K.png",
+          "accessories_name": "MP5K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/P92.png",
+          "accessories_name": "P92"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/P1911.png",
+          "accessories_name": "P1911"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/P18C.png",
+          "accessories_name": "P18C"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Desert_Eagle.png",
+          "accessories_name": "Desert Eagle"
+        }
+      ]
+    },
+    {
+      "id": "2023061004",
+      "type": "Magazine_Rifle",
+      "type_index": "4",
+      "name": "Extended Mag (Snipers)",
+      "image": "/wiki-assets/attachments/Icon_DJ_Sniper_E_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_DJ_Sniper_E.png",
+        "name": "Extended Mag (Snipers)",
+        "magazine": "17",
+        "skilldec": "Increases magazine capacity."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M24.png",
+          "accessories_name": "M24"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AWM.png",
+          "accessories_name": "AWM"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SKS.png",
+          "accessories_name": "SKS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/VSS.png",
+          "accessories_name": "VSS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mini14.png",
+          "accessories_name": "Mini14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk14.png",
+          "accessories_name": "Mk14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SLR.png",
+          "accessories_name": "SLR"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBU.png",
+          "accessories_name": "QBU"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk12.png",
+          "accessories_name": "Mk12"
+        }
+      ]
+    },
+    {
+      "id": "2023061005",
+      "type": "Magazine_Rifle",
+      "type_index": "4",
+      "name": "Quickdraw Mag (Snipers)",
+      "image": "/wiki-assets/attachments/Icon_DJ_Sniper_Q_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_DJ_Sniper_Q.png",
+        "name": "Quickdraw Mag (Snipers)",
+        "magazine": "16",
+        "skilldec": "Increases reload speed."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M24.png",
+          "accessories_name": "M24"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AWM.png",
+          "accessories_name": "AWM"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SKS.png",
+          "accessories_name": "SKS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/VSS.png",
+          "accessories_name": "VSS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mini14.png",
+          "accessories_name": "Mini14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk14.png",
+          "accessories_name": "Mk14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SLR.png",
+          "accessories_name": "SLR"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBU.png",
+          "accessories_name": "QBU"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk12.png",
+          "accessories_name": "Mk12"
+        }
+      ]
+    },
+    {
+      "id": "2023061006",
+      "type": "Magazine_Rifle",
+      "type_index": "4",
+      "name": "Extended Quickdraw Mag (Snipers)",
+      "image": "/wiki-assets/attachments/Icon_DJ_Sniper_EQ_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_DJ_Sniper_EQ.png",
+        "name": "Extended Quickdraw Mag (Snipers)",
+        "magazine": "23",
+        "skilldec": "Increases reload speed and magazine capacity."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M24.png",
+          "accessories_name": "M24"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AWM.png",
+          "accessories_name": "AWM"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SKS.png",
+          "accessories_name": "SKS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/VSS.png",
+          "accessories_name": "VSS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mini14.png",
+          "accessories_name": "Mini14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk14.png",
+          "accessories_name": "Mk14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SLR.png",
+          "accessories_name": "SLR"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBU.png",
+          "accessories_name": "QBU"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk12.png",
+          "accessories_name": "Mk12"
+        }
+      ]
+    },
+    {
+      "id": "2023061007",
+      "type": "Magazine_Rifle",
+      "type_index": "4",
+      "name": "Extended Mag (AR)",
+      "image": "/wiki-assets/attachments/Icon_DJ_Large_E_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_DJ_Large_E.png",
+        "name": "Extended Mag (AR)",
+        "magazine": "15",
+        "skilldec": "Increases magazine capacity."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AKM.png",
+          "accessories_name": "AKM"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M16A4.png",
+          "accessories_name": "M16A4"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SCAR-L.png",
+          "accessories_name": "SCAR-L"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M416.png",
+          "accessories_name": "M416"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Groza.png",
+          "accessories_name": "Groza"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AUG.png",
+          "accessories_name": "AUG"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBZ.png",
+          "accessories_name": "QBZ"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M762.png",
+          "accessories_name": "M762"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk47.png",
+          "accessories_name": "Mk47"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/G36C.png",
+          "accessories_name": "G36C"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Honey_Badger.png",
+          "accessories_name": "Honey Badger"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SKS.png",
+          "accessories_name": "SKS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/VSS.png",
+          "accessories_name": "VSS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mini14.png",
+          "accessories_name": "Mini14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk14.png",
+          "accessories_name": "Mk14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SLR.png",
+          "accessories_name": "SLR"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBU.png",
+          "accessories_name": "QBU"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk12.png",
+          "accessories_name": "Mk12"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/S12K.png",
+          "accessories_name": "S12K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M249.png",
+          "accessories_name": "M249"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/ace32.png",
+          "accessories_name": "ACE32"
+        }
+      ]
+    },
+    {
+      "id": "2023061008",
+      "type": "Magazine_Rifle",
+      "type_index": "4",
+      "name": "Quickdraw Mag (AR)",
+      "image": "/wiki-assets/attachments/Icon_DJ_Large_Q_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_DJ_Large_Q.png",
+        "name": "Quickdraw Mag (AR)",
+        "magazine": "14",
+        "skilldec": "Increases reload speed."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AKM.png",
+          "accessories_name": "AKM"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M16A4.png",
+          "accessories_name": "M16A4"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SCAR-L.png",
+          "accessories_name": "SCAR-L"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M416.png",
+          "accessories_name": "M416"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Groza.png",
+          "accessories_name": "Groza"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AUG.png",
+          "accessories_name": "AUG"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBZ.png",
+          "accessories_name": "QBZ"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M762.png",
+          "accessories_name": "M762"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk47.png",
+          "accessories_name": "Mk47"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/G36C.png",
+          "accessories_name": "G36C"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Honey_Badger.png",
+          "accessories_name": "Honey Badger"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SKS.png",
+          "accessories_name": "SKS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/VSS.png",
+          "accessories_name": "VSS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mini14.png",
+          "accessories_name": "Mini14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk14.png",
+          "accessories_name": "Mk14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SLR.png",
+          "accessories_name": "SLR"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBU.png",
+          "accessories_name": "QBU"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk12.png",
+          "accessories_name": "Mk12"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/S12K.png",
+          "accessories_name": "S12K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M249.png",
+          "accessories_name": "M249"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/ace32.png",
+          "accessories_name": "ACE32"
+        }
+      ]
+    },
+    {
+      "id": "2023061009",
+      "type": "Magazine_Rifle",
+      "type_index": "4",
+      "name": "Extended Quickdraw Mag (AR)",
+      "image": "/wiki-assets/attachments/Icon_DJ_Large_EQ_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_DJ_Large_EQ.png",
+        "name": "Extended Quickdraw Mag (AR)",
+        "magazine": "20",
+        "skilldec": "Increases reload speed and magazine capacity."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AKM.png",
+          "accessories_name": "AKM"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M16A4.png",
+          "accessories_name": "M16A4"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SCAR-L.png",
+          "accessories_name": "SCAR-L"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M416.png",
+          "accessories_name": "M416"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Groza.png",
+          "accessories_name": "Groza"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AUG.png",
+          "accessories_name": "AUG"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBZ.png",
+          "accessories_name": "QBZ"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M762.png",
+          "accessories_name": "M762"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk47.png",
+          "accessories_name": "Mk47"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/G36C.png",
+          "accessories_name": "G36C"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Honey_Badger.png",
+          "accessories_name": "Honey Badger"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SKS.png",
+          "accessories_name": "SKS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/VSS.png",
+          "accessories_name": "VSS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mini14.png",
+          "accessories_name": "Mini14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk14.png",
+          "accessories_name": "Mk14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SLR.png",
+          "accessories_name": "SLR"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBU.png",
+          "accessories_name": "QBU"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk12.png",
+          "accessories_name": "Mk12"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/S12K.png",
+          "accessories_name": "S12K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M249.png",
+          "accessories_name": "M249"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/ace32.png",
+          "accessories_name": "ACE32"
+        }
+      ]
+    },
+    {
+      "id": "2023061010",
+      "type": "Magazine_Rifle",
+      "type_index": "4",
+      "name": "Shotgun Quick Loader",
+      "image": "/wiki-assets/attachments/Icon_Shotgun_Quick_Loader_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_Shotgun_Quick_Loader.png",
+        "name": "Shotgun Quick Loader",
+        "magazine": "20",
+        "skilldec": "Increases the reload speed of shotguns. Can be used by the S1897, DBS, and M1014."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/S1897.png",
+          "accessories_name": "S1897"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/DBS.png",
+          "accessories_name": "DBS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M1014.png",
+          "accessories_name": "M1014"
+        }
+      ]
+    },
+    {
+      "id": "2023061011",
+      "type": "Magazine_Rifle",
+      "type_index": "4",
+      "name": "Mini Drum Mag (AR)",
+      "image": "/wiki-assets/attachments/Icon_Mini_Drum_Mag_AR_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_Mini_Drum_Mag_AR.png",
+        "name": "Mini Drum Mag (AR)",
+        "magazine": "25",
+        "skilldec": "Significantly increases the magazine capacity, but slightly increases the time to reload."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AKM.png",
+          "accessories_name": "AKM"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M16A4.png",
+          "accessories_name": "M16A4"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SCAR-L.png",
+          "accessories_name": "SCAR-L"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M416.png",
+          "accessories_name": "M416"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Groza.png",
+          "accessories_name": "Groza"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AUG.png",
+          "accessories_name": "AUG"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBZ.png",
+          "accessories_name": "QBZ"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M762.png",
+          "accessories_name": "M762"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk47.png",
+          "accessories_name": "Mk47"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/G36C.png",
+          "accessories_name": "G36C"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/FAMAS.png",
+          "accessories_name": "FAMAS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Honey_Badger.png",
+          "accessories_name": "Honey Badger"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/ace32.png",
+          "accessories_name": "ACE32"
+        }
+      ]
+    },
+    {
+      "id": "2023061101",
+      "type": "Stock_Rifle",
+      "type_index": "5",
+      "name": "Stock (Micro UZI)",
+      "image": "/wiki-assets/attachments/Icon_QT_UZI_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_QT_UZI.png",
+        "name": "Stock (Micro UZI)",
+        "magazine": "10",
+        "skilldec": "Increases recoil recovery speed and reduces weapon shake."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/UZI.png",
+          "accessories_name": "UZI"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Skorpion.png",
+          "accessories_name": "Skorpion"
+        }
+      ]
+    },
+    {
+      "id": "2023061102",
+      "type": "Stock_Rifle",
+      "type_index": "5",
+      "name": "Tactical Stock (Rifles, SMG)",
+      "image": "/wiki-assets/attachments/Icon_QT_A_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_QT_A.png",
+        "name": "Tactical Stock (Rifles, SMG)",
+        "magazine": "12",
+        "skilldec": "Increases recoil recovery speed and reduces weapon shake."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M16A4.png",
+          "accessories_name": "M16A4"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M416.png",
+          "accessories_name": "M416"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk47.png",
+          "accessories_name": "Mk47"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Vector.png",
+          "accessories_name": "Vector"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/MP5K.png",
+          "accessories_name": "MP5K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M249.png",
+          "accessories_name": "M249"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/ace32.png",
+          "accessories_name": "ACE32"
+        }
+      ]
+    },
+    {
+      "id": "2023061103",
+      "type": "Stock_Rifle",
+      "type_index": "5",
+      "name": "Cheek Pad (Snipers)",
+      "image": "/wiki-assets/attachments/Icon_QT_Sniper_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_QT_Sniper.png",
+        "name": "Cheek Pad (Snipers)",
+        "magazine": "17",
+        "skilldec": "Reduces recoil and weapon shake."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Kar98K.png",
+          "accessories_name": "Kar98K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M24.png",
+          "accessories_name": "M24"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/AWM.png",
+          "accessories_name": "AWM"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SKS.png",
+          "accessories_name": "SKS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/VSS.png",
+          "accessories_name": "VSS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk14.png",
+          "accessories_name": "Mk14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SLR.png",
+          "accessories_name": "SLR"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mosin-Nagant.png",
+          "accessories_name": "Mosin-Nagant"
+        }
+      ]
+    },
+    {
+      "id": "2023061104",
+      "type": "Stock_Rifle",
+      "type_index": "5",
+      "name": "Bullet Loop (Shotguns, Snipers)",
+      "image": "/wiki-assets/attachments/Icon_ZDD_Shotgun_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_ZDD_Shotgun.png",
+        "name": "Bullet Loop (Shotguns, Snipers)",
+        "magazine": "15",
+        "skilldec": "Increases reload speed."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Kar98K.png",
+          "accessories_name": "Kar98K"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Win94.png",
+          "accessories_name": "Win94"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mosin-Nagant.png",
+          "accessories_name": "Mosin-Nagant"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/S686.png",
+          "accessories_name": "S686"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/S1897.png",
+          "accessories_name": "S1897"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M1014.png",
+          "accessories_name": "M1014"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/NS2000.png",
+          "accessories_name": "NS2000"
+        }
+      ]
+    },
+    {
+      "id": "2023061201",
+      "type": "Tactical_Rifle",
+      "type_index": "6",
+      "name": "Gun Shield",
+      "image": "/wiki-assets/attachments/Icon_DP_28_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_DP_28.png",
+        "name": "Gun Shield",
+        "magazine": "20",
+        "skilldec": "Blocks enemy gunfire and automatically deploys upon going prone. Can be equipped to the DP-28 and M249."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M249.png",
+          "accessories_name": "M249"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/DP-28.png",
+          "accessories_name": "DP-28"
+        }
+      ]
+    },
+    {
+      "id": "2023061202",
+      "type": "Tactical_Rifle",
+      "type_index": "6",
+      "name": "Full-Auto Mod",
+      "image": "/wiki-assets/attachments/Icon_Full_Auto_Mod_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/attachments/Icon_Full_Auto_Mod.png",
+        "name": "Full-Auto Mod",
+        "magazine": "20",
+        "skilldec": "Gives the M16A4 or Mk47 a full-auto firing mode."
+      },
+      "attachments_accessories": [
+        {
+          "accessories": "/wiki-assets/attachments_weapon/M16A4.png",
+          "accessories_name": "M16A4"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk47.png",
+          "accessories_name": "Mk47"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SKS.png",
+          "accessories_name": "SKS"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/SLR.png",
+          "accessories_name": "SLR"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/QBU.png",
+          "accessories_name": "QBU"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mini14.png",
+          "accessories_name": "Mini14"
+        },
+        {
+          "accessories": "/wiki-assets/attachments_weapon/Mk12.png",
+          "accessories_name": "Mk12"
+        }
+      ]
+    }
+  ],
+  "maps": [
+    {
+      "id": "2024062301",
+      "type": "Assault_Rifle",
+      "type_index": "1",
+      "name": "Livik",
+      "image": "/wiki-assets/maps/Livik_w.png",
+      "image_c": "/wiki-assets/maps/Livik.png",
+      "size": "2km 횞 2km",
+      "Unranked": 1,
+      "Ranked": 1,
+      "recall": 1,
+      "shops": 1
+    },
+    {
+      "id": "2024062302",
+      "type": "Assault_Rifle",
+      "type_index": "1",
+      "name": "Miramar",
+      "image": "/wiki-assets/maps/Miramar_w.png",
+      "image_c": "/wiki-assets/maps/Miramar.png",
+      "size": "8km 횞 8km",
+      "Unranked": 1,
+      "Ranked": 1,
+      "recall": 0,
+      "shops": 1
+    },
+    {
+      "id": "2024062303",
+      "type": "Assault_Rifle",
+      "type_index": "1",
+      "name": "Livik Aftermath",
+      "image": "/wiki-assets/maps/Livik2_w.png",
+      "image_c": "/wiki-assets/maps/Livik2.png",
+      "size": "2km 횞 2km",
+      "Unranked": 1,
+      "Ranked": 0,
+      "recall": 1,
+      "shops": 1
+    },
+    {
+      "id": "2024062304",
+      "type": "Assault_Rifle",
+      "type_index": "1",
+      "name": "Sanhok",
+      "image": "/wiki-assets/maps/Sanhok_w.png",
+      "image_c": "/wiki-assets/maps/Sanhok.png",
+      "size": "4km 횞 4km",
+      "Unranked": 1,
+      "Ranked": 1,
+      "recall": 0,
+      "shops": 1
+    },
+    {
+      "id": "2024062305",
+      "type": "Assault_Rifle",
+      "type_index": "1",
+      "name": "Vikendi",
+      "image": "/wiki-assets/maps/Vikendi_w.png",
+      "image_c": "/wiki-assets/maps/Vikendi.png",
+      "size": "8km 횞 8km",
+      "Unranked": 1,
+      "Ranked": 1,
+      "recall": 0,
+      "shops": 1
+    },
+    {
+      "id": "2024062306",
+      "type": "Assault_Rifle",
+      "type_index": "1",
+      "name": "Karakin",
+      "image": "/wiki-assets/maps/Karakin_w.png",
+      "image_c": "/wiki-assets/maps/Karakin.png",
+      "size": "2km 횞 2km",
+      "Unranked": 1,
+      "Ranked": 1,
+      "recall": 0,
+      "shops": 1
+    },
+    {
+      "id": "2024062307",
+      "type": "Assault_Rifle",
+      "type_index": "1",
+      "name": "Nusa",
+      "image": "/wiki-assets/maps/Nusa_w.png",
+      "image_c": "/wiki-assets/maps/Nusa.png",
+      "size": "1km 횞 1km",
+      "Unranked": 1,
+      "Ranked": 1,
+      "recall": 0,
+      "shops": 1
+    },
+    {
+      "id": "2024062308",
+      "type": "Assault_Rifle",
+      "type_index": "1",
+      "name": "Erangel",
+      "image": "/wiki-assets/maps/Erangel_w.png",
+      "image_c": "/wiki-assets/maps/Erangel.png",
+      "size": "8km 횞 8km",
+      "Unranked": 1,
+      "Ranked": 1,
+      "recall": 1,
+      "shops": 1
+    }
+  ],
+  "vehicles": [
+    {
+      "id": "2024062401",
+      "type": "Sedan",
+      "type_index": "2",
+      "name": "Dacia",
+      "image": "/wiki-assets/vehicles/Dacia_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/vehicles/Dacia.png",
+        "name": "Dacia",
+        "vehicle": "Sedan",
+        "seat": "4",
+        "blood": "1800",
+        "fuel": "2750000",
+        "top": "133"
+      },
+      "map": [
+        {
+          "Erangel": 1
+        },
+        {
+          "Miramar": 0
+        },
+        {
+          "Vikendi": 1
+        },
+        {
+          "Sanhok": 0
+        },
+        {
+          "Karakin": 0
+        },
+        {
+          "Nusa": 1
+        },
+        {
+          "Livik": 0
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ]
+    },
+    {
+      "id": "2024062402",
+      "type": "Sedan",
+      "type_index": "2",
+      "name": "Mirado (Open Top)",
+      "image": "/wiki-assets/vehicles/MiradoOT_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/vehicles/MiradoOT.png",
+        "name": "Mirado (Open Top)",
+        "vehicle": "Sedan",
+        "seat": "4",
+        "blood": "1500",
+        "fuel": "2750000",
+        "top": "163"
+      },
+      "map": [
+        {
+          "Erangel": 1
+        },
+        {
+          "Miramar": 1
+        },
+        {
+          "Vikendi": 0
+        },
+        {
+          "Sanhok": 1
+        },
+        {
+          "Karakin": 0
+        },
+        {
+          "Nusa": 1
+        },
+        {
+          "Livik": 0
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ]
+    },
+    {
+      "id": "2024062403",
+      "type": "Boat",
+      "type_index": "6",
+      "name": "PG-117",
+      "image": "/wiki-assets/vehicles/pg117_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/vehicles/pg117.png",
+        "name": "PG-117",
+        "vehicle": "Boat",
+        "seat": "4",
+        "blood": "750",
+        "fuel": "1350000",
+        "top": "95"
+      },
+      "map": [
+        {
+          "Erangel": 1
+        },
+        {
+          "Miramar": 1
+        },
+        {
+          "Vikendi": 1
+        },
+        {
+          "Sanhok": 1
+        },
+        {
+          "Karakin": 0
+        },
+        {
+          "Nusa": 1
+        },
+        {
+          "Livik": 0
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ]
+    },
+    {
+      "id": "2024062404",
+      "type": "Other",
+      "type_index": "7",
+      "name": "Monster Truck",
+      "image": "/wiki-assets/vehicles/MonsterT_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/vehicles/MonsterT.png",
+        "name": "Monster Truck",
+        "vehicle": "Other",
+        "seat": "4",
+        "blood": "2000",
+        "fuel": "2500000",
+        "top": "104"
+      },
+      "map": [
+        {
+          "Erangel": 1
+        },
+        {
+          "Miramar": 1
+        },
+        {
+          "Vikendi": 0
+        },
+        {
+          "Sanhok": 0
+        },
+        {
+          "Karakin": 0
+        },
+        {
+          "Nusa": 1
+        },
+        {
+          "Livik": 1
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ]
+    },
+    {
+      "id": "2024062405",
+      "type": "Buggy",
+      "type_index": "4",
+      "name": "Buggy",
+      "image": "/wiki-assets/vehicles/Buggy_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/vehicles/Buggy.png",
+        "name": "Buggy",
+        "vehicle": "Buggy",
+        "seat": "2",
+        "blood": "1550",
+        "fuel": "2500000",
+        "top": "120"
+      },
+      "map": [
+        {
+          "Erangel": 1
+        },
+        {
+          "Miramar": 1
+        },
+        {
+          "Vikendi": 0
+        },
+        {
+          "Sanhok": 0
+        },
+        {
+          "Karakin": 0
+        },
+        {
+          "Nusa": 1
+        },
+        {
+          "Livik": 1
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ]
+    },
+    {
+      "id": "2024062406",
+      "type": "Truck",
+      "type_index": "3",
+      "name": "Pickup (Closed Top)",
+      "image": "/wiki-assets/vehicles/PickupCT_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/vehicles/PickupCT.png",
+        "name": "Pickup (Closed Top)",
+        "vehicle": "Truck",
+        "seat": "4",
+        "blood": "1200",
+        "fuel": "3000000",
+        "top": "115"
+      },
+      "map": [
+        {
+          "Erangel": 0
+        },
+        {
+          "Miramar": 1
+        },
+        {
+          "Vikendi": 0
+        },
+        {
+          "Sanhok": 0
+        },
+        {
+          "Karakin": 0
+        },
+        {
+          "Nusa": 0
+        },
+        {
+          "Livik": 0
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ]
+    },
+    {
+      "id": "2024062407",
+      "type": "Other",
+      "type_index": "7",
+      "name": "Motor Glider",
+      "image": "/wiki-assets/vehicles/MotorG_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/vehicles/MotorG.png",
+        "name": "Motor Glider",
+        "vehicle": "Other",
+        "seat": "2",
+        "blood": "1000",
+        "fuel": "2500000",
+        "top": "110"
+      },
+      "map": [
+        {
+          "Erangel": 1
+        },
+        {
+          "Miramar": 1
+        },
+        {
+          "Vikendi": 0
+        },
+        {
+          "Sanhok": 0
+        },
+        {
+          "Karakin": 0
+        },
+        {
+          "Nusa": 0
+        },
+        {
+          "Livik": 0
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ]
+    },
+    {
+      "id": "2024062408",
+      "type": "Boat",
+      "type_index": "6",
+      "name": "Jet Ski",
+      "image": "/wiki-assets/vehicles/JetS_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/vehicles/JetS.png",
+        "name": "Jet Ski",
+        "vehicle": "Boat",
+        "seat": "2",
+        "blood": "500",
+        "fuel": "1100000",
+        "top": "84"
+      },
+      "map": [
+        {
+          "Erangel": 1
+        },
+        {
+          "Miramar": 1
+        },
+        {
+          "Vikendi": 1
+        },
+        {
+          "Sanhok": 1
+        },
+        {
+          "Karakin": 0
+        },
+        {
+          "Nusa": 1
+        },
+        {
+          "Livik": 1
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ]
+    },
+    {
+      "id": "2024062409",
+      "type": "UAZ",
+      "type_index": "5",
+      "name": "UAZ",
+      "image": "/wiki-assets/vehicles/UAZ_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/vehicles/UAZ.png",
+        "name": "UAZ",
+        "vehicle": "UAZ",
+        "seat": "4",
+        "blood": "2450",
+        "fuel": "3000000",
+        "top": "131"
+      },
+      "map": [
+        {
+          "Erangel": 1
+        },
+        {
+          "Miramar": 1
+        },
+        {
+          "Vikendi": 0
+        },
+        {
+          "Sanhok": 1
+        },
+        {
+          "Karakin": 0
+        },
+        {
+          "Nusa": 1
+        },
+        {
+          "Livik": 1
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ]
+    },
+    {
+      "id": "2024062410",
+      "type": "Other",
+      "type_index": "7",
+      "name": "Tukshai",
+      "image": "/wiki-assets/vehicles/Tukshai_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/vehicles/Tukshai.png",
+        "name": "Tukshai",
+        "vehicle": "Other",
+        "seat": "3",
+        "blood": "1000",
+        "fuel": "2000000",
+        "top": "73"
+      },
+      "map": [
+        {
+          "Erangel": 0
+        },
+        {
+          "Miramar": 0
+        },
+        {
+          "Vikendi": 0
+        },
+        {
+          "Sanhok": 1
+        },
+        {
+          "Karakin": 0
+        },
+        {
+          "Nusa": 0
+        },
+        {
+          "Livik": 0
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ]
+    },
+    {
+      "id": "2024062411",
+      "type": "Motorcycle",
+      "type_index": "1",
+      "name": "Scooter",
+      "image": "/wiki-assets/vehicles/Scooter_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/vehicles/Scooter.png",
+        "name": "Scooter",
+        "vehicle": "Motorcycle",
+        "seat": "2",
+        "blood": "500",
+        "fuel": "2000000",
+        "top": "90"
+      },
+      "map": [
+        {
+          "Erangel": 1
+        },
+        {
+          "Miramar": 1
+        },
+        {
+          "Vikendi": 0
+        },
+        {
+          "Sanhok": 1
+        },
+        {
+          "Karakin": 0
+        },
+        {
+          "Nusa": 0
+        },
+        {
+          "Livik": 1
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ]
+    },
+    {
+      "id": "2024062412",
+      "type": "Buggy",
+      "type_index": "4",
+      "name": "Quad",
+      "image": "/wiki-assets/vehicles/Quad_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/vehicles/Quad.png",
+        "name": "Quad",
+        "vehicle": "Buggy",
+        "seat": "2",
+        "blood": "1400",
+        "fuel": "2000000",
+        "top": "110"
+      },
+      "map": [
+        {
+          "Erangel": 0
+        },
+        {
+          "Miramar": 0
+        },
+        {
+          "Vikendi": 0
+        },
+        {
+          "Sanhok": 0
+        },
+        {
+          "Karakin": 0
+        },
+        {
+          "Nusa": 1
+        },
+        {
+          "Livik": 0
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ]
+    },
+    {
+      "id": "2024062413",
+      "type": "Other",
+      "type_index": "7",
+      "name": "Mini Bus",
+      "image": "/wiki-assets/vehicles/MiniB_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/vehicles/MiniB.png",
+        "name": "Mini Bus",
+        "vehicle": "minibus",
+        "seat": "6",
+        "blood": "3100",
+        "fuel": "2500000",
+        "top": "116"
+      },
+      "map": [
+        {
+          "Erangel": 0
+        },
+        {
+          "Miramar": 0
+        },
+        {
+          "Vikendi": 0
+        },
+        {
+          "Sanhok": 0
+        },
+        {
+          "Karakin": 0
+        },
+        {
+          "Nusa": 1
+        },
+        {
+          "Livik": 0
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ]
+    },
+    {
+      "id": "2024062414",
+      "type": "Truck",
+      "type_index": "3",
+      "name": "Pickup (Open Top)",
+      "image": "/wiki-assets/vehicles/PickupOT_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/vehicles/PickupOT.png",
+        "name": "Pickup (Open Top)",
+        "vehicle": "pickup",
+        "seat": "4",
+        "blood": "1200",
+        "fuel": "3000000",
+        "top": "115"
+      },
+      "map": [
+        {
+          "Erangel": 0
+        },
+        {
+          "Miramar": 1
+        },
+        {
+          "Vikendi": 0
+        },
+        {
+          "Sanhok": 0
+        },
+        {
+          "Karakin": 0
+        },
+        {
+          "Nusa": 0
+        },
+        {
+          "Livik": 0
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ]
+    },
+    {
+      "id": "2024062415",
+      "type": "Buggy",
+      "type_index": "4",
+      "name": "UTV (Utility Task Vehicle)",
+      "image": "/wiki-assets/vehicles/UTV_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/vehicles/UTV.png",
+        "name": "UTV (Utility Task Vehicle)",
+        "vehicle": "Buggy",
+        "seat": "4",
+        "blood": "2000",
+        "fuel": "2500000",
+        "top": "115"
+      },
+      "map": [
+        {
+          "Erangel": 0
+        },
+        {
+          "Miramar": 0
+        },
+        {
+          "Vikendi": 0
+        },
+        {
+          "Sanhok": 0
+        },
+        {
+          "Karakin": 0
+        },
+        {
+          "Nusa": 0
+        },
+        {
+          "Livik": 1
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ]
+    },
+    {
+      "id": "2024062416",
+      "type": "UAZ",
+      "type_index": "5",
+      "name": "UAZ (Open Top)",
+      "image": "/wiki-assets/vehicles/UAZOT_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/vehicles/UAZOT.png",
+        "name": "UAZ (Open Top)",
+        "vehicle": "UAZ",
+        "seat": "4",
+        "blood": "2450",
+        "fuel": "3000000",
+        "top": "131"
+      },
+      "map": [
+        {
+          "Erangel": 1
+        },
+        {
+          "Miramar": 0
+        },
+        {
+          "Vikendi": 0
+        },
+        {
+          "Sanhok": 1
+        },
+        {
+          "Karakin": 0
+        },
+        {
+          "Nusa": 0
+        },
+        {
+          "Livik": 1
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ]
+    },
+    {
+      "id": "2024062417",
+      "type": "Truck",
+      "type_index": "3",
+      "name": "Rony",
+      "image": "/wiki-assets/vehicles/Rony_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/vehicles/Rony.png",
+        "name": "Rony",
+        "vehicle": "Truck",
+        "seat": "4",
+        "blood": "1200",
+        "fuel": "3000000",
+        "top": "106"
+      },
+      "map": [
+        {
+          "Erangel": 0
+        },
+        {
+          "Miramar": 0
+        },
+        {
+          "Vikendi": 0
+        },
+        {
+          "Sanhok": 1
+        },
+        {
+          "Karakin": 0
+        },
+        {
+          "Nusa": 0
+        },
+        {
+          "Livik": 0
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ]
+    },
+    {
+      "id": "2024062418",
+      "type": "Other",
+      "type_index": "7",
+      "name": "2-Seat Bike",
+      "image": "/wiki-assets/vehicles/2SBike_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/vehicles/2SBike.png",
+        "name": "2-Seat Bike",
+        "vehicle": "Other",
+        "seat": "2",
+        "blood": "NA",
+        "fuel": "NA",
+        "top": "60"
+      },
+      "map": [
+        {
+          "Erangel": 1
+        },
+        {
+          "Miramar": 0
+        },
+        {
+          "Vikendi": 0
+        },
+        {
+          "Sanhok": 0
+        },
+        {
+          "Karakin": 0
+        },
+        {
+          "Nusa": 0
+        },
+        {
+          "Livik": 1
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ]
+    },
+    {
+      "id": "2024062419",
+      "type": "Sedan",
+      "type_index": "2",
+      "name": "Coupe RB",
+      "image": "/wiki-assets/vehicles/CoupeRB_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/vehicles/CoupeRB.png",
+        "name": "Coupe RB",
+        "vehicle": "Sedan",
+        "seat": "2",
+        "blood": "1800",
+        "fuel": "2750000",
+        "top": "150"
+      },
+      "map": [
+        {
+          "Erangel": 1
+        },
+        {
+          "Miramar": 1
+        },
+        {
+          "Vikendi": 0
+        },
+        {
+          "Sanhok": 1
+        },
+        {
+          "Karakin": 0
+        },
+        {
+          "Nusa": 1
+        },
+        {
+          "Livik": 1
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ]
+    },
+    {
+      "id": "2024062420",
+      "type": "Motorcycle",
+      "type_index": "1",
+      "name": "Snowmobile",
+      "image": "/wiki-assets/vehicles/Snowmobile_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/vehicles/Snowmobile.png",
+        "name": "Snowmobile",
+        "vehicle": "Motorcycle",
+        "seat": "2",
+        "blood": "1000",
+        "fuel": "2000000",
+        "top": "105"
+      },
+      "map": [
+        {
+          "Erangel": 0
+        },
+        {
+          "Miramar": 0
+        },
+        {
+          "Vikendi": 1
+        },
+        {
+          "Sanhok": 0
+        },
+        {
+          "Karakin": 0
+        },
+        {
+          "Nusa": 0
+        },
+        {
+          "Livik": 0
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ]
+    },
+    {
+      "id": "2024062421",
+      "type": "Other",
+      "type_index": "7",
+      "name": "BRDM-2",
+      "image": "/wiki-assets/vehicles/BRDM2_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/vehicles/BRDM2.png",
+        "name": "BRDM-2",
+        "vehicle": "Other",
+        "seat": "4",
+        "blood": "3600",
+        "fuel": "4000000",
+        "top": "104"
+      },
+      "map": [
+        {
+          "Erangel": 0
+        },
+        {
+          "Miramar": 0
+        },
+        {
+          "Vikendi": 0
+        },
+        {
+          "Sanhok": 0
+        },
+        {
+          "Karakin": 0
+        },
+        {
+          "Nusa": 0
+        },
+        {
+          "Livik": 0
+        },
+        {
+          "Air_Drop_Weapon": 1
+        }
+      ]
+    },
+    {
+      "id": "2024062422",
+      "type": "Motorcycle",
+      "type_index": "1",
+      "name": "Motorcycle",
+      "image": "/wiki-assets/vehicles/Motorcycle_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/vehicles/Motorcycle.png",
+        "name": "Motorcycle",
+        "vehicle": "Motorcycle",
+        "seat": "2",
+        "blood": "1000",
+        "fuel": "2000000",
+        "top": "151"
+      },
+      "map": [
+        {
+          "Erangel": 1
+        },
+        {
+          "Miramar": 1
+        },
+        {
+          "Vikendi": 0
+        },
+        {
+          "Sanhok": 1
+        },
+        {
+          "Karakin": 0
+        },
+        {
+          "Nusa": 0
+        },
+        {
+          "Livik": 1
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ]
+    },
+    {
+      "id": "2024062423",
+      "type": "Motorcycle",
+      "type_index": "1",
+      "name": "Sidecar Motorcycle",
+      "image": "/wiki-assets/vehicles/SidecarM_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/vehicles/SidecarM.png",
+        "name": "Sidecar Motorcycle",
+        "vehicle": "Motorcycle",
+        "seat": "3",
+        "blood": "1000",
+        "fuel": "2000000",
+        "top": "110"
+      },
+      "map": [
+        {
+          "Erangel": 1
+        },
+        {
+          "Miramar": 1
+        },
+        {
+          "Vikendi": 0
+        },
+        {
+          "Sanhok": 0
+        },
+        {
+          "Karakin": 0
+        },
+        {
+          "Nusa": 0
+        },
+        {
+          "Livik": 0
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ]
+    },
+    {
+      "id": "2024062424",
+      "type": "Motorcycle",
+      "type_index": "1",
+      "name": "Snowbike",
+      "image": "/wiki-assets/vehicles/Snowbike_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/vehicles/Snowbike.png",
+        "name": "Snowbike",
+        "vehicle": "Motorcycle",
+        "seat": "2",
+        "blood": "350",
+        "fuel": "2000000",
+        "top": "134"
+      },
+      "map": [
+        {
+          "Erangel": 0
+        },
+        {
+          "Miramar": 0
+        },
+        {
+          "Vikendi": 1
+        },
+        {
+          "Sanhok": 0
+        },
+        {
+          "Karakin": 0
+        },
+        {
+          "Nusa": 0
+        },
+        {
+          "Livik": 0
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ]
+    },
+    {
+      "id": "2024062426",
+      "type": "Other",
+      "type_index": "7",
+      "name": "Horse",
+      "image": "/wiki-assets/vehicles/horse_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/vehicles/horse.png",
+        "name": "Horse",
+        "vehicle": "Other",
+        "seat": "2",
+        "blood": "1500",
+        "fuel": "0",
+        "top": "90"
+      },
+      "map": [
+        {
+          "Erangel": 1
+        },
+        {
+          "Miramar": 1
+        },
+        {
+          "Vikendi": 0
+        },
+        {
+          "Sanhok": 1
+        },
+        {
+          "Karakin": 0
+        },
+        {
+          "Nusa": 0
+        },
+        {
+          "Livik": 1
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ]
+    },
+    {
+      "id": "2024062425",
+      "type": "UAZ",
+      "type_index": "5",
+      "name": "Zima UAZ",
+      "image": "/wiki-assets/vehicles/ZimaUAZ_w.png",
+      "arms_introduce": {
+        "arms_c": "/wiki-assets/vehicles/ZimaUAZ.png",
+        "name": "Zima UAZ",
+        "vehicle": "UAZ",
+        "seat": "4",
+        "blood": "1900",
+        "fuel": "3000000",
+        "top": "110"
+      },
+      "map": [
+        {
+          "Erangel": 0
+        },
+        {
+          "Miramar": 0
+        },
+        {
+          "Vikendi": 0
+        },
+        {
+          "Sanhok": 1
+        },
+        {
+          "Karakin": 0
+        },
+        {
+          "Nusa": 0
+        },
+        {
+          "Livik": 0
+        },
+        {
+          "Air_Drop_Weapon": 0
+        }
+      ]
+    }
+  ]
+};
