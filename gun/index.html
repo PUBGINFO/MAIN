@@ -639,6 +639,17 @@ function renderDetail(item) {
       ${mapHtml ? `<div class="sec-lbl">Map Availability</div><div class="map-grid">${mapHtml}</div>` : ''}
     </div>`;
 }
+// ── Sidebar Toggle (Mobile) ─────────────────────────────
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sbOverlay').classList.add('show');
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sbOverlay').classList.remove('show');
+}
+
 </script>
 </body>
 </html>
