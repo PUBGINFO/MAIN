@@ -8446,10 +8446,10 @@ const pubgWeaponData = {
           "Miramar": 0
         },
         {
-          "Vikendi": 0
+          "Vikendi": 1
         },
         {
-          "Sanhok": 1
+          "Sanhok": 0
         },
         {
           "Karakin": 0
