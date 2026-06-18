@@ -426,7 +426,7 @@ function renderMaps() {
 // ── List (weapon / vehicle / attachment) ─────────────────
 function renderList() {
   const filtered = getFiltered();
-  document.getElementById('liveCount').innerText = `${filtered.length} results`;
+  document.getElementById('liveCount').innerText = `${filtered.length}개의 결과`;
 
   const tabLabel = { weapon:'Weapons', vehicle:'Vehicles', attachment:'Attachments' }[state.tab];
   document.getElementById('breadcrumb').innerHTML = `<span class="cur">${tabLabel}</span>`;
@@ -443,7 +443,7 @@ function renderList() {
     </div>`;
 
   if (filtered.length === 0) {
-    html += `<div class="card-grid"><div class="grid-empty"><p style="font-family:var(--mono);font-size:12px;color:var(--txt3);">No items found.</p></div></div>`;
+    html += `<div class="card-grid"><div class="grid-empty"><p style="font-family:var(--mono);font-size:12px;color:var(--txt3);">검색 결과가 없습니다.⁠</p></div></div>`;
   } else if (state.view === 'grid') {
     html += `<div class="card-grid">`;
     filtered.forEach(item => {
