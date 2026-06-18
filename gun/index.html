@@ -359,7 +359,7 @@ function renderSidebar() {
   const pool  = getPool();
   const types = TYPES[state.tab] || [];
 
-  const tabLabel = { weapon:'Weapons', vehicle:'Vehicles', attachment:'Attachments', map:'Maps' }[state.tab];
+  const tabLabel = { weapon:'총기', vehicle:'차량', attachment:'부착물', map:'지도' }[state.tab];
 
   let html = `
     <div class="cat-item ${state.category==='all'?'active':''}" onclick="setCategory('all')">
@@ -519,7 +519,7 @@ function renderDetail(item) {
   const isAttach = state.tab === 'attachment';
   const isMap    = state.tab === 'map';
 
-  const tabLabel = { weapon:'Weapons', vehicle:'Vehicles', attachment:'Attachments', map:'Maps' }[state.tab];
+  const tabLabel = { weapon:'총기', vehicle:'차량', attachment:'부착물', map:'지도' }[state.tab];
   document.getElementById('liveCount').innerText = '1 result';
   document.getElementById('breadcrumb').innerHTML = `
     <span class="cur" onclick="closeDetail()" style="cursor:pointer">${tabLabel}</span>
