@@ -697,7 +697,7 @@ function renderDetail(item) {
     const feats = [
       {lbl:'랭크 모드',  val:item.Ranked},
       {lbl:'일반 모드',  val:item.Unranked},
-      {lbl:'리콜 시스템', val:item.recall},
+      {lbl:'부활 시스템', val:item.recall},
       {lbl:'상점',       val:item.shops},
     ];
     document.getElementById('content').innerHTML = `
@@ -705,7 +705,7 @@ function renderDetail(item) {
         <button class="back-btn" onclick="closeDetail()">← 맵 목록으로</button>
         <img class="map-detail-img" src="${imgSrc(item.image_c || item.image)}" alt="${item.name}" onerror="this.style.display='none'">
         <div style="margin-bottom:8px">
-          <div class="detail-eyebrow">배틀 맵</div>
+          <div class="detail-eyebrow">MAP</div>
           <h2 class="detail-title">${item.name||''}</h2>
           <div class="detail-meta"><span>크기: <span class="hl">${item.size||'N/A'}</span></span></div>
         </div>
