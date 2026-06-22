@@ -8,7 +8,7 @@
 <style>
 :root {
   --accent:#6c63ff;--accent-lt:#9d97ff;--accent-bg:rgba(108,99,255,.1);--accent-bd:rgba(108,99,255,.28);
-  --red:#f04e4e;--pink:#e060a8;--purple:#9660dc;--blue:#4488e8;--green:#38b870;--orange:#f08030;
+  --red:#f04e4e;--pink:#e060a8;--purple:#9660dc;--blue:#4488e8;--green:#38b870;--orange:#f08030;--brown:#a9682f;
   --sans:'DM Sans',sans-serif;--mono:'DM Mono',monospace;--ease:cubic-bezier(.4,0,.2,1);
   --r-sm:8px;--r-md:12px;--r-lg:16px;
 }
@@ -66,6 +66,12 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);min-height:10
 .vbtn{flex:1;font-size:11px;font-family:var(--mono);padding:5px 0;border:1px solid var(--bd);border-radius:var(--r-sm);background:transparent;color:var(--txt3);cursor:pointer;transition:all .15s;text-align:center;}
 .vbtn:hover{color:var(--txt2);}
 .vbtn.active{background:var(--accent-bg);border-color:var(--accent-bd);color:var(--accent-lt);}
+.sort-group{display:flex;gap:8px;}
+.sort-btn{display:flex;align-items:center;gap:5px;padding:8px 12px;background:var(--surface);border:1px solid var(--bd);border-radius:8px;font-size:12px;font-family:var(--sans);color:var(--txt2);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.sort-btn:hover{border-color:var(--bd2);color:var(--txt);}
+.sort-btn.active{border-color:var(--accent-bd);background:var(--accent-bg);color:var(--accent-lt);}
+.sort-btn svg{width:11px;height:11px;}
+.sort-dir-icon{font-size:11px;opacity:.7;transition:transform .2s;display:inline-block;}
 .sb-view.hidden{display:none;}
 .sb-list{flex:1;overflow-y:auto;padding:4px 0 8px;scrollbar-width:thin;scrollbar-color:var(--bd2) transparent;}
 .sb-list::-webkit-scrollbar{width:3px;}
@@ -180,7 +186,7 @@ body{background:var(--bg);color:var(--txt);font-family:var(--sans);min-height:10
 .attach-grid{display:flex;flex-wrap:wrap;gap:6px;}
 .attach-chip{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-family:var(--mono);padding:5px 10px;border-radius:var(--r-sm);border:1px solid var(--bd);background:var(--surface2);color:var(--txt2);}
 .attach-chip img{width:22px;height:22px;object-fit:contain;}
-.map-detail-img{width:100%;max-height:320px;border-radius:var(--r-md);object-fit:cover;border:1px solid var(--bd);margin-bottom:4px;}
+.map-detail-img{width:100%;max-height:640px;min-height:260px;border-radius:var(--r-md);object-fit:contain;background:var(--surface2);border:1px solid var(--bd);margin-bottom:4px;}
 .map-feature-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;}
 .map-feat{background:var(--surface);border:1px solid var(--bd);border-radius:var(--r-md);padding:12px 14px;text-align:center;}
 .map-feat-val{font-size:18px;font-weight:700;}
@@ -283,11 +289,118 @@ const TYPE_KR = {
   'UAZ': 'UAZ',
   'Motorcycle': '오토바이',
   'Boat': '보트',
-  'Other': '기타'
+  'Other': '기타',
+  'Muzzle': '총구',
+  'Magazine': '탄창',
+  'Grip': '손잡이',
+  'Scope': '스코프',
+  'Stock': '개머리판',
+  'Sight': '조준경',
+  'Canted_Sight': '각도 보조 조준경',
+  'Foregrip': '전방 손잡이'
 };
 function typeKr(t) {
   if (!t) return '';
   return TYPE_KR[t] || t.replace(/_/g,' ');
+}
+
+// 발사방식 한글 번역 (Single-Shot/Full-Auto/Two Shot Burst 등)
+const FIRE_KR = {
+  'Single-Shot':'단발', 'Single Shot':'단발', 'SingleShot':'단발',
+  'Full-Auto':'자동', 'Full Auto':'자동', 'FullAuto':'자동', 'Automatic':'자동',
+  'Two Shot Burst':'2점사', 'Two-Shot Burst':'2점사',
+  'Three Shot Burst':'점사', 'Three-Shot Burst':'점사', 'Burst':'점사',
+  'Semi-Auto':'반자동', 'Semi Auto':'반자동', 'Bolt-Action':'볼트액션'
+};
+function translateFireMethod(s) {
+  if (!s) return '-';
+  return s.split('/').map(p => {
+    const t = p.trim();
+    return FIRE_KR[t] || t;
+  }).join(' / ');
+}
+
+// 탄약 종류별 색상 (5.56mm 초록 / 9mm 주황 / 12Gauge·.45ACP 하늘색 / 7.62mm·AE995A 핑크 / 그 외 회색)
+function bulletColor(b) {
+  const grey = {c:'var(--txt3)',bg:'rgba(140,150,165,.12)',bd:'rgba(140,150,165,.28)'};
+  if (!b) return grey;
+  const s = b.toLowerCase();
+  if (s.includes('5.56')) return {c:'var(--green)',bg:'rgba(56,184,112,.1)',bd:'rgba(56,184,112,.25)'};
+  if (s.includes('9mm')) return {c:'var(--orange)',bg:'rgba(240,128,48,.1)',bd:'rgba(240,128,48,.25)'};
+  if (s.includes('12 gauge') || s.includes('12gauge')) return {c:'var(--red)',bg:'rgba(240,78,78,.1)',bd:'rgba(240,78,78,.25)'};
+  if (s.includes('.45') || s.includes('45 acp')) return {c:'var(--blue)',bg:'rgba(68,136,232,.1)',bd:'rgba(68,136,232,.25)'};
+  if (s.includes('7.62') || s.includes('ae995')) return {c:'var(--brown)',bg:'rgba(169,104,47,.12)',bd:'rgba(169,104,47,.28)'};
+  if (s.includes('flare') || s === '-') return grey;
+  return grey;
+}
+
+// 파츠(부착물) 이름 한글 번역
+const ATTACH_NAME_KR = [
+  [/compensator/i,'보정기'],
+  [/flash hider/i,'소염기'],
+  [/suppressor|silencer/i,'소음기'],
+  [/extended quickdraw mag/i,'확장 신속 탄창'],
+  [/heavy duty quickdraw mag/i,'고강도 신속 탄창'],
+  [/extended mag/i,'확장 탄창'],
+  [/quickdraw mag/i,'신속 탄창'],
+  [/extended choke/i,'연장 초크'],
+  [/choke/i,'초크'],
+  [/duckbill/i,'덕빌'],
+  [/extended barrel/i,'연장 총열'],
+  [/red dot sight/i,'레드닷 사이트'],
+  [/holographic sight/i,'홀로그래픽 사이트'],
+  [/canted sight/i,'각도 보조 조준경'],
+  [/iron.?sight/i,'기계식 조준경'],
+  [/15x.*scope/i,'15배율 스코프'],
+  [/8x.*scope/i,'8배율 스코프'],
+  [/6x.*scope/i,'6배율 스코프'],
+  [/4x.*scope/i,'4배율 스코프'],
+  [/3x.*scope/i,'3배율 스코프'],
+  [/2x.*scope/i,'2배율 스코프'],
+  [/scope$/i,'스코프'],
+  [/vertical (fore)?grip/i,'수직 손잡이'],
+  [/angled (fore)?grip/i,'앵글 손잡이'],
+  [/thumb grip/i,'엄지 손잡이'],
+  [/half grip/i,'하프 그립'],
+  [/light grip/i,'라이트 그립'],
+  [/laser sight/i,'레이저 사이트'],
+  [/tactical stock/i,'전술 개머리판'],
+  [/cheek pad/i,'치크패드'],
+  [/heavy stock/i,'헤비 스톡'],
+  [/stock$/i,'개머리판']
+];
+function translateAttachName(name) {
+  if (!name) return '';
+  for (const [re, kr] of ATTACH_NAME_KR) { if (re.test(name)) return kr; }
+  return name;
+}
+
+// 호환 무기 종류 약어 (AR/SMG/SR/DMR/LMG/SG/P/CB)
+const TYPE_ABBR = {
+  'Assault_Rifle':'AR',
+  'Submachine_Gun':'SMG',
+  'Shotgun':'SG',
+  'Sniper_Rifle':'SR',
+  'Designated_Marksman_Rifle':'DMR',
+  'Light_Machine_Gun':'LMG',
+  'Pistol':'P',
+  'Crossbow':'CB'
+};
+function attachCategorySuffix(item) {
+  const list = item.attachments_accessories || [];
+  if (!list.length || !DB.arms || !DB.arms.length) return '';
+  const abbrs = new Set();
+  list.forEach(a => {
+    const nm = (a.accessories_name || '').toLowerCase();
+    if (!nm) return;
+    const arm = DB.arms.find(w => (w.name || '').toLowerCase() === nm);
+    if (arm && TYPE_ABBR[arm.type]) abbrs.add(TYPE_ABBR[arm.type]);
+  });
+  return abbrs.size ? ` (${[...abbrs].join('/')})` : '';
+}
+function attachDisplayName(item) {
+  const base = translateAttachName(item.name) || item.name || '';
+  return base + attachCategorySuffix(item);
 }
 
 let state = {
@@ -295,7 +408,8 @@ let state = {
   view: 'grid',
   category: 'all',
   search: '',
-  detailId: null
+  detailId: null,
+  sortDir: null // null | 'asc' | 'desc' — 무기:피해량, 차량:최고속도 기준
 };
 
 function imgSrc(path) {
@@ -329,13 +443,19 @@ window.addEventListener('DOMContentLoaded', () => {
 
 // ── Switches ────────────────────────────────────────────
 function switchTab(tab) {
-  state.tab = tab; state.category = 'all'; state.detailId = null;
+  state.tab = tab; state.category = 'all'; state.detailId = null; state.sortDir = null;
   state.search = ''; document.getElementById('searchInput').value = '';
   document.getElementById('sbView').classList.toggle('hidden', tab === 'map');
   render();
 }
 function switchView(view) {
-  state.view = view; state.detailId = null; render();
+  state.view = view; state.detailId = null; state.sortDir = null; render();
+}
+function toggleSort() {
+  if (state.sortDir === 'desc') state.sortDir = 'asc';
+  else if (state.sortDir === 'asc') state.sortDir = null;
+  else state.sortDir = 'desc';
+  render();
 }
 function setCategory(cat) {
   state.category = cat; state.detailId = null; render();
@@ -351,11 +471,20 @@ function getPool() {
   return DB.maps;
 }
 function getFiltered() {
-  return getPool().filter(item => {
+  let arr = getPool().filter(item => {
     const matchCat = state.category === 'all' || item.type === state.category;
     const matchQ   = (item.name || '').toLowerCase().includes(state.search);
     return matchCat && matchQ;
   });
+  if (state.sortDir && (state.tab === 'weapon' || state.tab === 'vehicle')) {
+    const key = state.tab === 'weapon' ? 'hurt' : 'top';
+    arr = [...arr].sort((a, b) => {
+      const av = (a.arms_introduce || {})[key] || 0;
+      const bv = (b.arms_introduce || {})[key] || 0;
+      return state.sortDir === 'asc' ? av - bv : bv - av;
+    });
+  }
+  return arr;
 }
 
 // ── Render ───────────────────────────────────────────────
@@ -456,10 +585,27 @@ function renderList() {
   const isAttach  = state.tab === 'attachment';
 
   const titles = { weapon:'무기 목록', vehicle:'차량 목록', attachment:'파츠 목록' };
+  const canSort = state.view === 'table' && (isWeapon || isVehicle);
+  const sortLabel = isWeapon ? '피해량순' : '최고속도순';
+  const sortActive = !!state.sortDir;
+  const sortRotated = state.sortDir === 'asc';
+  const sortBtnHtml = `
+    <div class="sort-group">
+      <button class="sort-btn ${sortActive ? 'active' : ''}" onclick="toggleSort()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l-4-4m4 4l4-4"/>
+        </svg>
+        <span>${sortLabel}</span>
+        <span class="sort-dir-icon" style="display:inline-block;transform:rotate(${sortRotated ? 180 : 0}deg)">↓</span>
+      </button>
+    </div>`;
   let html = `<div style="animation:fadeUp .3s var(--ease)">
-    <div class="view-header">
-      <h2 class="view-title">${titles[state.tab]}</h2>
-      <p class="view-sub">PUBG MOBILE · ${filtered.length}개 항목</p>
+    <div class="view-header" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+      <div>
+        <h2 class="view-title">${titles[state.tab]}</h2>
+        <p class="view-sub">PUBG MOBILE · ${filtered.length}개 항목</p>
+      </div>
+      ${canSort ? sortBtnHtml : ''}
     </div>`;
 
   if (filtered.length === 0) {
@@ -472,12 +618,13 @@ function renderList() {
       if (isWeapon)  meta = `<span>탄약: <span class="hl">${intro.bullet||'-'}</span></span><span>피해량: <span class="hl">${intro.hurt||'-'}</span></span>`;
       if (isVehicle) meta = `<span>좌석: <span class="hl">${intro.seat||'-'}</span></span><span>${intro.top||'-'} km/h</span>`;
       if (isAttach)  meta = `<span>${typeKr(item.type)||'-'}</span>`;
+      const dispName = isAttach ? attachDisplayName(item) : (item.name || '');
       html += `<div class="card" onclick="viewDetail('${item.id}')">
         <div class="card-img">
           <span class="type-badge">${typeKr(item.type)}</span>
           <img src="${imgSrc(item.image)}" alt="${item.name||''}" onerror="this.style.display='none'">
         </div>
-        <div class="card-name">${item.name||''}</div>
+        <div class="card-name">${dispName}</div>
         <div class="card-meta">${meta}</div>
       </div>`;
     });
@@ -494,12 +641,13 @@ function renderList() {
     filtered.forEach((item, idx) => {
       const intro = item.arms_introduce || {};
       if (isWeapon) {
+        const bc = bulletColor(intro.bullet);
         html += `<div class="t-row ${cls}" onclick="viewDetail('${item.id}')">
           <div class="td td-rank">${idx+1}</div>
           <div class="td"><div class="td-img-box"><img src="${imgSrc(item.image)}" alt="" onerror="this.style.display='none'"></div></div>
           <div class="td" style="font-weight:600">${item.name||''}</div>
-          <div class="td"><span class="pill" style="color:var(--green);background:rgba(56,184,112,.1);border-color:rgba(56,184,112,.2)">${intro.bullet||'-'}</span></div>
-          <div class="td" style="font-size:11px;font-family:var(--mono)">${intro.fireMethod||'-'}</div>
+          <div class="td"><span class="pill" style="color:${bc.c};background:${bc.bg};border-color:${bc.bd}">${intro.bullet||'-'}</span></div>
+          <div class="td" style="font-size:11px;font-family:var(--mono)">${translateFireMethod(intro.fireMethod)}</div>
           <div class="td">
             <div style="font-family:var(--mono);font-weight:700">${intro.hurt||0}</div>
             <div class="bar-track"><div class="bar-fill" style="width:${intro.hurt||0}%;background:var(--accent)"></div></div>
@@ -518,7 +666,7 @@ function renderList() {
         html += `<div class="t-row ${cls}" onclick="viewDetail('${item.id}')">
           <div class="td td-rank">${idx+1}</div>
           <div class="td"><div class="td-img-box"><img src="${imgSrc(item.image)}" alt="" onerror="this.style.display='none'"></div></div>
-          <div class="td" style="font-weight:600">${item.name||''}</div>
+          <div class="td" style="font-weight:600">${attachDisplayName(item)}</div>
           <div class="td"><span class="pill" style="color:var(--purple);background:rgba(150,96,220,.1);border-color:rgba(150,96,220,.2)">${typeKr(item.type)||'-'}</span></div>
           <div class="td" style="font-size:11px;font-family:var(--mono);color:var(--txt2)">${intro.skilldec||'-'}</div>
         </div>`;
@@ -580,9 +728,11 @@ function renderDetail(item) {
   let bodyHtml = '';
 
   if (isWeapon) {
-    const accHtml = (item.arms_accessories||[]).map(a =>
-      `<span class="attach-chip"><img src="${imgSrc(a.accessories)}" onerror="this.style.display='none'" alt="">${a.accessories_name||''}</span>`
-    ).join('');
+    const accHtml = (item.arms_accessories||[]).map(a => {
+      const fullAttach = (DB.attachments||[]).find(at => (at.name||'').toLowerCase() === (a.accessories_name||'').toLowerCase());
+      const label = fullAttach ? attachDisplayName(fullAttach) : (translateAttachName(a.accessories_name) || a.accessories_name || '');
+      return `<span class="attach-chip"><img src="${imgSrc(a.accessories)}" onerror="this.style.display='none'" alt="">${label}</span>`;
+    }).join('');
     bodyHtml = `
       <div class="sec-lbl" style="margin-top:0">성능</div>
       <div class="stat-cards">
@@ -631,14 +781,15 @@ function renderDetail(item) {
   }
 
   const metaHtml = isWeapon
-    ? `<span>탄약: <span class="hl">${intro.bullet||'-'}</span></span>
-       <span>발사방식: <span class="hl">${intro.fireMethod||'-'}</span></span>
+    ? `<span>탄약: <span class="hl" style="color:${bulletColor(intro.bullet).c}">${intro.bullet||'-'}</span></span>
+       <span>발사방식: <span class="hl">${translateFireMethod(intro.fireMethod)}</span></span>
        <span>탄창: <span class="hl">${intro.magazine||'-'}발</span></span>`
     : isVehicle
     ? `<span>종류: <span class="hl">${typeKr(item.type)||'-'}</span></span>
        <span>좌석: <span class="hl">${intro.seat||'-'}</span></span>`
     : `<span>분류: <span class="hl">${typeKr(item.type)||'-'}</span></span>`;
 
+  const dispItemName = isAttach ? attachDisplayName(item) : (item.name || '');
   document.getElementById('content').innerHTML = `
     <div class="detail-view">
       <button class="back-btn" onclick="closeDetail()">← ${tabLabel} 목록으로</button>
@@ -648,7 +799,7 @@ function renderDetail(item) {
         </div>
         <div>
           <div class="detail-eyebrow">${typeKr(item.type)}</div>
-          <h2 class="detail-title">${item.name||''}</h2>
+          <h2 class="detail-title">${dispItemName}</h2>
           <div class="detail-meta">${metaHtml}</div>
         </div>
       </div>
