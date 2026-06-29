@@ -266,47 +266,60 @@
 
   <div class="form-box">
     <h3 id="formTitle">➕ 일정 추가</h3>
-    <div class="form-grid">
-      <div class="form-group">
-        <label>날짜 & 시간 (KST) *</label>
-        <input type="datetime-local" id="fTime" />
-      </div>
-      <div class="form-group">
-        <label>대회명 *</label>
-        <select id="fLabelSelect" onchange="toggleCustomRound()">
-    <option value="">-- 대회 선택 --</option>
-    <option value="PMHI">PMHI</option>
-  </select>
-</div>
+  <div class="form-grid">
   <div class="form-group">
-  <label>라운드 *</label>
-  <select id="fLabel" onchange="toggleCustomRound()">
-    <option value="">-- 라운드 선택 --</option>
-    <option value="Round 1">Round 1</option>
-    <option value="Round 2">Round 2</option>
-    <option value="Round 3">Round 3</option>
-    <option value="Round 4">Round 4</option>
-    <option value="Round 5">Round 5</option>
-    <option value="Round 6">Round 6</option>
-  </select>
-      <div class="form-group">
-        <label>MAP</label>
-        <select id="fMap">
-          <option value="">-- 맵 선택 --</option>
-          <option value="Rondo">Rondo</option>
-          <option value="Erangel">Erangel</option>
-          <option value="Miramar">Miramar</option>
-          <option value="Sanim">(Sanhok)</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>팀</label>
-        <select id="fLabelSelect" onchange="toggleCustomRound()">
-    <option value="">-- 팀 선택 --</option>
-    <option value="Red Group & Green Group">Red Group & Green Group</option>
-  </select>
-      </div>
-    </div>
+    <label>날짜 & 시간 (KST) *</label>
+    <input type="datetime-local" id="fTime">
+  </div>
+
+  <div class="form-group">
+    <label>대회명 *</label>
+    <select id="fTitle">
+      <option value="">-- 대회 선택 --</option>
+      <option value="PMHI">PMHI</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>라운드 *</label>
+    <select id="fLabel" onchange="toggleCustomRound()">
+      <option value="">-- 라운드 선택 --</option>
+      <option value="Round 1">Round 1</option>
+      <option value="Round 2">Round 2</option>
+      <option value="Round 3">Round 3</option>
+      <option value="Round 4">Round 4</option>
+      <option value="Round 5">Round 5</option>
+      <option value="Round 6">Round 6</option>
+      <option value="custom">직접 입력</option>
+    </select>
+
+    <input
+      type="text"
+      id="customRound"
+      placeholder="직접 입력"
+      style="display:none;margin-top:8px;"
+    >
+  </div>
+
+  <div class="form-group">
+    <label>MAP</label>
+    <select id="fMap">
+      <option value="">-- 맵 선택 --</option>
+      <option value="Rondo">Rondo</option>
+      <option value="Erangel">Erangel</option>
+      <option value="Miramar">Miramar</option>
+      <option value="Sanhok">Sanhok</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>팀</label>
+    <select id="fTeam">
+      <option value="">-- 팀 선택 --</option>
+      <option value="Red Group & Green Group">Red Group & Green Group</option>
+    </select>
+  </div>
+</div>
     <div class="btn-row">
       <button class="btn btn-secondary" onclick="resetForm()">초기화</button>
       <button class="btn btn-primary" id="submitBtn" onclick="submitSchedule()">추가</button>
