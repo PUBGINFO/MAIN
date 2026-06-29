@@ -273,20 +273,29 @@
       </div>
       <div class="form-group">
         <label>대회명 *</label>
-        <input type="text" id="fTitle" placeholder="예: PMHI 2026 Super Weekend" />
+        <input type="text" id="fTitle" placeholder="예: PMPS, PMGC" />
       </div>
-      <div class="form-group">
-        <label>라운드 *</label>
-        <select id="fLabel">
-          <option value="">-- 라운드 선택 --</option>
-          <option value="Round 1">Round 1</option>
-          <option value="Round 2">Round 2</option>
-          <option value="Round 3">Round 3</option>
-          <option value="Round 4">Round 4</option>
-          <option value="Round 5">Round 5</option>
-          <option value="Round 6">Round 6</option>
-        </select>
-      </div>
+    <div class="form-group">
+  <label>라운드 *</label>
+
+  <select id="fLabelSelect" onchange="toggleCustomRound()">
+    <option value="">-- 라운드 선택 --</option>
+    <option value="Round 1">Round 1</option>
+    <option value="Round 2">Round 2</option>
+    <option value="Round 3">Round 3</option>
+    <option value="Round 4">Round 4</option>
+    <option value="Round 5">Round 5</option>
+    <option value="Round 6">Round 6</option>
+    <option value="custom">직접 입력</option>
+  </select>
+
+  <input
+    type="text"
+    id="customRound"
+    placeholder="라운드 입력"
+    style="display:none; margin-top:8px;"
+  >
+</div>
       <div class="form-group">
         <label>MAP</label>
         <select id="fMap">
