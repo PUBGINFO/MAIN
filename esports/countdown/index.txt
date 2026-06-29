@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PUBG MOBILE ESPORTS — Schedule</title>
+<style>
+[data-theme="dark"] {
+  --bg:#0d1526;--surface:#132040;--surface2:#1a2d55;--surface3:#1e3464;
+  --bd:rgba(100,160,255,.10);--bd2:rgba(100,160,255,.20);
+  --txt:#d6e4ff;--txt2:#7b9fd4;--txt3:#3d5a8a;
+  --sh:0 4px 28px rgba(0,10,40,.55);--sh-sm:0 2px 10px rgba(0,10,40,.35);
+  --accent:#4a9eff;--accent2:#2e7cd6;--accent-glow:rgba(74,158,255,.18);
+  --table-bg:#0f1e3a;
+  --row-done-txt:#2e4872;--row-next-bg:rgba(74,158,255,.07);
+  --border-row:rgba(100,160,255,.08);
+  --input-bg:#0a1628;--input-bd:rgba(100,160,255,.22);
+  --btn-sec-bg:rgba(100,160,255,.10);--btn-sec-txt:#7b9fd4;--btn-sec-hov:rgba(100,160,255,.20);
+  --day-hdr-bg:rgba(74,158,255,.06);--login-box-bg:#0f1e3a;
+  --nav-bg:rgba(13,21,38,.88);--done-opacity:.38;
+}
+[data-theme="light"] {
+  --bg:#f0f4fb;--surface:#ffffff;--surface2:#f5f8ff;--surface3:#eaf0fb;
+  --bd:rgba(0,60,180,.07);--bd2:rgba(0,60,180,.14);
+  --txt:#0e1e40;--txt2:#4a6fa5;--txt3:#a0b4d0;
+  --sh:0 4px 24px rgba(0,40,120,.09);--sh-sm:0 2px 8px rgba(0,40,120,.06);
+  --accent:#1a6fd4;--accent2:#1258b0;--accent-glow:rgba(26,111,212,.12);
+  --table-bg:#ffffff;
+  --row-done-txt:#b0c0d8;--row-next-bg:rgba(26,111,212,.04);
+  --border-row:rgba(0,60,180,.06);
+  --input-bg:#f5f8ff;--input-bd:rgba(0,60,180,.18);
+  --btn-sec-bg:#edf1fa;--btn-sec-txt:#4a6fa5;--btn-sec-hov:#dde6f5;
+  --day-hdr-bg:rgba(26,111,212,.05);--login-box-bg:#ffffff;
+  --nav-bg:rgba(240,244,251,.92);--done-opacity:.45;
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;min-height:100vh;padding-bottom:60px;transition:background .3s,color .3s;line-height:1.5;}
+
+/* NAV */
+.top-nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--bd);padding:11px 20px;display:flex;align-items:center;justify-content:space-between;transition:background .3s,border-color .3s;}
+.nav-brand{font-size:.68rem;font-weight:800;letter-spacing:3.5px;color:var(--accent);text-transform:uppercase;opacity:.9;}
+.nav-right{display:flex;align-items:center;gap:8px;}
+.nav-btn,.theme-btn{padding:6px 14px;border-radius:8px;border:1px solid var(--bd2);background:transparent;color:var(--txt2);cursor:pointer;font-size:.78rem;font-weight:500;transition:all .2s;}
+.nav-btn:hover,.theme-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-glow);}
+.theme-btn{padding:6px 10px;font-size:1rem;line-height:1;}
+
+/* PAGE HEADER */
+.page-header{text-align:center;padding:48px 16px 30px;}
+.page-eyebrow{font-size:.65rem;font-weight:700;letter-spacing:5px;color:var(--txt3);text-transform:uppercase;margin-bottom:12px;}
+.page-title{font-size:clamp(1.7rem,5vw,2.6rem);font-weight:900;letter-spacing:-.5px;color:var(--txt);margin-bottom:6px;line-height:1.1;}
+.page-title span{color:var(--accent);}
+.page-subtitle{font-size:.82rem;color:var(--txt2);margin-bottom:14px;}
+.now-time{display:inline-block;font-size:.74rem;color:var(--txt3);background:var(--surface);border:1px solid var(--bd);border-radius:20px;padding:5px 18px;font-variant-numeric:tabular-nums;letter-spacing:.5px;}
+
+/* TABS */
+.tabs-wrap{padding:0 16px 22px;}
+.tabs{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;max-width:960px;margin:0 auto;}
+.tab{padding:7px 20px;border-radius:22px;border:1px solid var(--bd2);background:transparent;color:var(--txt2);cursor:pointer;font-size:.8rem;font-weight:500;transition:all .2s;}
+.tab:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-glow);}
+.tab.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700;box-shadow:0 2px 14px var(--accent-glow);}
+
+/* TABLE */
+.table-wrap{max-width:960px;margin:0 auto;padding:0 16px;border-radius:16px;overflow:hidden;box-shadow:var(--sh);}
+table{width:100%;border-collapse:collapse;background:var(--table-bg);}
+thead tr{background:linear-gradient(90deg,var(--accent2),var(--accent));}
+th{padding:13px 14px;font-size:.73rem;font-weight:700;text-align:center;white-space:nowrap;color:rgba(255,255,255,.92);letter-spacing:.6px;text-transform:uppercase;}
+td{padding:13px 14px;text-align:center;font-size:.86rem;border-bottom:1px solid var(--border-row);white-space:nowrap;color:var(--txt);transition:background .15s;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:var(--surface2);}
+tr.done td{color:var(--row-done-txt);opacity:var(--done-opacity);}
+tr.done:hover td{background:transparent;}
+tr.next{background:var(--row-next-bg);}
+tr.next .cd{color:#fbbf24;font-weight:700;}
+.cd{font-variant-numeric:tabular-nums;letter-spacing:1px;}
+.badge{display:inline-block;background:#fbbf24;color:#000;font-size:.58rem;font-weight:800;letter-spacing:.5px;padding:2px 8px;border-radius:10px;margin-left:7px;vertical-align:middle;text-transform:uppercase;}
+.day-header td{background:var(--day-hdr-bg);color:var(--accent);font-size:.75rem;font-weight:700;letter-spacing:1px;text-align:left;border-bottom:1px solid var(--bd);padding-left:18px;}
+.day-header:hover td{background:var(--day-hdr-bg)!important;}
+.empty{text-align:center;padding:60px 20px;color:var(--txt3);font-size:.88rem;}
+.map-tag{display:inline-block;background:var(--surface2);border:1px solid var(--bd2);border-radius:6px;padding:2px 10px;font-size:.76rem;font-weight:600;color:var(--txt2);}
+
+/* LOGIN */
+#loginScreen{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 57px);padding:20px;}
+.login-card{background:var(--login-box-bg);border:1px solid var(--bd2);border-radius:20px;padding:44px 46px;display:flex;flex-direction:column;gap:16px;align-items:stretch;min-width:320px;max-width:390px;width:100%;box-shadow:var(--sh);}
+.login-logo{text-align:center;margin-bottom:4px;}
+.login-logo .eyebrow{font-size:.63rem;letter-spacing:4.5px;color:var(--txt3);text-transform:uppercase;font-weight:700;margin-bottom:8px;}
+.login-logo h2{font-size:1.2rem;font-weight:800;color:var(--txt);}
+.login-divider{border:none;border-top:1px solid var(--bd2);margin:0;}
+.login-field label{display:block;font-size:.72rem;font-weight:600;color:var(--txt2);margin-bottom:6px;letter-spacing:.4px;}
+.login-field input{width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--input-bd);background:var(--input-bg);color:var(--txt);font-size:.9rem;transition:border-color .2s,box-shadow .2s;}
+.login-field input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);}
+.login-submit{width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:.95rem;cursor:pointer;font-weight:700;letter-spacing:.5px;transition:background .2s,box-shadow .2s;}
+.login-submit:hover{background:var(--accent2);box-shadow:0 4px 18px var(--accent-glow);}
+.login-error{color:#f87171;font-size:.8rem;min-height:16px;text-align:center;}
+.back-link{text-align:center;color:var(--txt3);font-size:.78rem;cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+.back-link:hover{color:var(--txt2);}
+
+/* ADMIN */
+#adminScreen{display:none;}
+.admin-wrap{max-width:960px;margin:0 auto;padding:30px 16px 0;}
+.admin-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:12px;}
+.admin-title h2{font-size:1.25rem;font-weight:800;color:var(--txt);}
+.admin-title p{font-size:.8rem;color:var(--txt2);margin-top:3px;}
+.admin-btns{display:flex;gap:8px;flex-wrap:wrap;}
+.logout-btn{padding:7px 16px;border-radius:8px;border:1px solid var(--bd2);background:transparent;color:var(--txt2);cursor:pointer;font-size:.78rem;font-weight:500;transition:all .2s;}
+.logout-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-glow);}
+
+/* FORM */
+.form-card{background:var(--surface);border:1px solid var(--bd);border-radius:14px;padding:24px 26px;margin-bottom:24px;box-shadow:var(--sh-sm);}
+.form-card h3{font-size:.9rem;font-weight:700;color:var(--accent);margin-bottom:18px;display:flex;align-items:center;gap:7px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr;}}
+.form-group label{display:block;font-size:.72rem;font-weight:600;color:var(--txt2);margin-bottom:6px;letter-spacing:.3px;}
+.form-group input,.form-group select{width:100%;padding:10px 13px;background:var(--input-bg);border:1px solid var(--input-bd);border-radius:8px;color:var(--txt);font-size:.86rem;transition:border-color .2s,box-shadow .2s;appearance:none;-webkit-appearance:none;}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);}
+.form-group select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath fill='%237b9fd4' d='M5.5 7L0 0h11z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;}
+.btn-row{display:flex;gap:8px;justify-content:flex-end;}
+.btn{padding:10px 24px;border:none;border-radius:8px;cursor:pointer;font-size:.86rem;font-weight:700;transition:all .2s;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{background:var(--accent2);box-shadow:0 3px 14px var(--accent-glow);}
+.btn-secondary{background:var(--btn-sec-bg);color:var(--btn-sec-txt);border:1px solid var(--bd2);}
+.btn-secondary:hover{background:var(--btn-sec-hov);}
+.admin-table-wrap{border-radius:14px;overflow:hidden;box-shadow:var(--sh);}
+.btn-sm{padding:4px 11px;border:none;border-radius:6px;cursor:pointer;font-size:.72rem;font-weight:700;}
+.btn-edit{background:#2e7cd6;color:#fff;margin-right:4px;}
+.btn-edit:hover{background:#1a6bc0;}
+.btn-del{background:#dc2626;color:#fff;}
+.btn-del:hover{background:#b91c1c;}
+
+/* SECTION TITLE */
+.section-title{font-size:.78rem;font-weight:700;color:var(--txt2);letter-spacing:.5px;text-transform:uppercase;margin:32px 0 14px;display:flex;align-items:center;gap:10px;}
+.section-title::after{content:'';flex:1;height:1px;background:var(--bd2);}
+
+/* ACCOUNT LIST */
+.account-list{background:var(--surface);border:1px solid var(--bd);border-radius:14px;overflow:hidden;margin-bottom:24px;box-shadow:var(--sh-sm);}
+.account-item{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid var(--border-row);transition:background .15s;}
+.account-item:last-child{border-bottom:none;}
+.account-item:hover{background:var(--surface2);}
+.account-info{display:flex;align-items:center;gap:10px;}
+.account-avatar{width:34px;height:34px;border-radius:50%;background:var(--accent-glow);border:1px solid var(--bd2);display:flex;align-items:center;justify-content:center;font-size:.82rem;color:var(--accent);font-weight:800;}
+.account-id{font-size:.86rem;font-weight:600;color:var(--txt);}
+.account-role{font-size:.64rem;font-weight:700;letter-spacing:.5px;color:var(--accent);background:var(--accent-glow);border:1px solid var(--bd2);border-radius:6px;padding:2px 9px;}
+.account-empty{text-align:center;padding:40px;color:var(--txt3);font-size:.84rem;}
+
+/* SECURITY NOTE */
+.security-note{background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.25);border-radius:10px;padding:14px 18px;font-size:.78rem;color:#d4a017;line-height:1.6;margin-bottom:32px;}
+.security-note strong{display:block;margin-bottom:4px;font-size:.8rem;}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#166534;color:#dcfce7;padding:12px 28px;border-radius:10px;font-size:.86rem;font-weight:600;opacity:0;transition:opacity .3s;pointer-events:none;z-index:9999;border:1px solid rgba(255,255,255,.15);box-shadow:0 4px 20px rgba(0,0,0,.3);white-space:nowrap;}
+.toast.show{opacity:1;}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <span class="nav-brand">PUBG Mobile Esports</span>
+  <div class="nav-right">
+    <button class="theme-btn" onclick="toggleTheme()" title="테마 전환">
+      <span id="ico-dark">🌙</span><span id="ico-light" style="display:none">☀️</span>
+    </button>
+    <button class="nav-btn" onclick="goAdmin()">🔐 관리자</button>
+  </div>
+</nav>
+
+<!-- 공개 페이지 -->
+<div id="publicScreen">
+  <div class="page-header">
+    <p class="page-eyebrow">Live Schedule</p>
+    <h1 class="page-title">PUBG <span>MOBILE</span> ESPORTS</h1>
+    <p class="page-subtitle">실시간 대회 일정 &amp; 카운트다운</p>
+    <p class="now-time" id="nowTime">-</p>
+  </div>
+  <div class="tabs-wrap"><div class="tabs" id="tabs"></div></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th>날짜</th><th>시간 (KST)</th><th>카운트다운</th>
+        <th>대회명</th><th>라운드</th><th>MAP</th><th>팀</th>
+      </tr></thead>
+      <tbody id="publicBody"><tr><td colspan="7" class="empty">⏳ 로딩 중...</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 로그인 -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">
+      <p class="eyebrow">Admin Portal</p>
+      <h2>🔐 관리자 로그인</h2>
+    </div>
+    <hr class="login-divider">
+    <div class="login-field">
+      <label>아이디</label>
+      <input type="text" id="idInput" placeholder="ID 입력" autocomplete="username" />
+    </div>
+    <div class="login-field">
+      <label>비밀번호</label>
+      <input type="password" id="pwInput" placeholder="Password 입력" autocomplete="current-password" />
+    </div>
+    <p class="login-error" id="loginError"></p>
+    <button class="login-submit" onclick="doLogin()">로그인</button>
+    <span class="back-link" onclick="goPublic()">← 공개 페이지로 돌아가기</span>
+  </div>
+</div>
+
+<!-- 관리자 -->
+<div id="adminScreen">
+  <div class="admin-wrap">
+    <div class="admin-header">
+      <div class="admin-title">
+        <h2>⚙️ 관리자 대시보드</h2>
+        <p>PUBG Mobile Esports — 일정 관리</p>
+      </div>
+      <div class="admin-btns">
+        <button class="logout-btn" onclick="goPublic()">← 공개 페이지</button>
+        <button class="logout-btn" onclick="doLogout()">로그아웃</button>
+      </div>
+    </div>
+
+    <!-- 일정 폼 -->
+    <div class="form-card">
+      <h3 id="formTitle">➕ 일정 추가</h3>
+      <div class="form-grid">
+        <div class="form-group"><label>날짜 &amp; 시간 (KST) *</label><input type="datetime-local" id="fTime" /></div>
+        <div class="form-group"><label>대회명</label><input type="text" id="fTitle" placeholder="예: PMHI 2026 Super Weekend" /></div>
+        <div class="form-group">
+          <label>라운드 *</label>
+          <select id="fLabel">
+            <option value="">-- 라운드 선택 --</option>
+            <option>Round 1</option><option>Round 2</option><option>Round 3</option>
+            <option>Round 4</option><option>Round 5</option><option>Round 6</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>MAP</label>
+          <select id="fMap">
+            <option value="">-- 맵 선택 --</option>
+            <option>Rondo</option><option>Erangel</option><option>Miramar</option><option>(Sanhok)</option>
+          </select>
+        </div>
+        <div class="form-group"><label>팀</label><input type="text" id="fTeam" placeholder="예: Red Team &amp; Green Team" /></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="resetForm()">초기화</button>
+        <button class="btn btn-primary" id="submitBtn" onclick="submitSchedule()">추가</button>
+      </div>
+    </div>
+
+    <div class="section-title">📅 등록된 일정</div>
+    <div class="admin-table-wrap" style="margin-bottom:32px">
+      <table>
+        <thead><tr><th>날짜</th><th>시간</th><th>대회명</th><th>라운드</th><th>MAP</th><th>팀</th><th>관리</th></tr></thead>
+        <tbody id="adminBody"><tr><td colspan="7" class="empty">⏳ 로딩 중...</td></tr></tbody>
+      </table>
+    </div>
+
+    <div class="section-title">👤 관리자 계정</div>
+
+    <div class="security-note">
+      <strong>⚠️ 보안 안내</strong>
+      비밀번호는 Firebase Realtime Database에 저장됩니다. Firebase 콘솔에서 <code>/admins</code> 경로의 Rules를 <code>read: false</code>로 설정하면 외부에서 계정 목록을 조회할 수 없습니다. 완전한 보안이 필요하다면 Firebase Authentication 사용을 권장합니다.
+    </div>
+
+    <div class="form-card" style="margin-bottom:14px">
+      <h3>➕ 계정 추가</h3>
+      <div class="form-grid">
+        <div class="form-group"><label>아이디 *</label><input type="text" id="aId" placeholder="영문/숫자" autocomplete="off" /></div>
+        <div class="form-group"><label>비밀번호 *</label><input type="password" id="aPw" placeholder="4자 이상" autocomplete="new-password" /></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary" onclick="addAccount()">계정 추가</button></div>
+    </div>
+
+    <div class="account-list" id="accountList"><div class="account-empty">⏳ 로딩 중...</div></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+import { getDatabase, ref, onValue, push, set, remove, get }
+  from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey:"AIzaSyClByQBVoznJznLBTLcQ-6fszkOxGck99Y",
+  authDomain:"countdown-pubg.firebaseapp.com",
+  databaseURL:"https://countdown-pubg-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"countdown-pubg",
+  storageBucket:"countdown-pubg.firebasestorage.app",
+  messagingSenderId:"474098863700",
+  appId:"1:474098863700:web:523b316e14b710970527c1"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getDatabase(app);
+
+let allItems=[], editingId=null, selectedDay=null, loggedIn=false, currentUser=null, ticker=null;
+const pad = n => String(n).padStart(2,'0');
+const $   = id => document.getElementById(id);
+
+/* 테마 */
+let dark=true;
+window.toggleTheme=function(){
+  dark=!dark;
+  document.documentElement.setAttribute('data-theme',dark?'dark':'light');
+  $('ico-dark').style.display=dark?'none':'';
+  $('ico-light').style.display=dark?'':'none';
+};
+
+/* 화면 전환 */
+function showScreen(name){
+  ['publicScreen','loginScreen','adminScreen'].forEach(id=>$(id).style.display='none');
+  if(name==='public'){$('publicScreen').style.display='block';window.location.hash='';}
+  else if(name==='login'){$('loginScreen').style.display='flex';window.location.hash='admin';setTimeout(()=>$('idInput').focus(),100);}
+  else if(name==='admin'){$('adminScreen').style.display='block';window.location.hash='admin';renderAdmin();renderAccounts();}
+}
+window.goAdmin  =()=>loggedIn?showScreen('admin'):showScreen('login');
+window.goPublic =()=>showScreen('public');
+window.doLogout =()=>{loggedIn=false;currentUser=null;showScreen('public');};
+
+/* 로그인 */
+window.doLogin=async function(){
+  const id=$('idInput').value.trim(), pw=$('pwInput').value;
+  if(!id||!pw){$('loginError').textContent='⚠️ 아이디와 비밀번호를 입력하세요.';return;}
+  try{
+    const snap=await get(ref(db,`admins/${id}`));
+    if(snap.exists()&&snap.val().pw===pw){
+      loggedIn=true;currentUser=id;
+      $('idInput').value='';$('pwInput').value='';$('loginError').textContent='';
+      showScreen('admin');
+    } else {
+      $('loginError').textContent='❌ 아이디 또는 비밀번호가 틀렸습니다.';
+      $('pwInput').value='';$('pwInput').focus();
+    }
+  }catch(e){$('loginError').textContent='❌ 오류: '+e.message;}
+};
+['idInput','pwInput'].forEach(id=>$(id).addEventListener('keydown',e=>{if(e.key==='Enter')window.doLogin();}));
+
+/* 해시 라우팅 */
+function handleHash(){window.location.hash==='#admin'?(loggedIn?showScreen('admin'):showScreen('login')):showScreen('public');}
+window.addEventListener('hashchange',handleHash);
+handleHash();
+
+/* Firebase 구독 — 일정 */
+onValue(ref(db,'schedules'),snap=>{
+  const data=snap.val();
+  allItems=data?Object.entries(data).map(([id,v])=>({id,...v})).sort((a,b)=>a.targetTime-b.targetTime):[];
+  renderPublic();
+  if(loggedIn)renderAdmin();
+});
+
+/* 유틸 */
+function fmtDate(ts){const d=new Date(ts);const day=['일','월','화','수','목','금','토'][d.getDay()];return `${d.getMonth()+1}/${d.getDate()}(${day})`;}
+function fmtTime(ts){const d=new Date(ts);return `${pad(d.getHours())}:${pad(d.getMinutes())}`;}
+function getDayKey(ts){const d=new Date(ts);return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;}
+function fmtCd(ms){
+  if(ms<=0)return null;
+  const s=Math.floor(ms/1000),d=Math.floor(s/86400),h=Math.floor((s%86400)/3600),m=Math.floor((s%3600)/60),sec=s%60;
+  return d>0?`${d}일 ${pad(h)}:${pad(m)}:${pad(sec)}`:`${pad(h)}:${pad(m)}:${pad(sec)}`;
+}
+
+/* 공개 렌더 */
+function renderPublic(){
+  const now=Date.now(),nd=new Date(now);
+  $('nowTime').textContent=`현재 시각: ${nd.getFullYear()}/${pad(nd.getMonth()+1)}/${pad(nd.getDate())} ${pad(nd.getHours())}:${pad(nd.getMinutes())}:${pad(nd.getSeconds())}`;
+  if(!allItems.length){$('publicBody').innerHTML='<tr><td colspan="7" class="empty">등록된 일정이 없습니다</td></tr>';$('tabs').innerHTML='';return;}
+  const dayMap={};
+  allItems.forEach(item=>{const k=getDayKey(item.targetTime);(dayMap[k]=dayMap[k]||[]).push(item);});
+  const days=Object.keys(dayMap).sort();
+  $('tabs').innerHTML=[
+    `<button class="tab ${!selectedDay?'active':''}" onclick="window._day(null)">전체</button>`,
+    ...days.map(d=>{const ts=dayMap[d][0].targetTime;return `<button class="tab ${selectedDay===d?'active':''}" onclick="window._day('${d}')">${fmtDate(ts)}</button>`;})
+  ].join('');
+  let nextItem=null;
+  for(const item of allItems){if(item.targetTime>now){nextItem=item;break;}}
+  const filtered=selectedDay?(dayMap[selectedDay]||[]):allItems;
+  let html='',lastDay=null;
+  filtered.forEach(item=>{
+    const dk=getDayKey(item.targetTime);
+    if(!selectedDay&&dk!==lastDay){lastDay=dk;html+=`<tr class="day-header"><td colspan="7">📅 ${fmtDate(item.targetTime)}</td></tr>`;}
+    const ms=item.targetTime-now,done=ms<=0,isNext=nextItem&&item.id===nextItem.id,cd=fmtCd(ms);
+    const cdCell=cd?`<span class="cd">${cd}</span>${isNext?'<span class="badge">NEXT</span>':''}`:`<span style="color:var(--txt3)">✅ 종료</span>`;
+    const mapCell=item.map?`<span class="map-tag">${item.map}</span>`:'-';
+    html+=`<tr class="${done?'done':''} ${isNext?'next':''}">
+      <td>${fmtDate(item.targetTime)}</td><td>${fmtTime(item.targetTime)}</td><td>${cdCell}</td>
+      <td style="text-align:left;padding-left:16px">${item.title||'-'}</td>
+      <td>${item.label||'-'}</td><td>${mapCell}</td><td>${item.team||'-'}</td></tr>`;
+  });
+  $('publicBody').innerHTML=html||'<tr><td colspan="7" class="empty">일정 없음</td></tr>';
+}
+window._day=d=>{selectedDay=d;renderPublic();};
+if(ticker)clearInterval(ticker);
+ticker=setInterval(renderPublic,1000);
+
+/* 관리자 일정 렌더 */
+function renderAdmin(){
+  const now=Date.now();
+  if(!allItems.length){$('adminBody').innerHTML='<tr><td colspan="7" class="empty">등록된 일정이 없습니다</td></tr>';return;}
+  $('adminBody').innerHTML=allItems.map(item=>{
+    const done=item.targetTime<=now;
+    return `<tr class="${done?'done':''}">
+      <td>${fmtDate(item.targetTime)}</td><td>${fmtTime(item.targetTime)}</td>
+      <td style="text-align:left;padding-left:14px">${item.title||'-'}</td>
+      <td>${item.label||'-'}</td><td>${item.map||'-'}</td><td>${item.team||'-'}</td>
+      <td><button class="btn-sm btn-edit" onclick="window._edit('${item.id}')">수정</button><button class="btn-sm btn-del" onclick="window._del('${item.id}')">삭제</button></td>
+    </tr>`;
+  }).join('');
+}
+
+/* 일정 CRUD */
+window.submitSchedule=async function(){
+  const timeVal=$('fTime').value,title=$('fTitle').value.trim(),label=$('fLabel').value.trim(),map=$('fMap').value.trim(),team=$('fTeam').value.trim();
+  if(!timeVal||!label){showToast('날짜/시간과 라운드는 필수입니다!','#dc2626');return;}
+  const data={targetTime:new Date(timeVal).getTime(),title,label,map,team};
+  if(editingId){await set(ref(db,`schedules/${editingId}`),data);showToast('✅ 수정 완료!');}
+  else{await push(ref(db,'schedules'),data);showToast('✅ 추가 완료!');}
+  resetForm();
+};
+window._edit=function(id){
+  const item=allItems.find(i=>i.id===id);if(!item)return;
+  editingId=id;
+  const d=new Date(item.targetTime);
+  $('fTime').value=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  $('fTitle').value=item.title||'';$('fLabel').value=item.label||'';$('fMap').value=item.map||'';$('fTeam').value=item.team||'';
+  $('formTitle').textContent='✏️ 일정 수정';$('submitBtn').textContent='수정 완료';
+  window.scrollTo({top:0,behavior:'smooth'});
+};
+window._del=async function(id){if(!confirm('정말 삭제할까요?'))return;await remove(ref(db,`schedules/${id}`));showToast('🗑 삭제 완료!','#dc2626');};
+window.resetForm=function(){
+  editingId=null;['fTime','fTitle','fTeam'].forEach(id=>$(id).value='');$('fLabel').value='';$('fMap').value='';
+  $('formTitle').textContent='➕ 일정 추가';$('submitBtn').textContent='추가';
+};
+
+/* 계정 관리 */
+let accountsUnsub=null;
+function renderAccounts(){
+  if(accountsUnsub)accountsUnsub();
+  accountsUnsub=onValue(ref(db,'admins'),snap=>{
+    const data=snap.val();
+    if(!data){$('accountList').innerHTML='<div class="account-empty">등록된 계정이 없습니다</div>';return;}
+    $('accountList').innerHTML=Object.keys(data).map(id=>`
+      <div class="account-item">
+        <div class="account-info">
+          <div class="account-avatar">${id.charAt(0).toUpperCase()}</div>
+          <div><div class="account-id">${id}</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="account-role">ADMIN</span>
+          ${id===currentUser?'<span style="font-size:.7rem;color:var(--txt3)">(현재 계정)</span>':''}
+          ${id!==currentUser?`<button class="btn-sm btn-del" onclick="window._delAccount('${id}')">삭제</button>`:''}
+        </div>
+      </div>`).join('');
+  });
+}
+window.addAccount=async function(){
+  const id=$('aId').value.trim(),pw=$('aPw').value;
+  if(!id||!pw){showToast('아이디와 비밀번호를 입력하세요.','#dc2626');return;}
+  if(pw.length<4){showToast('비밀번호는 4자 이상이어야 합니다.','#dc2626');return;}
+  const snap=await get(ref(db,`admins/${id}`));
+  if(snap.exists()){showToast('이미 존재하는 아이디입니다.','#dc2626');return;}
+  await set(ref(db,`admins/${id}`),{pw});
+  $('aId').value='';$('aPw').value='';
+  showToast(`✅ 계정 "${id}" 추가 완료!`);
+};
+window._delAccount=async function(id){
+  if(!confirm(`"${id}" 계정을 삭제할까요?`))return;
+  await remove(ref(db,`admins/${id}`));
+  showToast(`🗑 "${id}" 계정 삭제 완료!`,'#dc2626');
+};
+
+/* 토스트 */
+function showToast(msg,bg='#166534'){
+  const t=$('toast');t.textContent=msg;t.style.background=bg;
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);
+}
+</script>
+</body>
+</html>
