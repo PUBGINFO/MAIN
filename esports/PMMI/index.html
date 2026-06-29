@@ -91,11 +91,11 @@
 
   /* 테이블 */
   .table-wrap { 
-    max-width: 920px; 
+    max-width: 960px; 
     margin: 0 auto; 
     border-radius: 6px; 
     overflow: hidden; 
-    overflow-x: auto; /* 모바일 가로 스크롤 허용 */
+    overflow-x: auto; 
     -webkit-overflow-scrolling: touch; 
     box-shadow: var(--sh); 
     border: 1px solid var(--bd); 
@@ -118,9 +118,20 @@
     padding: 2px 6px; border-radius: 4px; margin-left: 6px; vertical-align: middle;
   }
   .empty { text-align: center; padding: 50px; color: var(--txt3); font-size: 0.88rem; }
+  
+  /* 중계 링크 링크 스타일 */
+  .link-btn {
+    display: inline-block; padding: 4px 10px; border-radius: 4px;
+    background: var(--surface3); color: var(--txt2); font-size: 0.78rem;
+    text-decoration: none; font-weight: 600; border: 1px solid var(--bd2);
+    transition: all 0.2s;
+  }
+  .link-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+  tr.done .link-btn { opacity: 0.7; }
+  tr.done .link-btn:hover { opacity: 1; }
 
   /* 내비게이션 */
-  .top-nav { display: flex; justify-content: flex-end; align-items: center; max-width: 920px; margin: 0 auto 20px; gap: 8px; }
+  .top-nav { display: flex; justify-content: flex-end; align-items: center; max-width: 960px; margin: 0 auto 20px; gap: 8px; }
   .nav-btn {
     padding: 6px 14px; border-radius: 4px; border: 1px solid var(--bd2);
     background: var(--surface); color: var(--txt2); cursor: pointer; font-size: 0.78rem; font-weight: 500;
@@ -159,7 +170,7 @@
 
   /* 관리자 화면 */
   #adminScreen { display: none; }
-  .admin-header { display: flex; align-items: center; justify-content: space-between; max-width: 920px; margin: 0 auto 20px; }
+  .admin-header { display: flex; align-items: center; justify-content: space-between; max-width: 960px; margin: 0 auto 20px; }
   .admin-header h1 { margin: 0; font-size: 1.5rem; }
   .logout-btn {
     padding: 6px 14px; border-radius: 4px; border: 1px solid var(--bd2);
@@ -170,7 +181,7 @@
 
   /* 폼 */
   .form-box {
-    max-width: 920px; margin: 0 auto 24px;
+    max-width: 960px; margin: 0 auto 24px;
     background: var(--surface); border-radius: 6px; padding: 22px 24px;
     border: 1px solid var(--bd); box-shadow: var(--sh-sm);
   }
@@ -192,12 +203,11 @@
 
   /* 관리 테이블 */
   .admin-table-wrap { 
-    max-width: 920px; 
+    max-width: 960px; 
     margin: 0 auto; 
     border-radius: 6px; 
     overflow: hidden; 
-    overflow-x: auto; /* 관리자 표 모바일 가로 스크롤 허용 */
-    -webkit-overflow-scrolling: touch; 
+    overflow-x: auto; 
     box-shadow: var(--sh); 
     border: 1px solid var(--bd); 
   }
@@ -208,9 +218,9 @@
   .btn-del:hover { background: #b91c1c; }
 
   /* 계정 리스트 권한 분리 레이아웃 */
-  #superAdminSection { display: none; } /* 기본 숨김 처리 */
-  .section-title { font-size: 1.05rem; font-weight: 700; color: var(--txt); margin: 32px auto 14px; max-width: 920px; }
-  .account-list { max-width: 920px; margin: 0 auto 24px; background: var(--surface); border: 1px solid var(--bd); border-radius: 6px; overflow: hidden; box-shadow: var(--sh-sm); }
+  #superAdminSection { display: none; } 
+  .section-title { font-size: 1.05rem; font-weight: 700; color: var(--txt); margin: 32px auto 14px; max-width: 960px; }
+  .account-list { max-width: 960px; margin: 0 auto 24px; background: var(--surface); border: 1px solid var(--bd); border-radius: 6px; overflow: hidden; box-shadow: var(--sh-sm); }
   .account-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid var(--border-row); transition: background 0.15s; }
   .account-item:last-child { border-bottom: none; }
   .account-item:hover { background: var(--surface2); }
@@ -249,11 +259,11 @@
       <thead>
         <tr>
           <th>날짜</th><th>시간 (KST)</th><th>카운트다운</th>
-          <th>라운드</th><th>MAP</th><th>팀</th>
+          <th>라운드</th><th>MAP</th><th>팀</th><th>중계</th>
         </tr>
       </thead>
       <tbody id="publicBody">
-        <tr><td colspan="6" class="empty">⏳ 로딩 중...</td></tr>
+        <tr><td colspan="7" class="empty">⏳ 로딩 중...</td></tr>
       </tbody>
     </table>
   </div>
@@ -332,6 +342,11 @@
           <option value="Yellow Group & Green Group">Yellow Group & Green Group</option>
         </select>
       </div>
+
+      <div class="form-group">
+        <label>대회 중계 링크</label>
+        <input type="url" id="fLink" placeholder="https://youtube.com/... 또는 치지직 링크">
+      </div>
     </div>
     <div class="btn-row">
       <button class="btn btn-secondary" onclick="resetForm()">초기화</button>
@@ -408,7 +423,6 @@ let ticker    = null;
 const pad = n => String(n).padStart(2, '0');
 const $ = id => document.getElementById(id);
 
-// 라운드 직접 입력 토글 기능 구현 추가
 window.toggleCustomRound = function() {
   const selectEl = $('fLabel');
   const customInput = $('customRound');
@@ -500,11 +514,20 @@ handleHash();
 
 onValue(ref(db, 'schedules'), snapshot => {
   const data = snapshot.val();
+  const now = Date.now();
+  
   allItems = data
-    ? Object.entries(data)
-        .map(([id, v]) => ({ id, ...v }))
-        .sort((a, b) => a.targetTime - b.targetTime)
+    ? Object.entries(data).map(([id, v]) => ({ id, ...v }))
     : [];
+
+  // [핵심 변경사항] 정렬 커스텀: 남은 일정은 상단(시간순), 종료된 일정은 하단(시간순) 정렬
+  allItems.sort((a, b) => {
+    const aDone = (a.targetTime <= now);
+    const bDone = (b.targetTime <= now);
+    if (aDone !== bDone) return aDone ? 1 : -1; // 미완료 일정을 무조건 먼저 배치
+    return a.targetTime - b.targetTime;         // 같은 성격끼리는 최신순(오름차순) 정렬
+  });
+
   renderPublic();
   if (loggedIn) renderAdmin();
 });
@@ -540,13 +563,14 @@ function renderPublic() {
     `${pad(nd.getHours())}:${pad(nd.getMinutes())}:${pad(nd.getSeconds())}`;
 
   if (!allItems.length) {
-    $('publicBody').innerHTML = '<tr><td colspan="6" class="empty">등록된 일정이 없습니다</td></tr>';
+    $('publicBody').innerHTML = '<tr><td colspan="7" class="empty">등록된 일정이 없습니다</td></tr>';
     $('tabs').innerHTML = '';
     return;
   }
 
+  // 탭 구성을 위해 원본 등록 날짜 데이터 수집 (정렬과 독립적으로 날짜만 추출하기 위함)
   const dayMap = {};
-  allItems.forEach(item => {
+  [...allItems].sort((a,b)=>a.targetTime - b.targetTime).forEach(item => {
     const k = getDayKey(item.targetTime);
     if (!dayMap[k]) dayMap[k] = [];
     dayMap[k].push(item);
@@ -561,12 +585,17 @@ function renderPublic() {
     })
   ].join('');
 
+  // 실시간으로 가장 가까운 다가올 일정 1개 탐색
   let nextItem = null;
   for (const item of allItems) {
     if (item.targetTime > now) { nextItem = item; break; }
   }
 
-  const filtered = selectedDay ? (dayMap[selectedDay] || []) : allItems;
+  // 필터 처리 적용 (단, 전체 정렬 순서는 유지)
+  const filtered = selectedDay 
+    ? allItems.filter(item => getDayKey(item.targetTime) === selectedDay)
+    : allItems;
+    
   let html = '';
 
   filtered.forEach(item => {
@@ -578,6 +607,11 @@ function renderPublic() {
       ? `<span class="cd">${cd}</span>${isNext ? '<span class="badge">NEXT</span>' : ''}`
       : `<span style="color:var(--txt3)">✅ 종료</span>`;
 
+    // 중계 링크 유무에 따른 버튼 분기 처리
+    const linkCell = item.link 
+      ? `<a href="${item.link}" target="_blank" class="link-btn">📺 바로가기</a>`
+      : `<span style="color:var(--txt3)">-</span>`;
+
     html += `
       <tr class="${done ? 'done' : ''} ${isNext ? 'next' : ''}">
         <td>${fmtDate(item.targetTime)}</td>
@@ -586,10 +620,11 @@ function renderPublic() {
         <td>${item.label || '-'}</td>
         <td>${item.map   || '-'}</td>
         <td>${item.team  || '-'}</td>
+        <td>${linkCell}</td>
       </tr>`;
   });
 
-  $('publicBody').innerHTML = html || '<tr><td colspan="6" class="empty">일정 없음</td></tr>';
+  $('publicBody').innerHTML = html || '<tr><td colspan="7" class="empty">일정 없음</td></tr>';
 }
 
 window._day = function(d) { selectedDay = d; renderPublic(); };
@@ -626,8 +661,8 @@ window.submitSchedule = async function() {
   const title   = $('fTitle').value.trim();
   const map     = $('fMap').value.trim();
   const team    = $('fTeam').value.trim();
+  const link    = $('fLink').value.trim();
   
-  // 직접 입력 선택 유무 처리 보강
   let label = $('fLabel').value.trim();
   if (label === 'custom') {
     label = $('customRound').value.trim();
@@ -635,7 +670,8 @@ window.submitSchedule = async function() {
 
   if (!timeVal || !label) { showToast('날짜/시간과 라운드는 필수입니다!', '#ef4444'); return; }
 
-  const data = { targetTime: new Date(timeVal).getTime(), title, label, map, team };
+  // 중계 링크 데이터 필드(link) 포함 저장
+  const data = { targetTime: new Date(timeVal).getTime(), title, label, map, team, link };
 
   if (editingId) {
     await set(ref(db, `schedules/${editingId}`), data);
@@ -655,7 +691,6 @@ window._edit = function(id) {
   $('fTime').value  = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
   $('fTitle').value = item.title || '';
   
-  // 에디트 시 라운드 직접 입력 박스 대응 처리
   const standardRounds = ['Round 1', 'Round 2', 'Round 3', 'Round 4', 'Round 5', 'Round 6'];
   if (item.label && !standardRounds.includes(item.label)) {
     $('fLabel').value = 'custom';
@@ -669,6 +704,7 @@ window._edit = function(id) {
   
   $('fMap').value   = item.map   || '';
   $('fTeam').value  = item.team  || '';
+  $('fLink').value  = item.link  || ''; // 수정 모드 인풋 로드 적용
   $('formTitle').textContent   = '✏️ 일정 수정';
   $('submitBtn').textContent   = '수정 완료';
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -689,6 +725,7 @@ window.resetForm = function() {
   $('customRound').style.display = 'none';
   $('fMap').value   = '';
   $('fTeam').value  = '';
+  $('fLink').value  = '';
   $('formTitle').textContent = '➕ 일정 추가';
   $('submitBtn').textContent = '추가';
 };
