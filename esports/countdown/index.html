@@ -46,7 +46,7 @@
     --txt2:     #94a3b8;
     --txt3:     #64748b;
     --sh:       0 4px 25px rgba(0,0,0,0.3);
-    --sh-sm:    0 2px 8px rgba(0,0,0,0.2);
+    --sh-sm: 0 2px 8px rgba(0,0,0,0.2);
     --accent:   #ef4444;
     --accent2:  #dc2626;
     --table-bg: #1e293b;
@@ -89,7 +89,7 @@
   .tab:hover { border-color: var(--accent); color: var(--accent); }
   .tab.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
 
-  /* 테이블 */
+  /* 테이블 기본 (PC) */
   .table-wrap { max-width: 920px; margin: 0 auto; border-radius: 6px; overflow: hidden; box-shadow: var(--sh); border: 1px solid var(--bd); }
   table { width: 100%; border-collapse: collapse; background: var(--table-bg); }
   thead tr { background: var(--thead-bg); border-bottom: 2px solid var(--accent); }
@@ -167,7 +167,6 @@
   }
   .form-box h3 { color: var(--accent); font-size: 0.95rem; margin-bottom: 16px; font-weight: 700; }
   .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
-  @media(max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
   .form-group label { font-size: 0.75rem; color: var(--txt2); display: block; margin-bottom: 6px; font-weight: 600; }
   .form-group input, .form-group select {
     width: 100%; padding: 10px 12px; background: var(--input-bg);
@@ -210,6 +209,86 @@
   }
   .toast.show { opacity: 1; }
   .page-brand { text-align: center; color: var(--txt3); font-size: 0.72rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 4px; font-weight: 700; }
+
+  /* ─── 📱 모바일 추가 스타일 (반응형 대응) ─── */
+  @media (max-width: 768px) {
+    body { padding: 16px 10px; }
+    h1 { font-size: 1.5rem; }
+    .subtitle { font-size: 0.8rem; }
+    .tabs { gap: 4px; margin-bottom: 16px; }
+    .tab { padding: 6px 10px; font-size: 0.75rem; border-radius: 4px; }
+    .top-nav { margin-bottom: 12px; }
+    
+    /* 1. 테이블을 모바일 맞춤 세로형 카드로 레이아웃 변경 */
+    .table-wrap, .admin-table-wrap { border: none; box-shadow: none; border-radius: 0; background: transparent; }
+    table, thead, tbody, th, td, tr { display: block; width: 100%; }
+    thead { display: none; } /* 모바일에서는 가로 헤더 숨김 */
+    
+    tbody tr {
+      background: var(--surface) !important;
+      border: 1px solid var(--bd);
+      border-radius: 8px;
+      margin-bottom: 12px;
+      padding: 12px 14px;
+      box-shadow: var(--sh-sm);
+      position: relative;
+    }
+    tbody tr:last-child { margin-bottom: 0; }
+    
+    td {
+      text-align: left;
+      padding: 5px 0;
+      font-size: 0.85rem;
+      border-bottom: none;
+      white-space: normal;
+      display: flex;
+      align-items: center;
+    }
+
+    /* 데이터 앞단에 가상 카테고리 태그 추가 */
+    #publicBody td::before {
+      content: attr(data-label);
+      font-weight: 700;
+      color: var(--txt2);
+      width: 80px;
+      min-width: 80px;
+      font-size: 0.78rem;
+    }
+    
+    /* 관리자 테이블 전용 가상 카테고리 태그 */
+    #adminBody td::before {
+      content: attr(data-label);
+      font-weight: 700;
+      color: var(--txt2);
+      width: 70px;
+      min-width: 70px;
+      font-size: 0.78rem;
+    }
+
+    /* 관리 버튼 가상 요소 예외 처리 */
+    #adminBody td:last-child::before {
+      content: "관리";
+    }
+
+    /* 특수 셀 커스텀 데코레이션 */
+    td .badge { margin-left: 4px; }
+    tr.done { opacity: 0.65; }
+    tr.next { border: 1px solid var(--accent); background: var(--row-next) !important; }
+
+    /* 2. 관리자 설정 폼 및 헤더 모바일 정렬 */
+    .admin-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .admin-header div:last-child { width: 100%; justify-content: flex-end; }
+    .form-grid { grid-template-columns: 1fr !important; gap: 10px; }
+    .form-box { padding: 16px; }
+    .btn-row { width: 100%; }
+    .btn-row .btn { flex: 1; text-align: center; }
+
+    /* 3. 로그인 박스 모바일 대응 */
+    .login-box { min-width: 100%; padding: 24px 16px; }
+    
+    /* 빈 박스 메시지 처리 */
+    .empty { text-align: center; padding: 30px; }
+  }
 </style>
 </head>
 <body>
@@ -397,23 +476,19 @@ let ticker    = null;
 const pad = n => String(n).padStart(2, '0');
 const $ = id => document.getElementById(id);
 
-// 대회명, 라운드, 팀의 '직접 입력' 토글 통합 제어 함수
 window.toggleCustomFields = function() {
-  // 1. 대회명 제어
   if ($('fTitle').value === 'custom') {
     $('customTitle').style.display = 'block';
   } else {
     $('customTitle').style.display = 'none';
   }
 
-  // 2. 라운드 제어
   if ($('fLabel').value === 'custom') {
     $('customRound').style.display = 'block';
   } else {
     $('customRound').style.display = 'none';
   }
 
-  // 3. 팀 제어
   if ($('fTeam').value === 'custom') {
     $('customTeam').style.display = 'block';
   } else {
@@ -577,15 +652,16 @@ function renderPublic() {
       ? `<span class="cd">${cd}</span>${isNext ? '<span class="badge">NEXT</span>' : ''}`
       : `<span style="color:var(--txt3)">✅ 종료</span>`;
 
+    /* 각 td 노드에 모바일 레이블(data-label) 주입 */
     html += `
       <tr class="${done ? 'done' : ''} ${isNext ? 'next' : ''}">
-        <td>${fmtDate(item.targetTime)}</td>
-        <td>${fmtTime(item.targetTime)}</td>
-        <td style="font-weight:700;color:var(--accent);">${item.title || '-'}</td>
-        <td>${cdCell}</td>
-        <td>${item.label || '-'}</td>
-        <td>${item.map   || '-'}</td>
-        <td>${item.team  || '-'}</td>
+        <td data-label="날짜">${fmtDate(item.targetTime)}</td>
+        <td data-label="시간">${fmtTime(item.targetTime)}</td>
+        <td data-label="대회명" style="font-weight:700;color:var(--accent);">${item.title || '-'}</td>
+        <td data-label="카운트다운">${cdCell}</td>
+        <td data-label="라운드">${item.label || '-'}</td>
+        <td data-label="MAP">${item.map   || '-'}</td>
+        <td data-label="팀">${item.team  || '-'}</td>
       </tr>`;
   });
 
@@ -603,16 +679,18 @@ function renderAdmin() {
     $('adminBody').innerHTML = '<tr><td colspan="7" class="empty">등록된 일정이 없습니다</td></tr>';
     return;
   }
+  
+  /* 관리자 td 노드에도 모바일 레이블(data-label) 주입 */
   $('adminBody').innerHTML = allItems.map(item => {
     const done = item.targetTime <= now;
     return `
       <tr class="${done ? 'done' : ''}">
-        <td>${fmtDate(item.targetTime)}</td>
-        <td>${fmtTime(item.targetTime)}</td>
-        <td style="font-weight:600;">${item.title || '-'}</td>
-        <td>${item.label || '-'}</td>
-        <td>${item.map   || '-'}</td>
-        <td>${item.team  || '-'}</td>
+        <td data-label="날짜">${fmtDate(item.targetTime)}</td>
+        <td data-label="시간">${fmtTime(item.targetTime)}</td>
+        <td data-label="대회명" style="font-weight:600;">${item.title || '-'}</td>
+        <td data-label="라운드">${item.label || '-'}</td>
+        <td data-label="MAP">${item.map   || '-'}</td>
+        <td data-label="팀">${item.team  || '-'}</td>
         <td>
           <button class="btn-sm btn-edit" onclick="window._edit('${item.id}')">수정</button>
           <button class="btn-sm btn-del"  onclick="window._del('${item.id}')">삭제</button>
@@ -625,23 +703,14 @@ window.submitSchedule = async function() {
   const timeVal = $('fTime').value;
   const map     = $('fMap').value.trim();
   
-  // 1. 대회명 데이터 수집 (직접입력 분기처리)
   let title = $('fTitle').value.trim();
-  if (title === 'custom') {
-    title = $('customTitle').value.trim();
-  }
+  if (title === 'custom') title = $('customTitle').value.trim();
 
-  // 2. 라운드 데이터 수집 (직접입력 분기처리)
   let label = $('fLabel').value.trim();
-  if (label === 'custom') {
-    label = $('customRound').value.trim();
-  }
+  if (label === 'custom') label = $('customRound').value.trim();
 
-  // 3. 팀 데이터 수집 (직접입력 분기처리)
   let team = $('fTeam').value.trim();
-  if (team === 'custom') {
-    team = $('customTeam').value.trim();
-  }
+  if (team === 'custom') team = $('customTeam').value.trim();
 
   if (!timeVal || !title || !label) { 
     showToast('날짜/시간, 대회명, 라운드는 필수 입력 항목입니다!', '#ef4444'); 
@@ -667,8 +736,7 @@ window._edit = function(id) {
   const d = new Date(item.targetTime);
   $('fTime').value  = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
   
-  // 대회명 에디트 바인딩 및 직접 입력 대응
-  const standardTitles = ['PMHI 2026', 'PMGC 2026', 'PMPS 2026'];
+  const standardTitles = ['PMMI 2026', 'PMPS S2 2026', 'PMWC 2026'];
   if (item.title && !standardTitles.includes(item.title)) {
     $('fTitle').value = 'custom';
     $('customTitle').style.display = 'block';
@@ -679,7 +747,6 @@ window._edit = function(id) {
     $('customTitle').value = '';
   }
 
-  // 라운드 에디트 바인딩 및 직접 입력 대응
   const standardRounds = ['Round 1', 'Round 2', 'Round 3', 'Round 4', 'Round 5', 'Round 6'];
   if (item.label && !standardRounds.includes(item.label)) {
     $('fLabel').value = 'custom';
@@ -691,8 +758,7 @@ window._edit = function(id) {
     $('customRound').value = '';
   }
 
-  // 팀 에디트 바인딩 및 직접 입력 대응
-  const standardTeams = ['Red Group & Green Group', 'Group Stage', 'Grand Finals'];
+  const standardTeams = ['Group Stage Day 1', 'Group Stage Day 2', 'Group Stage Day 3', 'Grand Finals'];
   if (item.team && !standardTeams.includes(item.team)) {
     $('fTeam').value = 'custom';
     $('customTeam').style.display = 'block';
