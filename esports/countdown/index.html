@@ -3,133 +3,175 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PMHI 2026 - Group Stage</title>
+<title>PMHI 2026 - 일정</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   body {
     background: #1a1a2e;
     color: #fff;
     font-family: 'Segoe UI', sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     min-height: 100vh;
     padding: 30px 16px;
   }
-
   h1 {
-    font-size: 1.6rem;
+    text-align: center;
+    font-size: 2rem;
     color: #e07070;
-    margin-bottom: 4px;
-  }
-
-  .day-label {
-    font-size: 1rem;
-    color: #aaa;
     margin-bottom: 6px;
   }
-
-  .now {
+  .subtitle {
+    text-align: center;
+    color: #aaa;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+  }
+  .now-time {
+    text-align: center;
+    color: #555;
     font-size: 0.8rem;
-    color: #666;
-    margin-bottom: 24px;
+    margin-bottom: 30px;
+    font-variant-numeric: tabular-nums;
   }
 
-  table {
-    width: 100%;
-    max-width: 800px;
-    border-collapse: collapse;
-    background: #16213e;
+  /* 날짜 탭 */
+  .tabs {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .tab {
+    padding: 8px 20px;
+    border-radius: 20px;
+    border: 1px solid #e07070;
+    background: transparent;
+    color: #e07070;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+  }
+  .tab.active {
+    background: #e07070;
+    color: #fff;
+    font-weight: bold;
+  }
+
+  /* 테이블 */
+  .table-wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    overflow-x: auto;
     border-radius: 12px;
     overflow: hidden;
   }
-
-  thead tr {
-    background: #c0504d;
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #16213e;
   }
-
+  thead tr { background: #c0504d; }
   th {
-    padding: 12px 16px;
+    padding: 13px 16px;
     font-size: 0.85rem;
     letter-spacing: 1px;
     text-align: center;
+    white-space: nowrap;
   }
-
   td {
-    padding: 12px 16px;
+    padding: 13px 16px;
     text-align: center;
-    font-size: 0.95rem;
-    border-bottom: 1px solid #ffffff11;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #ffffff0f;
+    white-space: nowrap;
   }
-
   tr:last-child td { border-bottom: none; }
-
-  tr.done td { color: #555; }
-  tr.next td { background: #ffffff08; }
-  tr.next .countdown { color: #ffd700; font-weight: bold; }
+  tr.done td { color: #444; }
+  tr.next { background: #ffffff08; }
+  tr.next td { color: #ffd700; }
 
   .countdown {
     font-variant-numeric: tabular-nums;
-    font-size: 1rem;
+    font-weight: bold;
     letter-spacing: 1px;
   }
-
   .badge {
     display: inline-block;
     background: #ffd700;
     color: #000;
     font-size: 0.65rem;
     font-weight: bold;
-    padding: 1px 6px;
+    padding: 2px 7px;
     border-radius: 10px;
     margin-left: 6px;
-    vertical-align: middle;
+  }
+  .done-mark { color: #3a3a3a; }
+
+  .empty {
+    text-align: center;
+    padding: 60px;
+    color: #555;
+    font-size: 1rem;
   }
 
-  .done-text { color: #555; font-size: 0.85rem; }
+  /* 날짜 그룹 헤더 */
+  .day-header td {
+    background: #c0504d22;
+    color: #e07070;
+    font-weight: bold;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    padding: 8px 16px;
+  }
 </style>
 </head>
 <body>
 
 <h1>⚡ PMHI 2026</h1>
-<div class="day-label">6월 29일 — Group Stage Day 1</div>
-<div class="now" id="nowTime">로딩 중...</div>
+<p class="subtitle">실시간 일정 & 카운트다운</p>
+<p class="now-time" id="nowTime">-</p>
 
-<table>
-  <thead>
-    <tr>
-      <th>시간 (UTC+9)</th>
-      <th>카운트다운</th>
-      <th>부분</th>
-      <th>MAP</th>
-      <th>팀</th>
-    </tr>
-  </thead>
-  <tbody id="tableBody">
-    <tr><td colspan="5" style="color:#666;padding:30px">데이터 불러오는 중...</td></tr>
-  </tbody>
-</table>
+<div class="tabs" id="tabs"></div>
 
-<script>
-// ✅ 여기에 구글 시트 CSV URL 붙여넣기
-const CSV_URL = 'YOUR_CSV_URL_HERE';
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>날짜</th>
+        <th>시간 (KST)</th>
+        <th>카운트다운</th>
+        <th>부분</th>
+        <th>MAP</th>
+        <th>팀</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody">
+      <tr><td colspan="6" class="empty">⏳ 로딩 중...</td></tr>
+    </tbody>
+  </table>
+</div>
 
-const schedule = [
-  { time: '16:30', label: '선수 출발',    map: '-',               roundIdx: null },
-  { time: '17:30', label: '선수 테스트',  map: '-',               roundIdx: null },
-  { time: '19:00', label: '매치 1 (Match1)', map: '론도 (Rondo)',    roundIdx: 0 },
-  { time: '19:30', label: '매치 2 (Match2)', map: '에란겔 (Erangel)', roundIdx: 1 },
-  { time: '20:10', label: '매치 3 (Match3)', map: '에란겔 (Erangel)', roundIdx: 2 },
-  { time: '20:55', label: '매치 4 (Match4)', map: '에란겔 (Erangel)', roundIdx: 3 },
-  { time: '21:35', label: '매치 5 (Match5)', map: '미라마 (Miramar)', roundIdx: 4 },
-  { time: '22:15', label: '매치 6 (Match6)', map: '미라마 (Miramar)', roundIdx: 5 },
-  { time: '23:30', label: '선수 퇴장',    map: '-',               roundIdx: null },
-];
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
 
-let targets = [];
+const firebaseConfig = {
+  apiKey: "AIzaSyClByQBVoznJznLBTLcQ-6fszkOxGck99Y",
+  authDomain: "countdown-pubg.firebaseapp.com",
+  databaseURL: "https://countdown-pubg-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "countdown-pubg",
+  storageBucket: "countdown-pubg.firebasestorage.app",
+  messagingSenderId: "474098863700",
+  appId: "1:474098863700:web:523b316e14b710970527c1"
+};
 
-function pad(n) { return String(n).padStart(2, '0'); }
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+let allItems = [];
+let selectedDay = null;
+
+const pad = n => String(n).padStart(2, '0');
 
 function formatCountdown(ms) {
   if (ms <= 0) return null;
@@ -142,68 +184,115 @@ function formatCountdown(ms) {
   return `${pad(h)}:${pad(m)}:${pad(sec)}`;
 }
 
+function formatDateLabel(ts) {
+  const d = new Date(ts);
+  const days = ['일','월','화','수','목','금','토'];
+  return `${d.getMonth()+1}/${d.getDate()}(${days[d.getDay()]})`;
+}
+
+function formatTimeLabel(ts) {
+  const d = new Date(ts);
+  return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function getDayKey(ts) {
+  const d = new Date(ts);
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+}
+
 function render() {
   const now = Date.now();
   const nd = new Date(now);
   document.getElementById('nowTime').textContent =
     `현재 시각: ${nd.getFullYear()}/${pad(nd.getMonth()+1)}/${pad(nd.getDate())} ${pad(nd.getHours())}:${pad(nd.getMinutes())}:${pad(nd.getSeconds())}`;
 
-  // 다음 매치 인덱스 찾기
-  let nextScheduleIdx = -1;
-  for (let i = 0; i < schedule.length; i++) {
-    const ri = schedule[i].roundIdx;
-    if (ri !== null && targets[ri] && targets[ri] > now) {
-      nextScheduleIdx = i;
-      break;
-    }
+  if (!allItems.length) {
+    document.getElementById('tableBody').innerHTML =
+      '<tr><td colspan="6" class="empty">등록된 일정이 없습니다</td></tr>';
+    return;
   }
 
-  const tbody = document.getElementById('tableBody');
-  tbody.innerHTML = schedule.map((item, i) => {
-    const ri = item.roundIdx;
-    const target = ri !== null ? targets[ri] : null;
-    const ms = target ? target - now : null;
-    const done = ms !== null && ms <= 0;
-    const isNext = i === nextScheduleIdx;
-    const cd = ms !== null ? formatCountdown(ms) : null;
+  // 날짜별 그룹
+  const dayMap = {};
+  allItems.forEach(item => {
+    const key = getDayKey(item.targetTime);
+    if (!dayMap[key]) dayMap[key] = [];
+    dayMap[key].push(item);
+  });
 
-    const countdownCell = cd
+  const days = Object.keys(dayMap).sort();
+
+  // 탭 렌더
+  const tabsEl = document.getElementById('tabs');
+  tabsEl.innerHTML = [
+    `<button class="tab ${!selectedDay ? 'active' : ''}" onclick="window._selectDay(null)">전체</button>`,
+    ...days.map(d => {
+      const ts = dayMap[d][0].targetTime;
+      return `<button class="tab ${selectedDay === d ? 'active' : ''}" onclick="window._selectDay('${d}')">${formatDateLabel(ts)}</button>`;
+    })
+  ].join('');
+
+  // 다음 매치 찾기
+  let nextItem = null;
+  for (const item of allItems) {
+    if (item.targetTime > now) { nextItem = item; break; }
+  }
+
+  // 테이블 렌더
+  const filtered = selectedDay
+    ? (dayMap[selectedDay] || [])
+    : allItems;
+
+  let html = '';
+  let lastDay = null;
+
+  filtered.forEach(item => {
+    const dayKey = getDayKey(item.targetTime);
+    if (!selectedDay && dayKey !== lastDay) {
+      lastDay = dayKey;
+      html += `<tr class="day-header"><td colspan="6">📅 ${formatDateLabel(item.targetTime)}</td></tr>`;
+    }
+
+    const ms = item.targetTime - now;
+    const done = ms <= 0;
+    const isNext = nextItem && item.id === nextItem.id;
+    const cd = formatCountdown(ms);
+
+    const cdCell = cd
       ? `<span class="countdown">${cd}</span>${isNext ? '<span class="badge">NEXT</span>' : ''}`
-      : done
-        ? `<span class="done-text">✅ 종료</span>`
-        : `<span style="color:#444">-</span>`;
+      : `<span class="done-mark">✅ 종료</span>`;
 
-    return `
+    html += `
       <tr class="${done ? 'done' : ''} ${isNext ? 'next' : ''}">
-        <td>${item.time}</td>
-        <td>${countdownCell}</td>
-        <td>${item.label}</td>
-        <td>${item.map}</td>
-        <td>Red Team &amp; Green Team</td>
+        <td>${formatDateLabel(item.targetTime)}</td>
+        <td>${formatTimeLabel(item.targetTime)}</td>
+        <td>${cdCell}</td>
+        <td>${item.label || '-'}</td>
+        <td>${item.map || '-'}</td>
+        <td>${item.team || '-'}</td>
       </tr>`;
-  }).join('');
+  });
+
+  document.getElementById('tableBody').innerHTML = html || '<tr><td colspan="6" class="empty">일정 없음</td></tr>';
 }
 
-// CSV 파싱
-function parseCSV(text) {
-  const lines = text.trim().split('\n').slice(1); // 헤더 제거
-  targets = lines.map(line => {
-    const cols = line.split(',');
-    const val = cols[1]?.replace(/"/g, '').trim();
-    return val ? new Date(val).getTime() : null;
-  });
+window._selectDay = function(day) {
+  selectedDay = day;
   render();
-  setInterval(render, 1000);
-}
+};
 
-// CSV 불러오기
-fetch(CSV_URL)
-  .then(r => r.text())
-  .then(parseCSV)
-  .catch(() => {
-    document.getElementById('tableBody').innerHTML =
-      '<tr><td colspan="5" style="color:#e07070">❌ CSV 불러오기 실패 — URL을 확인하세요</td></tr>';
-  });
+// Firebase 실시간 구독
+onValue(ref(db, 'schedules'), snapshot => {
+  const data = snapshot.val();
+  allItems = data
+    ? Object.entries(data)
+        .map(([id, v]) => ({ id, ...v }))
+        .sort((a, b) => a.targetTime - b.targetTime)
+    : [];
+  render();
+});
+
+setInterval(render, 1000);
 </script>
 </body>
 </html>
