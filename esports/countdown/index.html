@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PUBG MOBILE ESPORTS - PMHI 2026</title>
+<title>PUBG MOBILE ESPORTS - MULTI TOURNAMENT</title>
 <style>
   /* ─── 라이트 모드 (기본) ─── */
   [data-theme="light"] {
@@ -125,7 +125,7 @@
   }
   .theme-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--surface2); }
 
-  /* ─── 로그인 화면 복구 ─── */
+  /* 로그인 화면 */
   #loginScreen { display: none; flex-direction: column; align-items: center; justify-content: center; min-height: 70vh; gap: 16px; }
   #loginScreen h2 { color: var(--txt); font-size: 1.4rem; font-weight: 700; }
   .login-box {
@@ -148,7 +148,7 @@
   .back-btn { color: var(--txt3); font-size: 0.8rem; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
   .back-btn:hover { color: var(--txt2); }
 
-  /* ─── 관리자 화면 ─── */
+  /* 관리자 화면 */
   #adminScreen { display: none; }
   .admin-header { display: flex; align-items: center; justify-content: space-between; max-width: 920px; margin: 0 auto 20px; }
   .admin-header h1 { margin: 0; font-size: 1.5rem; }
@@ -189,7 +189,8 @@
   .btn-del { background: #dc2626; color: #fff; }
   .btn-del:hover { background: #b91c1c; }
 
-  /* 계정 리스트 */
+  /* 계정 리스트 권한 분리 레이아웃 */
+  #superAdminSection { display: none; }
   .section-title { font-size: 1.05rem; font-weight: 700; color: var(--txt); margin: 32px auto 14px; max-width: 920px; }
   .account-list { max-width: 920px; margin: 0 auto 24px; background: var(--surface); border: 1px solid var(--bd); border-radius: 6px; overflow: hidden; box-shadow: var(--sh-sm); }
   .account-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid var(--border-row); transition: background 0.15s; }
@@ -201,11 +202,6 @@
   .account-role { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.5px; color: var(--accent); background: rgba(185,28,28,0.1); border: 1px solid rgba(185,28,28,0.2); border-radius: 4px; padding: 3px 8px; }
   .account-empty { text-align: center; padding: 40px; color: var(--txt3); font-size: 0.88rem; }
   
-  .security-note { max-width: 920px; margin: 0 auto 20px; background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.3); border-radius: 6px; padding: 14px 18px; font-size: 0.8rem; color: #b45309; line-height: 1.5; }
-  [data-theme="dark"] .security-note { color: #fbbf24; }
-  .security-note strong { display: block; margin-bottom: 4px; font-size: 0.85rem; }
-
-  /* 토스트 */
   .toast {
     position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
     background: #10b981; color: #fff; padding: 12px 28px;
@@ -226,20 +222,20 @@
     <button class="nav-btn" onclick="goAdmin()">🔐 관리자</button>
   </div>
   <p class="page-brand">PUBG MOBILE ESPORTS</p>
-  <h1>⚡ <span>PMHI 2026</span></h1>
-  <p class="subtitle">실시간 일정 & 카운트다운</p>
+  <h1>⚡ <span>ESPORTS CENTRAL</span></h1>
+  <p class="subtitle">실시간 대회 일정 & 카운트다운</p>
   <p class="now-time" id="nowTime">-</p>
   <div class="tabs" id="tabs"></div>
   <div class="table-wrap">
     <table>
       <thead>
         <tr>
-          <th>날짜</th><th>시간 (KST)</th><th>카운트다운</th>
+          <th>날짜</th><th>시간 (KST)</th><th>대회명</th><th>카운트다운</th>
           <th>라운드</th><th>MAP</th><th>팀</th>
         </tr>
       </thead>
       <tbody id="publicBody">
-        <tr><td colspan="6" class="empty">⏳ 로딩 중...</td></tr>
+        <tr><td colspan="7" class="empty">⏳ 로딩 중...</td></tr>
       </tbody>
     </table>
   </div>
@@ -259,8 +255,8 @@
 <div id="adminScreen">
   <div class="admin-header">
     <div>
-      <h1>⚙️ 관리자</h1>
-      <p class="subtitle" style="text-align:left;margin:0">PMHI 2026 일정 관리</p>
+      <h1>⚙️ 관리자 <span id="adminRoleBadge" style="font-size:0.75rem; vertical-align:middle; margin-left:6px;"></span></h1>
+      <p class="subtitle" style="text-align:left;margin:0">멀티 이스포츠 대회 일정 관리</p>
     </div>
     <div style="display:flex;gap:8px">
       <button class="logout-btn" onclick="goPublic()">← 공개 페이지</button>
@@ -273,15 +269,24 @@
     <div class="form-grid">
       <div class="form-group">
         <label>날짜 & 시간 (KST) *</label>
-        <input type="datetime-local" id="fTime" />
+        <input type="datetime-local" id="fTime">
       </div>
+
       <div class="form-group">
         <label>대회명 *</label>
-        <input type="text" id="fTitle" placeholder="예: PMHI 2026 Super Weekend" />
+        <select id="fTitle" onchange="toggleCustomFields()">
+          <option value="">-- 대회 선택 --</option>
+          <option value="PMHI 2026">PMHI 2026</option>
+          <option value="PMGC 2026">PMGC 2026</option>
+          <option value="PMPS 2026">PMPS 2026</option>
+          <option value="custom">직접 입력</option>
+        </select>
+        <input type="text" id="customTitle" placeholder="대회명 직접 입력" style="display:none;margin-top:8px;">
       </div>
+
       <div class="form-group">
         <label>라운드 *</label>
-        <select id="fLabel">
+        <select id="fLabel" onchange="toggleCustomFields()">
           <option value="">-- 라운드 선택 --</option>
           <option value="Round 1">Round 1</option>
           <option value="Round 2">Round 2</option>
@@ -289,8 +294,11 @@
           <option value="Round 4">Round 4</option>
           <option value="Round 5">Round 5</option>
           <option value="Round 6">Round 6</option>
+          <option value="custom">직접 입력</option>
         </select>
+        <input type="text" id="customRound" placeholder="라운드 직접 입력" style="display:none;margin-top:8px;">
       </div>
+
       <div class="form-group">
         <label>MAP</label>
         <select id="fMap">
@@ -298,14 +306,23 @@
           <option value="Rondo">Rondo</option>
           <option value="Erangel">Erangel</option>
           <option value="Miramar">Miramar</option>
-          <option value="Sanhok">(Sanhok)</option>
+          <option value="Sanhok">Sanhok</option>
         </select>
       </div>
+
       <div class="form-group">
         <label>팀</label>
-        <input type="text" id="fTeam" placeholder="예: Red Team & Green Team" />
+        <select id="fTeam" onchange="toggleCustomFields()">
+          <option value="">-- 팀 선택 --</option>
+          <option value="Red Group & Green Group">Red Group & Green Group</option>
+          <option value="Group Stage">Group Stage</option>
+          <option value="Grand Finals">Grand Finals</option>
+          <option value="custom">직접 입력</option>
+        </select>
+        <input type="text" id="customTeam" placeholder="참가 팀/그룹 직접 입력" style="display:none;margin-top:8px;">
       </div>
     </div>
+    
     <div class="btn-row">
       <button class="btn btn-secondary" onclick="resetForm()">초기화</button>
       <button class="btn btn-primary" id="submitBtn" onclick="submitSchedule()">추가</button>
@@ -325,32 +342,27 @@
     </table>
   </div>
 
-  <h2 class="section-title">👤 관리자 계정</h2>
-  
-  <div class="security-note">
-    <strong>⚠️ 보안 안내</strong>
-    전체 계정 리스트 조회는 보안 규칙에 의해 차단되며, 본인 정보만 조회 및 검증됩니다.
-  </div>
-
-  <div class="form-box">
-    <h3>➕ 계정 추가</h3>
-    <div class="form-grid">
-      <div class="form-group">
-        <label>아이디 *</label>
-        <input type="text" id="aId" placeholder="영문/숫자" autocomplete="off" />
+  <div id="superAdminSection">
+    <h2 class="section-title">👤 최고 관리자 전용 권한 (계정 제어)</h2>
+    <div class="form-box">
+      <h3>➕ 일반 관리자 계정 추가</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>아이디 *</label>
+          <input type="text" id="aId" placeholder="영문/숫자" autocomplete="off" />
+        </div>
+        <div class="form-group">
+          <label>비밀번호 *</label>
+          <input type="password" id="aPw" placeholder="4자 이상" autocomplete="new-password" />
+        </div>
       </div>
-      <div class="form-group">
-        <label>비밀번호 *</label>
-        <input type="password" id="aPw" placeholder="4자 이상" autocomplete="new-password" />
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="addAccount()">계정 추가</button>
       </div>
     </div>
-    <div class="btn-row">
-      <button class="btn btn-primary" onclick="addAccount()">계정 추가</button>
+    <div class="account-list" id="accountList">
+      <div class="account-empty">관리자 데이터 로드 중...</div>
     </div>
-  </div>
-
-  <div class="account-list" id="accountList">
-    <div class="account-empty">관리자 데이터 로드 중...</div>
   </div>
 </div>
 
@@ -384,6 +396,30 @@ let ticker    = null;
 const pad = n => String(n).padStart(2, '0');
 const $ = id => document.getElementById(id);
 
+// 대회명, 라운드, 팀의 '직접 입력' 토글 통합 제어 함수
+window.toggleCustomFields = function() {
+  // 1. 대회명 제어
+  if ($('fTitle').value === 'custom') {
+    $('customTitle').style.display = 'block';
+  } else {
+    $('customTitle').style.display = 'none';
+  }
+
+  // 2. 라운드 제어
+  if ($('fLabel').value === 'custom') {
+    $('customRound').style.display = 'block';
+  } else {
+    $('customRound').style.display = 'none';
+  }
+
+  // 3. 팀 제어
+  if ($('fTeam').value === 'custom') {
+    $('customTeam').style.display = 'block';
+  } else {
+    $('customTeam').style.display = 'none';
+  }
+};
+
 function showScreen(name) {
   $('publicScreen').style.display = 'none';
   $('loginScreen').style.display  = 'none';
@@ -399,8 +435,21 @@ function showScreen(name) {
   } else if (name === 'admin') {
     $('adminScreen').style.display = 'block';
     window.location.hash = 'admin';
+    
+    if (currentUser && currentUser.toLowerCase() === 'admin1') {
+      $('superAdminSection').style.display = 'block';
+      $('adminRoleBadge').className = 'account-role';
+      $('adminRoleBadge').textContent = 'SUPER ADMIN';
+      renderAccounts();
+    } else {
+      $('superAdminSection').style.display = 'none';
+      $('adminRoleBadge').className = 'account-role';
+      $('adminRoleBadge').style.background = 'rgba(71,85,105,0.1)';
+      $('adminRoleBadge').style.borderColor = 'rgba(71,85,105,0.2)';
+      $('adminRoleBadge').style.color = 'var(--txt2)';
+      $('adminRoleBadge').textContent = 'STAFF';
+    }
     renderAdmin();
-    renderAccounts();
   }
 }
 
@@ -408,7 +457,6 @@ window.goAdmin  = () => loggedIn ? showScreen('admin') : showScreen('login');
 window.goPublic = () => showScreen('public');
 window.doLogout = () => { loggedIn = false; currentUser = null; showScreen('public'); };
 
-// [복구] Realtime Database의 /admins/{id} 직접 조회 비교 방식 로그인
 window.doLogin = async function() {
   const id = $('idInput').value.trim();
   const pw = $('pwInput').value;
@@ -419,7 +467,6 @@ window.doLogin = async function() {
   }
   
   try {
-    // Authentication 모듈을 안 쓰고, DB 경로에 데이터가 있는지 직접 꺼내와서 대조합니다.
     const snap = await get(ref(db, `admins/${id}`));
     if (snap.exists() && snap.val().pw === pw) {
       loggedIn = true;
@@ -491,7 +538,7 @@ function renderPublic() {
     `${pad(nd.getHours())}:${pad(nd.getMinutes())}:${pad(nd.getSeconds())}`;
 
   if (!allItems.length) {
-    $('publicBody').innerHTML = '<tr><td colspan="6" class="empty">등록된 일정이 없습니다</td></tr>';
+    $('publicBody').innerHTML = '<tr><td colspan="7" class="empty">등록된 일정이 없습니다</td></tr>';
     $('tabs').innerHTML = '';
     return;
   }
@@ -505,7 +552,7 @@ function renderPublic() {
   const days = Object.keys(dayMap).sort();
 
   $('tabs').innerHTML = [
-    `<button class="tab ${!selectedDay ? 'active' : ''}" onclick="window._day(null)">전체</button>`,
+    `<button class="tab ${!selectedDay ? 'active' : ''}" onclick="window._day(null)">전체 일별 보기</button>`,
     ...days.map(d => {
       const ts = dayMap[d][0].targetTime;
       return `<button class="tab ${selectedDay === d ? 'active' : ''}" onclick="window._day('${d}')">${fmtDate(ts)}</button>`;
@@ -533,6 +580,7 @@ function renderPublic() {
       <tr class="${done ? 'done' : ''} ${isNext ? 'next' : ''}">
         <td>${fmtDate(item.targetTime)}</td>
         <td>${fmtTime(item.targetTime)}</td>
+        <td style="font-weight:700;color:var(--accent);">${item.title || '-'}</td>
         <td>${cdCell}</td>
         <td>${item.label || '-'}</td>
         <td>${item.map   || '-'}</td>
@@ -540,7 +588,7 @@ function renderPublic() {
       </tr>`;
   });
 
-  $('publicBody').innerHTML = html || '<tr><td colspan="6" class="empty">일정 없음</td></tr>';
+  $('publicBody').innerHTML = html || '<tr><td colspan="7" class="empty">일정 없음</td></tr>';
 }
 
 window._day = function(d) { selectedDay = d; renderPublic(); };
@@ -560,7 +608,7 @@ function renderAdmin() {
       <tr class="${done ? 'done' : ''}">
         <td>${fmtDate(item.targetTime)}</td>
         <td>${fmtTime(item.targetTime)}</td>
-        <td>${item.title || '-'}</td>
+        <td style="font-weight:600;">${item.title || '-'}</td>
         <td>${item.label || '-'}</td>
         <td>${item.map   || '-'}</td>
         <td>${item.team  || '-'}</td>
@@ -574,12 +622,30 @@ function renderAdmin() {
 
 window.submitSchedule = async function() {
   const timeVal = $('fTime').value;
-  const title   = $('fTitle').value.trim();
-  const label   = $('fLabel').value.trim();
   const map     = $('fMap').value.trim();
-  const team    = $('fTeam').value.trim();
+  
+  // 1. 대회명 데이터 수집 (직접입력 분기처리)
+  let title = $('fTitle').value.trim();
+  if (title === 'custom') {
+    title = $('customTitle').value.trim();
+  }
 
-  if (!timeVal || !label) { showToast('날짜/시간과 라운드는 필수입니다!', '#ef4444'); return; }
+  // 2. 라운드 데이터 수집 (직접입력 분기처리)
+  let label = $('fLabel').value.trim();
+  if (label === 'custom') {
+    label = $('customRound').value.trim();
+  }
+
+  // 3. 팀 데이터 수집 (직접입력 분기처리)
+  let team = $('fTeam').value.trim();
+  if (team === 'custom') {
+    team = $('customTeam').value.trim();
+  }
+
+  if (!timeVal || !title || !label) { 
+    showToast('날짜/시간, 대회명, 라운드는 필수 입력 항목입니다!', '#ef4444'); 
+    return; 
+  }
 
   const data = { targetTime: new Date(timeVal).getTime(), title, label, map, team };
 
@@ -599,10 +665,44 @@ window._edit = function(id) {
   editingId = id;
   const d = new Date(item.targetTime);
   $('fTime').value  = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-  $('fTitle').value = item.title || '';
-  $('fLabel').value = item.label || '';
+  
+  // 대회명 에디트 바인딩 및 직접 입력 대응
+  const standardTitles = ['PMHI 2026', 'PMGC 2026', 'PMPS 2026'];
+  if (item.title && !standardTitles.includes(item.title)) {
+    $('fTitle').value = 'custom';
+    $('customTitle').style.display = 'block';
+    $('customTitle').value = item.title;
+  } else {
+    $('fTitle').value = item.title || '';
+    $('customTitle').style.display = 'none';
+    $('customTitle').value = '';
+  }
+
+  // 라운드 에디트 바인딩 및 직접 입력 대응
+  const standardRounds = ['Round 1', 'Round 2', 'Round 3', 'Round 4', 'Round 5', 'Round 6'];
+  if (item.label && !standardRounds.includes(item.label)) {
+    $('fLabel').value = 'custom';
+    $('customRound').style.display = 'block';
+    $('customRound').value = item.label;
+  } else {
+    $('fLabel').value = item.label || '';
+    $('customRound').style.display = 'none';
+    $('customRound').value = '';
+  }
+
+  // 팀 에디트 바인딩 및 직접 입력 대응
+  const standardTeams = ['Red Group & Green Group', 'Group Stage', 'Grand Finals'];
+  if (item.team && !standardTeams.includes(item.team)) {
+    $('fTeam').value = 'custom';
+    $('customTeam').style.display = 'block';
+    $('customTeam').value = item.team;
+  } else {
+    $('fTeam').value = item.team || '';
+    $('customTeam').style.display = 'none';
+    $('customTeam').value = '';
+  }
+  
   $('fMap').value   = item.map   || '';
-  $('fTeam').value  = item.team  || '';
   $('formTitle').textContent   = '✏️ 일정 수정';
   $('submitBtn').textContent   = '수정 완료';
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -617,38 +717,69 @@ window._del = async function(id) {
 window.resetForm = function() {
   editingId = null;
   $('fTime').value  = '';
+  
   $('fTitle').value = '';
+  $('customTitle').value = '';
+  $('customTitle').style.display = 'none';
+  
   $('fLabel').value = '';
-  $('fMap').value   = '';
+  $('customRound').value = '';
+  $('customRound').style.display = 'none';
+  
   $('fTeam').value  = '';
+  $('customTeam').value = '';
+  $('customTeam').style.display = 'none';
+
+  $('fMap').value   = '';
   $('formTitle').textContent = '➕ 일정 추가';
   $('submitBtn').textContent = '추가';
 };
 
-// [복구] DB 연동형 계정 정보 출력
 async function renderAccounts() {
-  if (!currentUser) {
-    $('accountList').innerHTML = '<div class="account-empty">인증 정보가 없습니다.</div>';
-    return;
-  }
+  if (!currentUser || currentUser.toLowerCase() !== 'admin1') return;
   
-  let html = `
-    <div class="account-item">
-      <div class="account-info">
-        <div class="account-avatar">${currentUser.charAt(0).toUpperCase()}</div>
-        <div><div class="account-id">${currentUser}</div></div>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px">
-        <span class="account-role">ADMIN</span>
-        <span style="font-size:0.75rem;color:var(--txt3)">(현재 로그인 중)</span>
-      </div>
-    </div>`;
+  try {
+    const snap = await get(ref(db, 'admins'));
+    if (!snap.exists()) {
+      $('accountList').innerHTML = '<div class="account-empty">등록된 계정이 없습니다.</div>';
+      return;
+    }
     
-  $('accountList').innerHTML = html;
+    let html = '';
+    const adminsData = snap.val();
+    
+    Object.keys(adminsData).forEach(id => {
+      const isSuper = id.toLowerCase() === 'admin1';
+      html += `
+        <div class="account-item">
+          <div class="account-info">
+            <div class="account-avatar" style="${isSuper ? 'background:var(--accent);color:#fff;border-color:var(--accent);' : ''}">
+              ${id.charAt(0).toUpperCase()}
+            </div>
+            <div>
+              <div class="account-id">${id}</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span class="account-role" style="${!isSuper ? 'background:rgba(71,85,105,0.1);color:var(--txt2);border-color:rgba(71,85,105,0.2);' : ''}">
+              ${isSuper ? 'SUPER ADMIN' : 'STAFF'}
+            </span>
+          </div>
+        </div>`;
+    });
+    
+    $('accountList').innerHTML = html;
+  } catch(e) {
+    $('accountList').innerHTML = '<div class="account-empty">❌ 목록 로드 실패 (권한 없음)</div>';
+  }
 }
 
-// [복구] DB 내부 /admins/ 노드에 직접 매핑 추가
 window.addAccount = async function() {
+  if (!currentUser || currentUser.toLowerCase() !== 'admin1') {
+    showToast('❌ 권한이 없습니다. 계정은 admin1만 추가할 수 있습니다.', '#ef4444');
+    return;
+  }
+
   const id = $('aId').value.trim();
   const pw = $('aPw').value;
   
@@ -659,14 +790,13 @@ window.addAccount = async function() {
     const snap = await get(ref(db, `admins/${id}`));
     if (snap.exists()) { showToast('이미 존재하는 아이디입니다.', '#ef4444'); return; }
     
-    // 단순 매핑 구조로 DB에 텍스트 쌍으로 저장
     await set(ref(db, `admins/${id}`), { pw: pw });
     $('aId').value = '';
     $('aPw').value = '';
     showToast(`✅ 계정 "${id}" 추가 완료!`);
     renderAccounts();
   } catch(e) {
-    showToast('계정 추가 실패 (데이터베이스 권한 오류)', '#ef4444');
+    showToast('계정 추가 실패 (데이터베이스 오류)', '#ef4444');
   }
 };
 
