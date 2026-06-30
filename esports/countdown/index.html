@@ -77,6 +77,23 @@
   .session-row:hover td{background:var(--sess-hd)!important;}
   .stag{display:inline-block;background:var(--accent);color:#fff;font-size:0.62rem;font-weight:800;padding:2px 7px;border-radius:4px;margin-right:7px;vertical-align:middle;}
 
+  /* 종료된 세션 구분행 */
+  .session-row.session-ended td{background:#64748b!important;color:#cbd5e1;}
+  [data-theme="dark"] .session-row.session-ended td{background:#1e293b!important;color:#64748b;}
+  .session-row.session-ended .stag{background:#94a3b8;}
+
+  /* Live on 다음 차례 (NEXT LIVE) */
+  tr.live-on-row td{background:rgba(185,28,28,0.07);color:var(--accent);font-weight:700;}
+  tr.live-on-row .cd{color:var(--accent);font-weight:800;animation:blink 1.5s infinite;}
+  @keyframes blink{50%{opacity:.5;}}
+
+  /* 다음 일반 라운드 (NEXT MATCH) */
+  tr.next-match-row td{background:rgba(235,91,91,0.08);color:#eb5b5b;font-weight:700;}
+  tr.next-match-row .cd{color:#eb5b5b;font-weight:800;}
+  [data-theme="dark"] tr.next-match-row td{color:#f08080;}
+  [data-theme="dark"] tr.next-match-row .cd{color:#f08080;}
+  .badge-match{display:inline-block;background:#eb5b5b;color:#fff;font-size:0.58rem;font-weight:800;padding:2px 6px;border-radius:4px;margin-left:5px;vertical-align:middle;}
+
   .link-btn{display:inline-block;padding:4px 10px;border-radius:4px;background:var(--surface3);color:var(--txt2);font-size:0.76rem;text-decoration:none;font-weight:600;border:1px solid var(--bd2);transition:all .2s;}
   .link-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
   tr.done .link-btn{opacity:.65;}
@@ -213,11 +230,11 @@
       <thead>
         <tr>
           <th>날짜</th><th>시간 (KST)</th><th>카운트다운</th>
-          <th>대회명</th><th>라운드</th><th>MAP</th><th>팀</th><th>중계</th>
+          <th>대회명</th><th>라운드</th><th>MAP</th><th>팀</th>
         </tr>
       </thead>
       <tbody id="publicBody">
-        <tr><td colspan="8" class="empty">⏳ 로딩 중...</td></tr>
+        <tr><td colspan="7" class="empty">⏳ 로딩 중...</td></tr>
       </tbody>
     </table>
   </div>
@@ -374,6 +391,7 @@
         <label>라운드 *</label>
         <select id="rLabel" onchange="toggleRCustom()">
           <option value="">-- 선택 --</option>
+          <option value="Live on">Live on</option>
           <option value="Round 1">Round 1</option>
           <option value="Round 2">Round 2</option>
           <option value="Round 3">Round 3</option>
@@ -424,7 +442,7 @@ const db = getDatabase(app);
 
 const pad = n => String(n).padStart(2,'0');
 const $ = id => document.getElementById(id);
-const STD_ROUNDS = ['Round 1','Round 2','Round 3','Round 4','Round 5','Round 6'];
+const STD_ROUNDS = ['Live on','Round 1','Round 2','Round 3','Round 4','Round 5','Round 6'];
 const STD_TITLES = ['PMMI 2026','PMPS S2 2026','PMWC 2026'];
 const STD_TEAMS  = ['Group Stage Day 1','Group Stage Day 2','Group Stage Day 3','Grand Finals',
                     'Red Group & Green Group','Red Group & Yellow Group','Yellow Group & Green Group','전체'];
@@ -506,8 +524,11 @@ function renderPublic(){
   const now=Date.now(), nd=new Date(now);
   $('nowTime').textContent=`현재 시각: ${nd.getFullYear()}/${pad(nd.getMonth()+1)}/${pad(nd.getDate())} ${pad(nd.getHours())}:${pad(nd.getMinutes())}:${pad(nd.getSeconds())}`;
 
-  let allRounds=[];
-  allSessions.forEach(sess=>sess.rounds.forEach(r=>{ allRounds.push({...r,sess,ts:dateToTs(sess.date,r.time)}); }));
+  if(!allSessions.length){
+    $('publicBody').innerHTML='<tr><td colspan="7" class="empty">등록된 일정이 없습니다</td></tr>';
+    $('tabs').innerHTML='';
+    return;
+  }
 
   const daySet=new Set(allSessions.map(s=>s.date));
   const days=[...daySet].sort();
@@ -516,30 +537,61 @@ function renderPublic(){
     ...days.map(d=>`<button class="tab ${selectedDay===d?'active':''}" onclick="window._day('${d}')">${fmtDate(dateToTs(d,'12:00'))}</button>`)
   ].join('');
 
-  allRounds.sort((a,b)=>{ const ad=a.ts<=now,bd=b.ts<=now; return ad!==bd?(ad?1:-1):a.ts-b.ts; });
-  const nextRound=allRounds.find(r=>r.ts>now);
-  const filtered=selectedDay?allRounds.filter(r=>r.sess.date===selectedDay):allRounds;
+  // 세션별 라운드 가공 + 종료 여부 판정
+  let activeSessions=[], endedSessions=[];
+  allSessions.forEach(sess=>{
+    if(selectedDay && sess.date!==selectedDay) return;
+    let roundsWithTs=sess.rounds.map(r=>({...r, ts:dateToTs(sess.date,r.time||'00:00')}));
+    roundsWithTs.sort((a,b)=>a.ts-b.ts);
+    const isSessionEnded = roundsWithTs.length>0 && roundsWithTs.every(r=>r.ts<=now);
+    if(isSessionEnded) endedSessions.push({...sess, processedRounds:roundsWithTs, isEnded:true});
+    else activeSessions.push({...sess, processedRounds:roundsWithTs, isEnded:false});
+  });
+  activeSessions.sort((a,b)=>a.date.localeCompare(b.date));
+  endedSessions.sort((a,b)=>a.date.localeCompare(b.date));
+  const finalSessions=[...activeSessions,...endedSessions];
 
-  if(!filtered.length){ $('publicBody').innerHTML='<tr><td colspan="8" class="empty">일정 없음</td></tr>'; return; }
+  if(!finalSessions.length){ $('publicBody').innerHTML='<tr><td colspan="7" class="empty">일정 없음</td></tr>'; return; }
 
-  let html='', prevSessId=null;
-  filtered.forEach(r=>{
-    const ms=r.ts-now, done=ms<=0, isNext=nextRound&&r.id===nextRound.id&&r.sess.id===nextRound.sess.id;
-    const cd=fmtCd(ms);
-    const cdCell=cd?`<span class="cd">${cd}</span>${isNext?'<span class="badge">NEXT</span>':''}`:`<span style="color:var(--txt3)">✅ 종료</span>`;
-
-    if(r.sess.id!==prevSessId){
-      const lk=r.sess.link?`&nbsp;·&nbsp;<a href="${r.sess.link}" target="_blank" class="link-btn" style="font-size:.68rem;padding:2px 8px">📺 중계</a>`:'';
-      html+=`<tr class="session-row"><td colspan="8"><span class="stag">${r.sess.title||'대회'}</span>${fmtDate(dateToTs(r.sess.date,'12:00'))}&nbsp;·&nbsp;${r.sess.team||'팀 미정'}${lk}</td></tr>`;
-      prevSessId=r.sess.id;
-    }
+  let html='';
+  finalSessions.forEach(sess=>{
+    const sessionDateTs=dateToTs(sess.date,'00:00');
+    const headerLinkHtml = sess.link
+      ? `&nbsp;·&nbsp;<a href="${sess.link}" target="_blank" class="link-btn" style="font-size:.68rem;padding:2px 8px;background:var(--accent);color:#fff;border-color:var(--accent)">📺 중계</a>`
+      : '';
     html+=`
-      <tr class="${done?'done':''} ${isNext?'next':''}">
-        <td>${fmtDate(r.ts)}</td><td>${fmtTime(r.ts)}</td><td>${cdCell}</td>
-        <td style="font-weight:700;color:var(--accent)">${r.sess.title||'-'}</td>
-        <td>${r.label||'-'}</td><td>${r.map||'-'}</td><td>${r.sess.team||'-'}</td>
-        <td>${r.sess.link?`<a href="${r.sess.link}" target="_blank" class="link-btn">📺 바로가기</a>`:'<span style="color:var(--txt3)">-</span>'}</td>
+      <tr class="session-row ${sess.isEnded?'session-ended':''}">
+        <td colspan="7">
+          <span class="stag">${sess.title||'대회'}</span>
+          ${fmtDate(sessionDateTs)}&nbsp;·&nbsp;${sess.team||'팀 미정'}${sess.isEnded?' (종료됨)':''}
+          ${headerLinkHtml}
+        </td>
       </tr>`;
+
+    const nextInSession = sess.processedRounds.find(r=>r.ts>now);
+
+    sess.processedRounds.forEach(r=>{
+      const ms=r.ts-now, done=ms<=0, cd=fmtCd(ms);
+      const isLiveOn = r.label==='Live on';
+      const isNext = nextInSession && r.id===nextInSession.id;
+      const isNextLive = isNext && isLiveOn;
+      const isNextMatch = isNext && !isLiveOn;
+
+      let badgeHtml='';
+      if(isNextLive) badgeHtml='<span class="badge" style="background:#10b981">NEXT LIVE</span>';
+      else if(isNextMatch) badgeHtml='<span class="badge-match">NEXT MATCH</span>';
+
+      const cdCell = cd
+        ? `<span class="cd">${cd}</span>${badgeHtml}`
+        : `<span style="color:var(--txt3)">✅ 종료</span>`;
+
+      html+=`
+        <tr class="${done?'done':''} ${isNextLive?'live-on-row':''} ${isNextMatch?'next-match-row':''}">
+          <td>${fmtDate(r.ts)}</td><td>${fmtTime(r.ts)}</td><td>${cdCell}</td>
+          <td style="font-weight:700;color:var(--accent)">${sess.title||'-'}</td>
+          <td>${r.label||'-'}</td><td>${r.map||'-'}</td><td>${sess.team||'-'}</td>
+        </tr>`;
+    });
   });
   $('publicBody').innerHTML=html;
 }
@@ -597,6 +649,7 @@ function renderSessionCard(sess){
           <label>라운드 *</label>
           <select id="rl_${sess.id}" onchange="toggleRoundAddCustom('${sess.id}')">
             <option value="">-- 선택 --</option>
+            <option value="Live on">Live on</option>
             <option>Round 1</option><option>Round 2</option><option>Round 3</option>
             <option>Round 4</option><option>Round 5</option><option>Round 6</option>
             <option value="custom">직접 입력</option>
