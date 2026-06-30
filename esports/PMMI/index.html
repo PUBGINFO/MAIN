@@ -14,7 +14,7 @@
     --row-next: rgba(185,28,28,0.04); --border-row: #f1f5f9;
     --input-bg: #ffffff; --input-bd: #cbd5e1;
     --btn-sec-bg: #e2e8f0; --btn-sec-txt: #475569; --btn-sec-hov: #cbd5e1;
-    --session-hd: #f1f5f9; --session-border: #e2e8f0;
+    --session-hd: #1e293b; --session-border: #e2e8f0;
   }
   [data-theme="dark"] {
     --bg: #0f172a; --surface: #1e293b; --surface2: #334155; --surface3: #475569;
@@ -25,7 +25,7 @@
     --row-next: rgba(239,68,68,0.06); --border-row: #334155;
     --input-bg: #0f172a; --input-bd: #475569;
     --btn-sec-bg: #334155; --btn-sec-txt: #94a3b8; --btn-sec-hov: #475569;
-    --session-hd: #1a2744; --session-border: #334155;
+    --session-hd: #0f172a; --session-border: #334155;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -57,13 +57,32 @@
   .badge { display: inline-block; background: var(--accent); color: #fff; font-size: 0.6rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; margin-left: 6px; vertical-align: middle; }
 
   /* 세션 구분 행 */
-  .session-row td { background: var(--session-hd) !important; font-size: 0.78rem; font-weight: 700; color: var(--txt2); letter-spacing: 0.5px; padding: 8px 16px; border-bottom: 1px solid var(--session-border); text-align: left; }
-  .session-row:hover td { background: var(--session-hd) !important; }
+  .session-row td { background: #334155 !important; font-size: 0.82rem; font-weight: 700; color: #ffffff; letter-spacing: 0.5px; padding: 10px 16px; text-align: left; }
+  [data-theme="dark"] .session-row td { background: #1e293b !important; }
+  .session-row:hover td { background: #334155 !important; }
+  [data-theme="dark"] .session-row:hover td { background: #1e293b !important; }
   .session-tag { display: inline-block; background: var(--accent); color: #fff; font-size: 0.65rem; font-weight: 800; padding: 2px 7px; border-radius: 4px; margin-right: 8px; vertical-align: middle; }
+
+  /* 종료된 세션 구분 행 스타일 */
+  .session-row.session-ended td { background: #64748b !important; color: #cbd5e1; }
+  [data-theme="dark"] .session-row.session-ended td { background: #1e293b !important; color: #64748b; }
+  .session-row.session-ended .session-tag { background: #94a3b8; }
+
+  /* Live on 전용 행 스타일 (NEXT LIVE) */
+  tr.live-on-row td { background: rgba(185,28,28,0.07); color: var(--accent); font-weight: 700; }
+  tr.live-on-row .cd { color: var(--accent); font-weight: 800; animation: blink 1.5s infinite; }
+  @keyframes blink { 50% { opacity: 0.5; } }
+
+  /* 다음 일반 라운드 행 스타일 (NEXT MATCH) */
+  tr.next-match-row td { background: rgba(235,91,91,0.08); color: #eb5b5b; font-weight: 700; }
+  tr.next-match-row .cd { color: #eb5b5b; font-weight: 800; }
+  [data-theme="dark"] tr.next-match-row td { color: #f08080; }
+  [data-theme="dark"] tr.next-match-row .cd { color: #f08080; }
+  .badge-match { display: inline-block; background: #eb5b5b; color: #fff; font-size: 0.6rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; margin-left: 6px; vertical-align: middle; }
 
   .link-btn { display: inline-block; padding: 4px 10px; border-radius: 4px; background: var(--surface3); color: var(--txt2); font-size: 0.78rem; text-decoration: none; font-weight: 600; border: 1px solid var(--bd2); transition: all 0.2s; }
   .link-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
-  tr.done .link-btn { opacity: 0.7; }
+  tr.done .link-btn { opacity: 0.5; }
 
   .top-nav { display: flex; justify-content: flex-end; align-items: center; max-width: 960px; margin: 0 auto 20px; gap: 8px; }
   .nav-btn { padding: 6px 14px; border-radius: 4px; border: 1px solid var(--bd2); background: var(--surface); color: var(--txt2); cursor: pointer; font-size: 0.78rem; font-weight: 500; transition: all .2s; }
@@ -92,7 +111,7 @@
 
   .form-box { max-width: 960px; margin: 0 auto 20px; background: var(--surface); border-radius: 6px; padding: 22px 24px; border: 1px solid var(--bd); box-shadow: var(--sh-sm); }
   .form-box h3 { color: var(--accent); font-size: 0.95rem; margin-bottom: 16px; font-weight: 700; }
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+  .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 16px; }
   @media(max-width:600px) { .form-grid { grid-template-columns: 1fr; } }
   .form-group label { font-size: 0.75rem; color: var(--txt2); display: block; margin-bottom: 6px; font-weight: 600; }
   .form-group input, .form-group select { width: 100%; padding: 10px 12px; background: var(--input-bg); border: 1px solid var(--input-bd); border-radius: 4px; color: var(--txt); font-size: 0.88rem; }
@@ -107,7 +126,7 @@
   /* 세션 카드 (관리자용) */
   .sessions-wrap { max-width: 960px; margin: 0 auto 40px; display: flex; flex-direction: column; gap: 16px; }
   .session-card { background: var(--surface); border: 1px solid var(--bd); border-radius: 8px; overflow: hidden; box-shadow: var(--sh-sm); }
-  .session-card-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: var(--session-hd); border-bottom: 1px solid var(--session-border); flex-wrap: wrap; gap: 8px; }
+  .session-card-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: var(--surface2); border-bottom: 1px solid var(--bd); flex-wrap: wrap; gap: 8px; }
   .session-card-title { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
   .session-card-title strong { font-size: 0.95rem; color: var(--txt); font-weight: 700; }
   .session-card-meta { font-size: 0.78rem; color: var(--txt2); }
@@ -119,11 +138,12 @@
   .round-table td { padding: 10px 14px; text-align: center; font-size: 0.85rem; border-bottom: 1px solid var(--border-row); color: var(--txt); white-space: nowrap; }
   .round-table tr:last-child td { border-bottom: none; }
   .round-table tbody tr:hover td { background: var(--surface2); }
-  .round-add-row { padding: 12px 20px; border-top: 1px solid var(--border-row); display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap; background: var(--surface2); }
-  .round-add-row .form-group { margin: 0; flex: 1; min-width: 120px; }
+  .round-add-row { padding: 12px 20px; border-top: 1px solid var(--border-row); display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; background: var(--surface2); }
+  .round-add-row .form-group { margin: 0; flex: 1 1 140px; min-width: 140px; }
   .round-add-row .form-group label { font-size: 0.7rem; margin-bottom: 4px; }
   .round-add-row .form-group input,
-  .round-add-row .form-group select { padding: 7px 10px; font-size: 0.82rem; }
+  .round-add-row .form-group select { padding: 7px 10px; font-size: 0.82rem; width: 100%; }
+  .round-add-row .btn-green { flex-shrink: 0; }
 
   .btn-sm { padding: 4px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 600; }
   .btn-edit { background: #2563eb; color: #fff; margin-right: 4px; }
@@ -163,7 +183,6 @@
 </head>
 <body>
 
-<!-- 공개 화면 -->
 <div id="publicScreen">
   <div class="top-nav">
     <button class="theme-btn" onclick="toggleTheme()">
@@ -181,17 +200,16 @@
       <thead>
         <tr>
           <th>날짜</th><th>시간 (KST)</th><th>카운트다운</th>
-          <th>대회명</th><th>라운드</th><th>MAP</th><th>팀</th><th>중계</th>
+          <th>대회명</th><th>라운드</th><th>MAP</th><th>팀</th>
         </tr>
       </thead>
       <tbody id="publicBody">
-        <tr><td colspan="8" class="empty">⏳ 로딩 중...</td></tr>
+        <tr><td colspan="7" class="empty">⏳ 로딩 중...</td></tr>
       </tbody>
     </table>
   </div>
 </div>
 
-<!-- 로그인 화면 -->
 <div id="loginScreen">
   <div class="login-box">
     <h2>🔐 관리자 로그인</h2>
@@ -203,7 +221,6 @@
   </div>
 </div>
 
-<!-- 관리자 화면 -->
 <div id="adminScreen">
   <div class="admin-header">
     <div>
@@ -216,7 +233,6 @@
     </div>
   </div>
 
-  <!-- 세션 추가 폼 -->
   <div class="form-box">
     <h3>➕ 새 세션 추가 <small style="font-size:0.75rem;font-weight:400;color:var(--txt3)">(날짜 + 대회명 단위로 묶음 생성)</small></h3>
     <div class="form-grid">
@@ -254,12 +270,10 @@
     </div>
   </div>
 
-  <!-- 세션 카드 목록 -->
   <div class="sessions-wrap" id="sessionsWrap">
     <div style="text-align:center;padding:40px;color:var(--txt3)">⏳ 로딩 중...</div>
   </div>
 
-  <!-- 슈퍼 어드민 계정 관리 -->
   <div id="superAdminSection">
     <h2 class="section-title">👤 최고 관리자 전용 (계정 제어)</h2>
     <div class="form-box">
@@ -284,7 +298,6 @@
   </div>
 </div>
 
-<!-- 세션 수정 모달 -->
 <div class="modal-overlay" id="sessionModal">
   <div class="modal">
     <h3>✏️ 세션 수정</h3>
@@ -324,7 +337,6 @@
   </div>
 </div>
 
-<!-- 라운드 수정 모달 -->
 <div class="modal-overlay" id="roundModal">
   <div class="modal">
     <h3>✏️ 라운드 수정</h3>
@@ -337,6 +349,7 @@
         <label>라운드 *</label>
         <select id="rLabel" onchange="toggleRoundCustom()">
           <option value="">-- 선택 --</option>
+          <option value="Live on">Live on</option>
           <option value="Round 1">Round 1</option>
           <option value="Round 2">Round 2</option>
           <option value="Round 3">Round 3</option>
@@ -387,7 +400,7 @@ const db = getDatabase(app);
 const pad = n => String(n).padStart(2,'0');
 const $ = id => document.getElementById(id);
 
-let allSessions = []; // [{id, date, title, team, link, rounds:[{id,time,label,map}]}]
+let allSessions = []; 
 let loggedIn = false;
 let currentUser = null;
 let selectedDay = null;
@@ -407,7 +420,6 @@ function fmtTime(ts) {
   const d = new Date(ts);
   return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
-function getDayKey(dateStr) { return dateStr; } // "YYYY-MM-DD"
 function fmtCd(ms) {
   if (ms <= 0) return null;
   const s = Math.floor(ms / 1000);
@@ -418,7 +430,6 @@ function fmtCd(ms) {
   return d > 0 ? `${d}일 ${pad(h)}:${pad(m)}:${pad(sec)}` : `${pad(h)}:${pad(m)}:${pad(sec)}`;
 }
 function dateToTs(dateStr, timeStr) {
-  // dateStr: "YYYY-MM-DD", timeStr: "HH:MM"
   return new Date(`${dateStr}T${timeStr}:00`).getTime();
 }
 
@@ -497,7 +508,6 @@ onValue(ref(db, 'sessions'), snapshot => {
       }))
     : [];
 
-  // 세션 날짜순 정렬
   allSessions.sort((a,b) => a.date.localeCompare(b.date));
 
   renderPublic();
@@ -512,25 +522,15 @@ function renderPublic() {
     `현재 시각: ${nd.getFullYear()}/${pad(nd.getMonth()+1)}/${pad(nd.getDate())} ` +
     `${pad(nd.getHours())}:${pad(nd.getMinutes())}:${pad(nd.getSeconds())}`;
 
-  // 전체 라운드 목록 (날짜+시간으로 타임스탬프 계산)
-  let allRounds = [];
-  allSessions.forEach(sess => {
-    sess.rounds.forEach(r => {
-      const ts = dateToTs(sess.date, r.time || '00:00');
-      allRounds.push({ ...r, sess, ts });
-    });
-  });
-
-  if (!allRounds.length && !allSessions.length) {
-    $('publicBody').innerHTML = '<tr><td colspan="8" class="empty">등록된 일정이 없습니다</td></tr>';
+  if (!allSessions.length) {
+    $('publicBody').innerHTML = '<tr><td colspan="7" class="empty">등록된 일정이 없습니다</td></tr>';
     $('tabs').innerHTML = '';
     return;
   }
 
-  // 탭: 고유 날짜 수집
+  // 탭 구성
   const daySet = new Set(allSessions.map(s => s.date));
   const days = [...daySet].sort();
-
   $('tabs').innerHTML = [
     `<button class="tab ${!selectedDay?'active':''}" onclick="window._day(null)">전체</button>`,
     ...days.map(d => {
@@ -539,66 +539,86 @@ function renderPublic() {
     })
   ].join('');
 
-  // 미완료 → 완료 순, 같은 성격끼리 시간 오름차순
-  allRounds.sort((a,b) => {
-    const aDone = a.ts <= now, bDone = b.ts <= now;
-    if (aDone !== bDone) return aDone ? 1 : -1;
-    return a.ts - b.ts;
+  // 각 세션별로 상태 파악 및 데이터 가공
+  let activeSessions = [];
+  let endedSessions = [];
+
+  allSessions.forEach(sess => {
+    if (selectedDay && sess.date !== selectedDay) return;
+
+    let roundsWithTs = sess.rounds.map(r => ({
+      ...r,
+      ts: dateToTs(sess.date, r.time || '00:00')
+    }));
+    roundsWithTs.sort((a, b) => a.ts - b.ts);
+
+    const isSessionEnded = roundsWithTs.length > 0 && roundsWithTs.every(r => r.ts <= now);
+
+    if (isSessionEnded) {
+      endedSessions.push({ ...sess, processedRounds: roundsWithTs, isEnded: true });
+    } else {
+      activeSessions.push({ ...sess, processedRounds: roundsWithTs, isEnded: false });
+    }
   });
 
-  // NEXT 탐색
-  const nextRound = allRounds.find(r => r.ts > now);
+  activeSessions.sort((a, b) => a.date.localeCompare(b.date));
+  endedSessions.sort((a, b) => a.date.localeCompare(b.date));
 
-  // 필터
-  const filtered = selectedDay
-    ? allRounds.filter(r => r.sess.date === selectedDay)
-    : allRounds;
+  const finalSessions = [...activeSessions, ...endedSessions];
 
-  if (!filtered.length) {
-    $('publicBody').innerHTML = '<tr><td colspan="8" class="empty">일정 없음</td></tr>';
+  if (!finalSessions.length) {
+    $('publicBody').innerHTML = '<tr><td colspan="7" class="empty">일정 없음</td></tr>';
     return;
   }
 
-  // 세션 구분선을 위해 이전 세션 추적
-  let prevSessId = null;
   let html = '';
 
-  filtered.forEach(r => {
-    const ms = r.ts - now;
-    const done = ms <= 0;
-    const isNext = nextRound && r.id === nextRound.id && r.sess.id === nextRound.sess.id;
-    const cd = fmtCd(ms);
-    const cdCell = cd
-      ? `<span class="cd">${cd}</span>${isNext ? '<span class="badge">NEXT</span>' : ''}`
-      : `<span style="color:var(--txt3)">✅ 종료</span>`;
-
-    // 세션이 바뀌면 구분 행 삽입
-    if (r.sess.id !== prevSessId) {
-      const linkHtml = r.sess.link
-        ? `&nbsp;·&nbsp;<a href="${r.sess.link}" target="_blank" class="link-btn" style="font-size:0.7rem;padding:2px 8px">📺 중계</a>`
-        : '';
-      html += `
-        <tr class="session-row">
-          <td colspan="8">
-            <span class="session-tag">${r.sess.title || '대회'}</span>
-            ${fmtDate(dateToTs(r.sess.date,'00:00'))} &nbsp;·&nbsp; ${r.sess.team || '팀 미정'}
-            ${linkHtml}
-          </td>
-        </tr>`;
-      prevSessId = r.sess.id;
-    }
+  finalSessions.forEach(sess => {
+    // 세션 구분 타이틀 행: 중계 링크는 여기에만 표시
+    const sessionDateTs = dateToTs(sess.date, '00:00');
+    const headerLinkHtml = sess.link
+      ? `&nbsp;·&nbsp;<a href="${sess.link}" target="_blank" class="link-btn" style="font-size:0.7rem;padding:2px 8px;background:var(--accent);color:#fff;border-color:var(--accent)">📺 중계</a>`
+      : '';
 
     html += `
-      <tr class="${done?'done':''} ${isNext?'next':''}">
-        <td>${fmtDate(r.ts)}</td>
-        <td>${fmtTime(r.ts)}</td>
-        <td>${cdCell}</td>
-        <td>${r.sess.title || '-'}</td>
-        <td>${r.label || '-'}</td>
-        <td>${r.map || '-'}</td>
-        <td>${r.sess.team || '-'}</td>
-        <td>${r.sess.link ? `<a href="${r.sess.link}" target="_blank" class="link-btn">📺 바로가기</a>` : '<span style="color:var(--txt3)">-</span>'}</td>
+      <tr class="session-row ${sess.isEnded ? 'session-ended' : ''}">
+        <td colspan="7">
+          <span class="session-tag">${sess.title || '대회'}</span>
+          ${fmtDate(sessionDateTs)} &nbsp;·&nbsp; ${sess.team || '팀 미정'} ${sess.isEnded ? ' (종료됨)' : ''}
+          ${headerLinkHtml}
+        </td>
       </tr>`;
+
+    const nextInSession = sess.processedRounds.find(r => r.ts > now);
+
+    sess.processedRounds.forEach((r) => {
+      const ms = r.ts - now;
+      const done = ms <= 0;
+      const cd = fmtCd(ms);
+      const isLiveOn = r.label === 'Live on';
+      const isNext = nextInSession && r.id === nextInSession.id;
+      const isNextLive = isNext && isLiveOn;
+      const isNextMatch = isNext && !isLiveOn;
+
+      let badgeHtml = '';
+      if (isNextLive) badgeHtml = '<span class="badge" style="background:#10b981">NEXT LIVE</span>';
+      else if (isNextMatch) badgeHtml = '<span class="badge-match">NEXT MATCH</span>';
+
+      const cdCell = cd
+        ? `<span class="cd">${cd}</span>${badgeHtml}`
+        : `<span style="color:var(--txt3)">✅ 종료</span>`;
+
+      html += `
+        <tr class="${done ? 'done' : ''} ${isNextLive ? 'live-on-row' : ''} ${isNextMatch ? 'next-match-row' : ''}">
+          <td>${fmtDate(r.ts)}</td>
+          <td>${fmtTime(r.ts)}</td>
+          <td>${cdCell}</td>
+          <td>${sess.title || '-'}</td>
+          <td>${r.label || '-'}</td>
+          <td>${r.map || '-'}</td>
+          <td>${sess.team || '-'}</td>
+        </tr>`;
+    });
   });
 
   $('publicBody').innerHTML = html;
@@ -667,6 +687,7 @@ function renderSessionCard(sess) {
           <label>라운드 *</label>
           <select id="rl_${sess.id}" onchange="toggleRoundAddCustom('${sess.id}')">
             <option value="">-- 선택 --</option>
+            <option value="Live on">Live on</option>
             <option value="Round 1">Round 1</option>
             <option value="Round 2">Round 2</option>
             <option value="Round 3">Round 3</option>
@@ -726,7 +747,6 @@ window.saveSession = async function() {
   const team  = $('mTeam').value;
   const link  = $('mLink').value.trim();
   if (!date || !title) { showToast('날짜와 대회명은 필수입니다!', '#ef4444'); return; }
-  // 라운드 데이터는 건드리지 않고 세션 메타만 업데이트
   const sess = allSessions.find(s => s.id === editingSessionId);
   const roundsData = {};
   if (sess && sess.rounds.length) {
@@ -759,7 +779,6 @@ window.addRound = async function(sessId) {
 
   if (!time || !label) { showToast('시간과 라운드는 필수입니다!', '#ef4444'); return; }
   await push(ref(db, `sessions/${sessId}/rounds`), { time, label, map });
-  // 입력 초기화
   $(`rt_${sessId}`).value = '';
   selEl.value = '';
   $(`rlc_${sessId}`).value = '';
@@ -776,7 +795,7 @@ window.openRoundEdit = function(sessId, roundId) {
   editingRoundSessionId = sessId;
   editingRoundId = roundId;
   $('rTime').value = round.time || '';
-  const stdRounds = ['Round 1','Round 2','Round 3','Round 4','Round 5','Round 6'];
+  const stdRounds = ['Live on','Round 1','Round 2','Round 3','Round 4','Round 5','Round 6'];
   if (round.label && !stdRounds.includes(round.label)) {
     $('rLabel').value = 'custom';
     $('rLabelCustom').style.display = 'block';
