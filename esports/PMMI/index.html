@@ -4,13 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PUBG MOBILE ESPORTS - PMMI 2026</title>
-<meta property="og:title" content="PUBG INFO / 이스포츠 일정 카운트 다운">
-<meta property="og:description" content="PUBG MOBILE ESPORTS 대회 일정 카운트 다운과 중계 채널을 확인하세요.">
-<meta property="og:image" content="https://cdn.discordapp.com/attachments/1511521944401613032/1521585364609794138/IMG_4653.png?ex=6a455e4c&is=6a440ccc&hm=f53e800f55f907e7c038b26bcef665fe46590ef6c8b7eb5c5924ae41fa8c580a&">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:url" content="pubginfo.site/esports/PMMI/">
-<meta property="og:type" content="website">
 <style>
   [data-theme="light"] {
     --bg: #f8fafc; --surface: #ffffff; --surface2: #f1f5f9; --surface3: #e2e8f0;
@@ -155,6 +148,8 @@
   .btn-sm { padding: 4px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 600; }
   .btn-edit { background: #2563eb; color: #fff; margin-right: 4px; }
   .btn-edit:hover { background: #1d4ed8; }
+  .btn-copy { background: #059669; color: #fff; margin-right: 4px; }
+  .btn-copy:hover { background: #047857; }
   .btn-del { background: #dc2626; color: #fff; }
   .btn-del:hover { background: #b91c1c; }
   .btn-green { background: #059669; color: #fff; }
@@ -676,6 +671,7 @@ function renderSessionCard(sess) {
         </div>
         <div class="session-card-actions">
           <button class="btn-sm btn-edit" onclick="openSessionEdit('${sess.id}')">세션 수정</button>
+          <button class="btn-sm btn-copy" onclick="copySession('${sess.id}')">세션 복사</button>
           <button class="btn-sm btn-del"  onclick="delSession('${sess.id}')">세션 삭제</button>
         </div>
       </div>
@@ -729,6 +725,43 @@ window.addSession = async function() {
   await push(ref(db, 'sessions'), { date, title, team, link });
   $('sDate').value = ''; $('sTitle').value = ''; $('sTeam').value = ''; $('sLink').value = '';
   showToast('✅ 세션 생성 완료!');
+};
+
+window.copySession = async function(sessId) {
+  const original = allSessions.find(s => s.id === sessId);
+  if (!original) return;
+  if (!confirm(`[${original.date} - ${original.title}] 세션을 하위 라운드를 포함하여 복사하시겠습니까?`)) return;
+
+  try {
+    // 1단계: 새 세션 기본 구조 삽입 생성
+    const newSessionRef = push(ref(db, 'sessions'));
+    const sessionData = {
+      date: original.date,
+      title: original.title,
+      team: original.team,
+      link: original.link
+    };
+
+    // 2단계: 하위 라운드가 존재한다면 오브젝트 맵 구조 재구성
+    if (original.rounds && original.rounds.length > 0) {
+      const roundsObj = {};
+      original.rounds.forEach(r => {
+        // Firebase에 밀어 넣을 때 내부의 자동 생성 키 생성을 위해 push() 모사 키 또는 난수 처리
+        const newRoundKey = push(ref(db, `dummy`)).key;
+        roundsObj[newRoundKey] = {
+          time: r.time || '',
+          label: r.label || '',
+          map: r.map || ''
+        };
+      });
+      sessionData.rounds = roundsObj;
+    }
+
+    await set(newSessionRef, sessionData);
+    showToast('✅ 세션 전체 복사 성공!');
+  } catch(e) {
+    showToast('❌ 세션 복사 오류 발생.', '#ef4444');
+  }
 };
 
 window.openSessionEdit = function(sessId) {
