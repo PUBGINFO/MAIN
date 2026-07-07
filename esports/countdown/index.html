@@ -6,7 +6,7 @@
 <title>PUBG MOBILE ESPORTS - CENTRAL</title>
 <meta property="og:title" content="PUBG ESPORTS CENTRAL - 실시간 대회 일정">
 <meta property="og:description" content="PUBG MOBILE 이스포츠 대회 일정을 한눈에 확인하세요. 실시간 카운트다운, 라운드별 맵 정보, 중계 링크 제공.">
-<meta property="og:image" content="https://cdn.discordapp.com/attachments/1511521944401613032/1523850035807260712/IMG_6689.png?ex=6a4d9b70&is=6a4c49f0&hm=14cc87e15e02fb11beeeba0af6e4b4a64582a8341e5b7d6e9b926d34c5829e62&">
+<meta property="og:image" content="https://cdn.discordapp.com/attachments/1511521944401613032/1515878892286509179/IMG_4127.png?ex=6a309bbb&is=6a2f4a3b&hm=f6b94ce336afe093b466c14173a1c40f11799b48813dfcc67aa85c6de32145a6&">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:url" content="pubginfo.site/esports/">
@@ -445,7 +445,8 @@
   <div class="modal">
     <h3><svg class="icon"><use href="#ic-edit"/></svg> 라운드 수정</h3>
     <div class="form-grid" style="gap:14px;margin-bottom:16px">
-      <div class="form-group"><label>시간 (KST) *</label><input type="time" id="rTime"></div>
+      <div class="form-group"><label>시간 (KST) *</label><input type="text" id="rTime" placeholder="예: 20:00 또는 25:00(다음날 새벽1시)" pattern="[0-9]{1,2}:[0-9]{2}"></div>
+      <p style="font-size:0.72rem;color:var(--txt3);margin:-8px 0 0;grid-column:1/-1;">※ 자정을 넘기는 라운드는 24:00 이상으로 입력하세요 (예: 25:00 = 다음날 01:00)</p>
       <div class="form-group">
         <label>라운드 *</label>
         <select id="rLabel" onchange="toggleRCustom()">
@@ -516,7 +517,18 @@ function fmtCd(ms) {
   const s = Math.floor(ms / 1000), d = Math.floor(s / 86400), h = Math.floor((s % 86400) / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
   return d > 0 ? `${d}일 ${pad(h)}:${pad(m)}:${pad(sec)}` : `${pad(h)}:${pad(m)}:${pad(sec)}`;
 }
-function dateToTs(dateStr, timeStr) { return new Date(`${dateStr}T${timeStr||'00:00'}:00`).getTime(); }
+// 시간 문자열(HH:MM)을 파싱. 24 이상이면 다음날로 넘겨서 계산하되, 화면 표기는 입력값 그대로(예: 25:00) 유지한다.
+function dateToTs(dateStr, timeStr) {
+  const t = (timeStr || '00:00').split(':');
+  let hh = parseInt(t[0], 10) || 0;
+  const mm = parseInt(t[1], 10) || 0;
+  let dayOffset = 0;
+  if (hh >= 24) { dayOffset = Math.floor(hh / 24); hh = hh % 24; }
+  const base = new Date(`${dateStr}T00:00:00`);
+  base.setDate(base.getDate() + dayOffset);
+  base.setHours(hh, mm, 0, 0);
+  return base.getTime();
+}
 
 // --- 유튜브 다중 분기대응 API 로직 ---
 function parseLiveLink(url) {
@@ -671,7 +683,7 @@ function renderPublic() {
   let dynamicSessions = allSessions.map(sess => {
     let isSessionEnded = false;
     if(sess.rounds.length > 0) {
-      const sorted = sess.rounds.slice().sort((a,b) => (a.time||'').localeCompare(b.time||''));
+      const sorted = sess.rounds.slice().sort((a,b) => dateToTs(sess.date, a.time||'00:00') - dateToTs(sess.date, b.time||'00:00'));
       const lastRoundTs = dateToTs(sess.date, sorted[sorted.length - 1].time || '00:00');
       // 대기 버퍼 시간을 최상단 선언 변수(SESSION_CLOSE_DELAY_MINUTES)로 유연하게 처리
       if (now >= lastRoundTs + (SESSION_CLOSE_DELAY_MINUTES * 60 * 1000)) isSessionEnded = true; 
@@ -683,7 +695,7 @@ function renderPublic() {
   let flatRounds = [];
   dynamicSessions.forEach(sess => {
     if (selectedDay && sess.date !== selectedDay) return;
-    const sortedRounds = sess.rounds.slice().sort((a,b) => (a.time || '').localeCompare(b.time || ''));
+    const sortedRounds = sess.rounds.slice().sort((a,b) => dateToTs(sess.date, a.time||'00:00') - dateToTs(sess.date, b.time||'00:00'));
     sortedRounds.forEach((r, idx) => {
       flatRounds.push({ ...r, parentSession: sess, ts: dateToTs(sess.date, r.time || '00:00'), nextTs: sortedRounds[idx + 1] ? dateToTs(sess.date, sortedRounds[idx + 1].time || '00:00') : null });
     });
@@ -759,9 +771,9 @@ function renderPublic() {
 
     html += `
       <tr class="${rowClass}">
-        <td>${fmtDate(r.ts)}</td><td>${fmtTime(r.ts)}</td><td>${cdCell}</td>
+        <td>${fmtDate(r.ts)}</td><td>${r.time || '-'}</td><td>${cdCell}</td>
         <td>${sess.title || '-'}</td><td>${r.label || '-'}</td><td>${r.map || '-'}</td><td>${sess.team || '-'}</td>
-        <td class="m-top-flex"><span style="font-size: 1.25rem !important; font-weight: 800 !important;">${fmtTime(r.ts)}</span><span style="font-size: 1.05rem !important; font-weight: 700 !important;">${r.label || '-'}</span></td>
+        <td class="m-top-flex"><span style="font-size: 1.25rem !important; font-weight: 800 !important;">${r.time || '-'}</span><span style="font-size: 1.05rem !important; font-weight: 700 !important;">${r.label || '-'}</span></td>
         <td class="m-bottom-flex"><div style="text-align: left;">${cdCell}</div><span style="font-size: 0.85rem !important; font-weight: 600; color: var(--txt2);">${r.map || '-'}</span></td>
       </tr>`;
   });
@@ -780,7 +792,7 @@ window.toggleRoundAddCustom = function(sessId){ const sel = $(`rl_${sessId}`), i
 function renderAdmin() {
   if (!allSessions.length) { $('sessionsWrap').innerHTML = '<div class="empty">등록된 세션이 없습니다.</div>'; return; }
   $('sessionsWrap').innerHTML = allSessions.map(sess => {
-    const roundRows = sess.rounds.length ? sess.rounds.slice().sort((a,b) => (a.time||'').localeCompare(b.time||'')).map(r => `
+    const roundRows = sess.rounds.length ? sess.rounds.slice().sort((a,b) => dateToTs(sess.date, a.time||'00:00') - dateToTs(sess.date, b.time||'00:00')).map(r => `
           <tr><td>${r.time || '-'}</td><td>${r.label || '-'}</td><td>${r.map || '-'}</td>
           <td><button class="btn-sm btn-edit" onclick="openRoundEdit('${sess.id}','${r.id}')">${ic('edit')} 수정</button> <button class="btn-sm btn-del" onclick="delRound('${sess.id}','${r.id}')">${ic('trash')} 삭제</button></td></tr>`).join('') 
           : `<tr><td colspan="4">라운드가 없습니다.</td></tr>`;
@@ -794,7 +806,7 @@ function renderAdmin() {
       </div>
       <table class="round-table"><thead><tr><th>시간</th><th>라운드</th><th>MAP</th><th>관리</th></tr></thead><tbody>${roundRows}</tbody></table>
       <div class="round-add-row">
-        <div class="form-group"><label>시간 *</label><input type="time" id="rt_${sess.id}"></div>
+        <div class="form-group"><label>시간 * <span style="font-weight:400;color:var(--txt3);font-size:0.68rem;">(자정 넘으면 25:00처럼)</span></label><input type="text" id="rt_${sess.id}" placeholder="예: 20:00 / 25:00" pattern="[0-9]{1,2}:[0-9]{2}"></div>
         <div class="form-group">
           <label>라운드 *</label>
           <select id="rl_${sess.id}" onchange="toggleRoundAddCustom('${sess.id}')"><option value="Live on">Live on</option><option value="Round 1">Round 1</option><option value="Round 2">Round 2</option><option value="Round 3">Round 3</option><option value="Round 4">Round 4</option><option value="Round 5">Round 5</option><option value="Round 6">Round 6</option><option value="custom">직접 입력</option></select>
@@ -841,10 +853,20 @@ window.saveSession = async function() {
   await set(ref(db, `sessions/${editSessId}`), { date, title, team, link, rounds: roundsData }); closeModal('sessionModal'); showToast('수정 완료!');
 };
 window.delSession = async function(sessId) { if (confirm('삭제할까요?')) await remove(ref(db, `sessions/${sessId}`)); };
+// HH:MM 형식 검증 (시는 0~29, 자정 넘김 표기 25:00 등 허용 / 분은 0~59)
+function isValidTimeStr(t) {
+  const m = /^([0-9]{1,2}):([0-9]{2})$/.exec((t||'').trim());
+  if (!m) return false;
+  const hh = parseInt(m[1], 10), mm = parseInt(m[2], 10);
+  return hh >= 0 && hh <= 29 && mm >= 0 && mm <= 59;
+}
+
 window.addRound = async function(sessId) {
-  const time = $(`rt_${sessId}`).value, map = $(`rm_${sessId}`).value;
+  const time = $(`rt_${sessId}`).value.trim(), map = $(`rm_${sessId}`).value;
   let label = $(`rl_${sessId}`).value; if (label === 'custom') label = $(`rlc_${sessId}`).value.trim();
-  if (!time || !label) return; await push(ref(db, `sessions/${sessId}/rounds`), { time, label, map }); showToast('라운드 추가 완료!');
+  if (!time || !label) return;
+  if (!isValidTimeStr(time)) return showToast('시간 형식이 올바르지 않습니다. 예: 20:00, 자정 초과 시 25:00', '#ef4444');
+  await push(ref(db, `sessions/${sessId}/rounds`), { time, label, map }); showToast('라운드 추가 완료!');
 };
 window.openRoundEdit = function(sessId, roundId) {
   const s = allSessions.find(x => x.id === sessId); const r = s.rounds.find(x => x.id === roundId);
@@ -853,8 +875,9 @@ window.openRoundEdit = function(sessId, roundId) {
   $('rMap').value = r.map || ''; $('roundModal').classList.add('open');
 };
 window.saveRound = async function() {
-  const time = $('rTime').value, map = $('rMap').value;
+  const time = $('rTime').value.trim(), map = $('rMap').value;
   let label = $('rLabel').value; if (label === 'custom') label = $('rLabelCustom').value.trim();
+  if (!isValidTimeStr(time)) return showToast('시간 형식이 올바르지 않습니다. 예: 20:00, 자정 초과 시 25:00', '#ef4444');
   await set(ref(db, `sessions/${editRoundSessId}/rounds/${editRoundId}`), { time, label, map }); closeModal('roundModal'); showToast('라운드 수정 완료!');
 };
 window.delRound = async function(sessId, roundId) { if(confirm('삭제할까요?')) await remove(ref(db, `sessions/${sessId}/rounds/${roundId}`)); };
