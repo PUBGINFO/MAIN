@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>페이지를 찾을 수 없습니다 (404 Not Found)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+        .container {
+            max-width: 500px;
+            padding: 20px;
+        }
+        .error-code {
+            font-size: 120px;
+            font-weight: 900;
+            color: #4f46e5;
+            line-height: 1;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #111827;
+        }
+        p {
+            font-size: 16px;
+            color: #6b7280;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        .btn-home {
+            display: inline-block;
+            background-color: #4f46e5;
+            color: #ffffff;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background-color 0.2s ease;
+        }
+        .btn-home:hover {
+            background-color: #4338ca;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="error-code">404</div>
+        <h1>원하시는 페이지를 찾을 수 없습니다.</h1>
+        <p>
+            요청하신 페이지의 주소가 잘못 입력되었거나,<br>
+            변경 혹은 삭제되어 현재 사용할 수 없습니다.
+        </p>
+        <a href="./" class="btn-home">홈으로 돌아가기</a>
+    </div>
+
+</body>
+</html>
