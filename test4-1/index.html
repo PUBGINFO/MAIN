@@ -135,8 +135,12 @@
   @media (max-width: 768px) {
     body { padding: 16px 10px; } h1 { font-size: 1.5rem; }
     .tabs { gap: 4px; margin-bottom: 16px; } .tab { padding: 6px 12px; font-size: 0.8rem; }
+    /* 아래 table 관련 규칙은 공개 화면(.table-wrap) 전용으로 스코프를 한정합니다.
+       관리자 화면의 round-table은 별도 규칙(하단)에서 처리합니다. */
     .table-wrap { border: none; box-shadow: none; overflow-x: visible !important; }
-    table, tbody, tr { display: block !important; width: 100% !important; } table { table-layout: auto; } thead { display: none !important; }
+    .table-wrap table, .table-wrap tbody, .table-wrap tr { display: block !important; width: 100% !important; }
+    .table-wrap table { table-layout: auto; }
+    .table-wrap thead { display: none !important; }
 
     .session-row { display: block !important; margin: 20px 0 8px 0 !important; padding: 0 !important; border-radius: 8px !important; overflow: hidden; }
     .session-row td { display: block !important; width: 100% !important; padding: 12px 14px !important; }
@@ -144,19 +148,44 @@
     .session-container { display: flex !important; justify-content: space-between !important; align-items: center !important; gap: 8px; flex-wrap: wrap; }
     .session-info { font-size: 0.85rem !important; flex-wrap: wrap; gap: 6px !important; flex: 1; min-width: 180px; }
     
-    tbody tr:not(.session-row) {
+    .table-wrap tbody tr:not(.session-row) {
       background: var(--surface) !important; border: 1px solid var(--bd) !important; border-radius: 8px !important;
       margin-bottom: 8px !important; padding: 14px 14px !important; box-shadow: var(--sh-sm) !important;
       display: flex !important; flex-direction: column !important; gap: 8px !important;
     }
-    tbody tr:not(.session-row) td { display: none !important; padding: 0 !important; border-bottom: none !important; text-align: left !important; white-space: normal !important; }
+    .table-wrap tbody tr:not(.session-row) td { display: none !important; padding: 0 !important; border-bottom: none !important; text-align: left !important; white-space: normal !important; }
 
-    tbody tr:not(.session-row) td.m-top-flex {
+    .table-wrap tbody tr:not(.session-row) td.m-top-flex {
       display: flex !important; justify-content: space-between !important; align-items: center !important; width: 100% !important; border-bottom: 1px dashed var(--bd) !important; padding-bottom: 6px !important;
     }
-    tbody tr:not(.session-row) td.m-bottom-flex {
+    .table-wrap tbody tr:not(.session-row) td.m-bottom-flex {
       display: flex !important; justify-content: space-between !important; align-items: center !important; width: 100% !important; padding-top: 2px !important; flex-wrap: wrap; gap: 6px;
     }
+
+    /* --- 관리자 화면: 라운드 테이블 모바일 카드형 레이아웃 --- */
+    .round-table, .round-table tbody, .round-table tr { display: block !important; width: 100% !important; }
+    .round-table thead { display: none !important; }
+    .round-table tr {
+      display: flex !important; flex-wrap: wrap !important; align-items: center !important;
+      background: var(--surface) !important; border: 1px solid var(--bd) !important; border-radius: 8px !important;
+      margin: 10px 12px !important; padding: 10px 12px !important; box-shadow: var(--sh-sm) !important; gap: 6px 10px;
+    }
+    .round-table td {
+      display: inline-flex !important; align-items: center; gap: 4px;
+      border-bottom: none !important; padding: 0 !important; text-align: left !important; white-space: normal !important;
+      font-size: 0.82rem !important;
+    }
+    .round-table td:nth-child(1)::before { content: '시간'; font-weight: 700; color: var(--txt3); font-size: 0.7rem; margin-right: 2px; }
+    .round-table td:nth-child(2)::before { content: '라운드'; font-weight: 700; color: var(--txt3); font-size: 0.7rem; margin-right: 2px; }
+    .round-table td:nth-child(3)::before { content: 'MAP'; font-weight: 700; color: var(--txt3); font-size: 0.7rem; margin-right: 2px; }
+    .round-table td:nth-child(4) { width: 100% !important; margin-top: 6px; padding-top: 8px !important; border-top: 1px dashed var(--bd) !important; justify-content: flex-start; flex-wrap: wrap; }
+
+    .round-add-row { flex-direction: column; align-items: stretch !important; }
+    .round-add-row .form-group { flex: 1 1 auto !important; min-width: 0 !important; width: 100%; }
+    .round-add-row button { width: 100%; }
+
+    .form-grid { grid-template-columns: 1fr !important; }
+    .session-card-header { flex-direction: column; align-items: flex-start !important; }
   }
 </style>
 </head>
