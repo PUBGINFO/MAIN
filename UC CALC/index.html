@@ -1,0 +1,681 @@
+```html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PUBG MOBILE - UC 계산기</title>
+<meta property="og:title" content="PUBG MOBILE - UC 계산기">
+<meta property="og:description" content="배틀그라운드 모바일 UC 최저가 계산기">
+<meta property="og:url" content="https://pubginfo.site">
+<meta property="og:type" content="website">
+<style>
+:root{
+  --bg:#f6f7f9; --bg2:#ffffff; --surface:#ffffff; --surface2:#f1f3f6;
+  --border:#e4e7ec; --text:#111418; --text2:#5b6270; --text3:#9aa1ac;
+  --accent:#2f6fed; --accent2:#7c5cff; --good:#12875a; --bad:#e0453c;
+  --shadow:0 1px 2px rgba(16,24,40,.04), 0 8px 24px rgba(16,24,40,.06);
+  --radius:16px;
+}
+[data-theme="dark"]{
+  --bg:#0e1013; --bg2:#15171b; --surface:#17191d; --surface2:#1e2126;
+  --border:#2a2d33; --text:#f0f1f3; --text2:#a8adb7; --text3:#6d727c;
+  --accent:#5b8def; --accent2:#9c8bff; --good:#3ed195; --bad:#ff6b62;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Pretendard,sans-serif;
+  background:var(--bg); color:var(--text);
+  min-height:100vh; display:flex; align-items:center; justify-content:center;
+  padding:24px; transition:background .3s,color .3s;
+}
+.page{width:100%; max-width:520px;}
+.page.hidden{display:none !important;}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+.anim-up{animation:slideUp .38s cubic-bezier(.22,1,.36,1) both;}
+.anim-down{animation:slideDown .38s cubic-bezier(.22,1,.36,1) both;}
+
+/* top bar */
+.topbar{display:flex; align-items:center; justify-content:space-between; margin-bottom:28px;}
+.icon-btn{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:38px; height:38px; border-radius:12px; border:1px solid var(--border);
+  background:var(--surface); cursor:pointer; color:var(--text2); transition:all .2s;
+}
+.icon-btn:hover{background:var(--surface2); color:var(--text);}
+.icon-btn svg{width:18px; height:18px;}
+.back-link{display:inline-flex; align-items:center; gap:6px; font-size:.84rem; font-weight:600; color:var(--text3); background:none; border:none; cursor:pointer; padding:0; transition:color .2s;}
+.back-link:hover{color:var(--text);}
+.back-link svg{width:15px; height:15px;}
+
+/* welcome */
+#welcomePage{text-align:center;}
+.welcome-logo{font-size:2.2rem; font-weight:800; letter-spacing:-.5px; margin-bottom:6px;}
+.welcome-sub{font-size:.86rem; color:var(--text3); margin-bottom:40px;}
+.welcome-question{font-size:.95rem; font-weight:600; color:var(--text2); margin-bottom:18px;}
+.os-cards{display:flex; gap:10px; justify-content:center; flex-wrap:wrap;}
+.os-card{
+  flex:1; min-width:130px; max-width:160px; padding:26px 14px 20px;
+  border-radius:18px; cursor:pointer; border:1px solid var(--border);
+  background:var(--surface); transition:all .25s cubic-bezier(.34,1.56,.64,1);
+}
+.os-card:hover{transform:translateY(-4px); box-shadow:var(--shadow);}
+.os-icon{width:44px; height:44px; margin:0 auto 14px; display:flex; align-items:center; justify-content:center; color:var(--text2);}
+.os-icon svg{width:100%; height:100%;}
+.os-name{font-size:.95rem; font-weight:700; margin-bottom:4px;}
+.os-desc{font-size:.72rem; color:var(--text3); line-height:1.5;}
+
+/* 플랫폼별 브랜드 컬러 포인트 */
+.ios-card{background:linear-gradient(160deg, rgba(59,130,246,.07), var(--surface) 55%);}
+.ios-card .os-icon{color:#2f6fed;}
+.ios-card .os-name{color:#2f6fed;}
+.ios-card:hover{border-color:#2f6fed;}
+
+.aos-card{background:linear-gradient(160deg, rgba(52,168,83,.08), var(--surface) 55%);}
+.aos-card .os-icon{color:#2fa757;}
+.aos-card .os-name{color:#238a48;}
+.aos-card:hover{border-color:#34a853;}
+
+.midas-card{background:linear-gradient(160deg, rgba(245,158,11,.09), var(--surface) 55%);}
+.midas-card .os-name{color:#e08a0c;}
+.midas-card:hover{border-color:#f5a623;}
+[data-theme="dark"] .ios-card{background:linear-gradient(160deg, rgba(59,130,246,.14), var(--surface) 55%);}
+[data-theme="dark"] .aos-card{background:linear-gradient(160deg, rgba(52,168,83,.15), var(--surface) 55%);}
+[data-theme="dark"] .midas-card{background:linear-gradient(160deg, rgba(245,158,11,.16), var(--surface) 55%);}
+[data-theme="dark"] .aos-card .os-name{color:#3ed195;}
+[data-theme="dark"] .midas-card .os-name{color:#fbbf24;}
+
+/* calc page */
+.title{font-size:1.5rem; font-weight:700; margin-bottom:20px; line-height:1.3;}
+.title-badge{display:inline-block; font-size:.62rem; font-weight:800; padding:2px 8px; border-radius:20px; margin-left:6px; vertical-align:middle; background:var(--surface2); color:var(--accent); border:1px solid var(--border); position:relative; top:-2px;}
+
+.calculator{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:24px; box-shadow:var(--shadow);}
+.input-group{margin-bottom:16px;}
+label{display:block; margin-bottom:8px; font-weight:600; color:var(--text2); font-size:.88rem;}
+input[type="number"]{
+  width:100%; padding:13px; font-size:1.05rem; border-radius:12px;
+  background:var(--bg); color:var(--text); text-align:center; outline:none;
+  border:1.5px solid var(--border); transition:border-color .2s;
+}
+input[type="number"]:focus{border-color:var(--accent);}
+
+.checkbox-group{display:flex; align-items:center; margin-bottom:18px; padding-left:2px; cursor:pointer;}
+.checkbox-group input[type="checkbox"]{
+  appearance:none; width:19px; height:19px; border-radius:6px; border:1.5px solid var(--border);
+  margin-right:10px; cursor:pointer; position:relative; transition:all .2s; flex-shrink:0; background:var(--bg);
+}
+.checkbox-group input[type="checkbox"]:checked{background:var(--accent); border-color:var(--accent);}
+.checkbox-group input[type="checkbox"]:checked::after{content:'';position:absolute; left:6px; top:2px; width:4px; height:9px; border:solid #fff; border-width:0 2px 2px 0; transform:rotate(45deg);}
+.checkbox-group label{font-size:.86rem; color:var(--text2); cursor:pointer; margin-bottom:0;}
+
+button.calc-btn{
+  width:100%; padding:13px; font-size:1rem; font-weight:700; color:#fff;
+  background:var(--accent); border:none; border-radius:12px; cursor:pointer; transition:all .2s;
+}
+button.calc-btn:hover{filter:brightness(1.08); transform:translateY(-1px);}
+button.calc-btn:disabled{opacity:.6; transform:none !important;}
+
+.mode-toggle-wrapper{margin-top:18px; display:flex; justify-content:center;}
+.mode-pill{display:flex; background:var(--bg); border-radius:50px; padding:4px; gap:2px; position:relative; border:1px solid var(--border);}
+.mode-pill .m-slider{position:absolute; top:4px; height:calc(100% - 8px); border-radius:46px; background:var(--accent); transition:all .35s cubic-bezier(.34,1.56,.64,1); z-index:1;}
+.mode-pill .m-tab{position:relative; z-index:2; padding:9px 18px; border-radius:46px; font-size:.85rem; font-weight:600; cursor:pointer; border:none; background:transparent; color:var(--text3); transition:color .2s; white-space:nowrap;}
+.mode-pill .m-tab.active{color:#fff;}
+
+/* results */
+.result{margin-top:20px; display:none;}
+.result.show{display:block; animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+.rate-banner{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:14px 16px; border-radius:12px; margin-bottom:14px;
+  background:linear-gradient(135deg, var(--accent), var(--accent2)); color:#fff;
+}
+.rate-banner .rb-label{font-size:.76rem; opacity:.85; margin-bottom:2px;}
+.rate-banner .rb-value{font-size:1.3rem; font-weight:800;}
+
+.cards{display:flex; flex-direction:column; gap:10px;}
+.rec-card{border:1.5px solid var(--border); border-radius:14px; padding:16px; background:var(--surface); transition:border-color .2s;}
+.rec-card.best{border-color:var(--accent); box-shadow: 0 0 0 2px rgba(47, 111, 237, 0.15), var(--shadow);}
+.rec-card-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;}
+.rec-tag{font-size:.7rem; font-weight:700; padding:3px 9px; border-radius:20px; background:var(--surface2); color:var(--text2);}
+.rec-tag.tag-min{color:var(--good); background:rgba(18,135,90,.1);}
+.rec-tag.tag-value{color:var(--accent); background:rgba(47,111,237,.1);}
+.rec-tag.tag-simple{color:var(--accent2); background:rgba(124,92,255,.1);}
+.rec-price{font-size:1.3rem; font-weight:800;}
+.rec-sub{font-size:.8rem; color:var(--text2); margin-bottom:10px; line-height:1.6;}
+.rec-sub strong{color:var(--text);}
+.pkg-line{display:flex; justify-content:space-between; font-size:.82rem; padding:7px 10px; border-radius:8px; background:var(--surface2); margin-bottom:5px;}
+.pkg-line:last-child{margin-bottom:0;}
+.pkg-line b{font-weight:700;}
+.empty-msg{text-align:center; color:var(--bad); padding:20px; font-size:.9rem;}
+
+.version{position:fixed; bottom:12px; right:16px; font-size:11px; color:var(--text3);}
+.loading{display:inline-block; width:15px; height:15px; border:2px solid rgba(255,255,255,.35); border-radius:50%; border-top-color:#fff; animation:spin .8s linear infinite; vertical-align:middle;}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<div class="page" id="welcomePage">
+  <div class="topbar" style="justify-content:flex-end;">
+    <button class="icon-btn" id="themeToggle" onclick="toggleTheme()" title="테마 전환">
+      <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    </button>
+  </div>
+  <div class="welcome-logo">UC 계산기</div>
+  <div class="welcome-sub">PUBG MOBILE · 모바일 배틀그라운드</div>
+  <div class="welcome-question">어떤 플랫폼의 정보를 원하시나요?</div>
+  <div class="os-cards">
+    <div class="os-card ios-card" onclick="selectOS('ios')">
+      <div class="os-icon">
+        <svg viewBox="0 0 384 512" fill="currentColor"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 21.8-88.5 21.8-11.4 0-51.1-20.8-82.3-20.1-41.2.6-79.1 23.9-100.2 60.5-42.5 73.7-10.9 183.7 30.2 243.2 20.1 29 44.1 61.3 75.7 60.1 30.5-1.2 41.9-19.7 78.9-19.7 36.5 0 47.1 19.7 79 19 32.1-.6 53.1-29.3 72.8-58.1 22.6-33 32-65 32.5-66.6-.7-.3-63.1-24.2-63.4-96zM232 81.9c16.1-19.5 26.3-46.6 23.3-73.9-23.4 1-52 15.6-68.8 35.2-15.2 17.5-28.5 45.4-24.8 72 26 2.1 52.8-14 70.3-33.3z"/></svg>
+      </div>
+      <div class="os-name">iOS</div>
+      <div class="os-desc">App Store<br>누적 충전 보너스 포함</div>
+    </div>
+    <div class="os-card aos-card" onclick="selectOS('android')">
+      <div class="os-icon">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 10.5V17a1 1 0 001 1h1v2.5a1.5 1.5 0 003 0V18h4v2.5a1.5 1.5 0 003 0V18h1a1 1 0 001-1v-6.5H5z"/><path d="M5 10.5a7 7 0 0114 0z" opacity=".85"/><rect x="1.6" y="10.8" width="2.2" height="6" rx="1.1"/><rect x="20.2" y="10.8" width="2.2" height="6" rx="1.1"/><g stroke="currentColor" stroke-width="1.4" stroke-linecap="round" fill="none"><path d="M8.5 4.5L7 2.5M15.5 4.5L17 2.5"/></g><circle cx="9.5" cy="8" r="1" fill="#fff"/><circle cx="14.5" cy="8" r="1" fill="#fff"/></svg>
+      </div>
+      <div class="os-name">Android</div>
+      <div class="os-desc">Google Play<br>패키지 보너스 포함</div>
+    </div>
+    <div class="os-card midas-card" onclick="selectOS('midasbuy')">
+      <div class="os-icon">
+        <svg viewBox="0 0 100 110" fill="none">
+          <defs>
+            <linearGradient id="midasBlue" x1="5" y1="2" x2="95" y2="71" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#4a9dff"/><stop offset="1" stop-color="#1a5ce0"/>
+            </linearGradient>
+            <linearGradient id="midasOrange" x1="22" y1="63" x2="80" y2="105" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#ffb648"/><stop offset="1" stop-color="#f0790f"/>
+            </linearGradient>
+          </defs>
+          <path d="M50 2
+            C51 2 52 2.4 52.7 3.1
+            L95 45.4
+            C96.4 46.8 96.4 49.1 95 50.5
+            L74.5 71
+            L62 58.5
+            C60.7 57.2 58.6 57.2 57.3 58.5
+            L50 65.8
+            L42.7 58.5
+            C41.4 57.2 39.3 57.2 38 58.5
+            L25.5 71
+            L5 50.5
+            C3.6 49.1 3.6 46.8 5 45.4
+            L47.3 3.1
+            C48 2.4 49 2 50 2 Z"
+            fill="url(#midasBlue)"/>
+          <path d="M38 58.5 L50 46.3 L57.3 58.5
+            C58.6 57.2 60.7 57.2 62 58.5
+            L74.5 71 L67 78.5
+            L55.4 66.9
+            C53.5 65 51.7 63.7 50 63
+            C48.3 63.7 46.5 65 44.6 66.9
+            L33 78.5 L25.5 71 Z"
+            fill="#e8f2ff"/>
+          <path d="M22 63
+            L50 91
+            C50.8 91.8 52 91.8 52.8 91
+            L80 63.8
+            L80 78
+            L52.8 105.2
+            C52 106 50.8 106 50 105.2
+            L22 77.2
+            Z"
+            fill="url(#midasOrange)"/>
+        </svg>
+      </div>
+      <div class="os-name">MidasBuy</div>
+      <div class="os-desc">공식 충전소<br>보너스 UC 포함</div>
+    </div>
+  </div>
+</div>
+
+<div class="page hidden" id="calcPage">
+  <div class="topbar">
+    <button class="back-link" onclick="goBack()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      플랫폼 선택
+    </button>
+    <button class="icon-btn" onclick="toggleTheme()" title="테마 전환">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    </button>
+  </div>
+
+  <h1 class="title" id="mainTitle">UC 최저가 계산기 <span class="title-badge">BETA</span></h1>
+  <div class="calculator">
+    <div class="input-group">
+      <label id="inputLabel">필요한 UC를 입력하세요</label>
+      <input type="number" id="mainInput" min="1" placeholder="예: 12000" onkeypress="handleEnterKey(event)">
+    </div>
+    <div class="checkbox-group" id="bonusRow">
+      <input type="checkbox" id="useBonus" checked>
+      <label for="useBonus">iOS 누적 충전 보너스 적용</label>
+    </div>
+    <button class="calc-btn" onclick="calculate()" id="calculateBtn">계산하기</button>
+    <div id="result" class="result"></div>
+    <div class="mode-toggle-wrapper">
+      <div class="mode-pill">
+        <div class="m-slider" id="mSlider"></div>
+        <button class="m-tab active" id="tabPrice" onclick="setMode('price')">UC → 최저가</button>
+        <button class="m-tab" id="tabUC" onclick="setMode('uc')">예산 → UC</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="version" id="versionTag">v4.0</div>
+
+<script>
+let platform = 'ios', mode = 'price';
+
+const data = {
+    ios: [
+        { price:1100,   baseUC:60,   bonusUC:0,    totalUC:60,   label:'60 UC' },
+        { price:4400,   baseUC:180,  bonusUC:10,   totalUC:190,  label:'190 UC' },
+        { price:14000,  baseUC:600,  bonusUC:60,   totalUC:660,  label:'660 UC' },
+        { price:33000,  baseUC:1500, bonusUC:300,  totalUC:1800, label:'1,800 UC' },
+        { price:66000,  baseUC:2950, bonusUC:900,  totalUC:3850, label:'3,850 UC' },
+        { price:149000, baseUC:5900, bonusUC:2200, totalUC:8100, label:'8,100 UC' }
+    ],
+    android: [
+        { price:1100,   baseUC:60,   bonusUC:0,    totalUC:60,   label:'60 UC' },
+        { price:3300,   baseUC:180,  bonusUC:10,   totalUC:190,  label:'180 + 10 UC' },
+        { price:11000,  baseUC:600,  bonusUC:60,   totalUC:660,  label:'600 + 60 UC' },
+        { price:27500,  baseUC:1500, bonusUC:300,  totalUC:1800, label:'1,500 + 300 UC' },
+        { price:55000,  baseUC:2950, bonusUC:900,  totalUC:3850, label:'2,950 + 900 UC' },
+        { price:110000, baseUC:5900, bonusUC:2200, totalUC:8100, label:'5,900 + 2,200 UC' }
+    ],
+    midasbuy: [
+        { price:1100,   baseUC:60,   bonusUC:0,    totalUC:60,   label:'60 UC' },
+        { price:3300,   baseUC:180,  bonusUC:15,   totalUC:195,  label:'180 + 15 UC' },
+        { price:11000,  baseUC:600,  bonusUC:80,   totalUC:680,  label:'600 + 80 UC' },
+        { price:27500,  baseUC:1500, bonusUC:350,  totalUC:1850, label:'1,500 + 350 UC' },
+        { price:55000,  baseUC:2950, bonusUC:1000, totalUC:3950, label:'2,950 + 1,000 UC' },
+        { price:110000, baseUC:5900, bonusUC:2400, totalUC:8300, label:'5,900 + 2,400 UC' }
+    ]
+};
+
+function getBonus(baseUC, on) {
+    if (!on) return 0;
+    let b = 0;
+    if (baseUC >= 1000) b += 450;
+    if (baseUC >= 2000) b += 450;
+    if (baseUC >= 3000) b += 450;
+    for (let i = 5000; i <= 39000; i += 2000) {
+        if (baseUC >= i) b += 900; else break;
+    }
+    return b;
+}
+
+// ---- 테마 ----
+function applyTheme(t){
+    document.documentElement.setAttribute('data-theme', t);
+    localStorage.setItem('uc-theme', t);
+}
+function toggleTheme(){
+    const cur = document.documentElement.getAttribute('data-theme') || 'light';
+    applyTheme(cur === 'dark' ? 'light' : 'dark');
+}
+(function initTheme(){
+    const saved = localStorage.getItem('uc-theme');
+    applyTheme(saved === 'dark' ? 'dark' : 'light');
+})();
+
+// ---- DP 빌더: 그리디 선결제 + 좁힌 범위 DP 하이브리드 ----
+function buildMinCostDP(pkgs, maxBaseUC) {
+    const dp = new Array(maxBaseUC + 1).fill(Infinity);
+    const dpTotal = new Array(maxBaseUC + 1).fill(0);
+    const ch = new Array(maxBaseUC + 1).fill(-1);
+    dp[0] = 0; dpTotal[0] = 0;
+    for (let i = 0; i < pkgs.length; i++) {
+        for (let j = pkgs[i].baseUC; j <= maxBaseUC; j++) {
+            const prev = dp[j - pkgs[i].baseUC];
+            if (prev === Infinity) continue;
+            const newCost = prev + pkgs[i].price;
+            const newTotal = dpTotal[j - pkgs[i].baseUC] + pkgs[i].totalUC;
+            if (newCost < dp[j] || (newCost === dp[j] && newTotal > dpTotal[j])) {
+                dp[j] = newCost; dpTotal[j] = newTotal; ch[j] = i;
+            }
+        }
+    }
+    return { dp, dpTotal, ch };
+}
+
+function traceback(ch, pkgs, startValue, key = 'baseUC') {
+    const counts = new Array(pkgs.length).fill(0);
+    let tmp = startValue;
+    while (tmp > 0 && ch[tmp] !== -1) {
+        const pkgIdx = ch[tmp];
+        counts[pkgIdx]++;
+        tmp -= pkgs[pkgIdx][key];
+    }
+    return counts;
+}
+
+function mergeCounts(base, extra) {
+    return base.map((c, i) => c + (extra[i] || 0));
+}
+
+function countsToLines(pkgs, counts) {
+    return pkgs.map((p, i) => counts[i] > 0 ? { price: p.price, label: p.label, qty: counts[i] } : null).filter(Boolean);
+}
+
+function totalPaymentClicks(counts) {
+    return counts.reduce((a, b) => a + b, 0);
+}
+
+// ---- 페이지 전환 ----
+function showPage(showId, hideId, animClass) {
+    const s = document.getElementById(showId);
+    const h = document.getElementById(hideId);
+    if (h) h.classList.add('hidden');
+    if (s) { s.classList.remove('hidden', 'anim-up', 'anim-down'); void s.offsetWidth; s.classList.add(animClass); }
+}
+
+function selectOS(os) {
+    platform = os; mode = 'price';
+    document.getElementById('result').classList.remove('show');
+    document.getElementById('result').innerHTML = '';
+    document.getElementById('mainInput').value = '';
+    document.getElementById('useBonus').checked = true;
+    document.getElementById('tabPrice').classList.add('active');
+    document.getElementById('tabUC').classList.remove('active');
+    document.getElementById('inputLabel').textContent = '필요한 UC를 입력하세요';
+    document.getElementById('mainInput').placeholder = '예: 12000';
+    document.getElementById('mainTitle').innerHTML = 'UC 최저가 계산기 <span class="title-badge">BETA</span>';
+    const bonusRow = document.getElementById('bonusRow');
+    if (bonusRow) bonusRow.style.display = os === 'ios' ? 'flex' : 'none';
+    const verMap = { ios: 'v4.0 (iOS)', android: 'v4.0 (Android)', midasbuy: 'v4.0 (MidasBuy)' };
+    document.getElementById('versionTag').textContent = verMap[os];
+    showPage('calcPage', 'welcomePage', 'anim-up');
+    setTimeout(() => updateMSlider(), 260);
+    setTimeout(() => document.getElementById('mainInput').focus(), 420);
+}
+
+function goBack() {
+    document.getElementById('versionTag').textContent = 'v4.0';
+    showPage('welcomePage', 'calcPage', 'anim-down');
+}
+
+function updateMSlider() {
+    const s = document.getElementById('mSlider');
+    const t = document.getElementById(mode === 'price' ? 'tabPrice' : 'tabUC');
+    if (s && t && t.offsetWidth > 0) {
+        s.style.left = (t.offsetLeft - 4) + 'px';
+        s.style.width = t.offsetWidth + 'px';
+    }
+}
+
+function setMode(m) {
+    if (mode === m) return;
+    mode = m; resetResult();
+    document.getElementById('tabPrice').classList.toggle('active', m === 'price');
+    document.getElementById('tabUC').classList.toggle('active', m === 'uc');
+    document.getElementById('inputLabel').textContent = m === 'price' ? '필요한 UC를 입력하세요' : '보유 예산을 입력하세요 (원)';
+    document.getElementById('mainInput').placeholder = m === 'price' ? '예: 12000' : '예: 50000';
+    document.getElementById('mainTitle').innerHTML = (m === 'price' ? 'UC 최저가 계산기' : 'UC 예산 계산기') + ' <span class="title-badge">BETA</span>';
+    setTimeout(updateMSlider, 10);
+    document.getElementById('mainInput').focus();
+}
+
+function resetResult() {
+    const r = document.getElementById('result');
+    if (r) { r.classList.remove('show'); r.innerHTML = ''; }
+    document.getElementById('mainInput').value = '';
+}
+
+function handleEnterKey(e) { if (e.key === 'Enter') calculate(); }
+function calculate() { mode === 'price' ? calcMinPrice() : calcMaxUC(); }
+
+// ---- 모드 A: UC 입력 -> [최저 가격 / 최대 획득 / 묶음 위주] 3대 카드를 모두 분석하여 제안 ----
+function calcMinPrice() {
+    const input = document.getElementById('mainInput');
+    const resultDiv = document.getElementById('result');
+    const btn = document.getElementById('calculateBtn');
+    const bonusOn = platform === 'ios' && document.getElementById('useBonus').checked;
+    const targetUC = parseInt(input.value);
+    if (isNaN(targetUC) || targetUC <= 0) return;
+
+    btn.innerHTML = '<span class="loading"></span> 계산중...'; btn.disabled = true;
+
+    setTimeout(() => {
+        const pkgs = data[platform];
+        const best = pkgs[pkgs.length - 1]; // 최고가 패키지
+        const maxBase = Math.max(...pkgs.map(p => p.baseUC));
+
+        // 1. 그리디 선결제 범위 축소
+        let preBuyCount = 0;
+        let remainingTarget = targetUC;
+        const safetyMargin = maxBase * 2;
+        if (targetUC > best.baseUC * 3) {
+            const affordable = Math.floor((targetUC - safetyMargin) / best.baseUC);
+            preBuyCount = Math.max(affordable, 0);
+            remainingTarget = targetUC - preBuyCount * best.baseUC;
+        }
+
+        const searchMax = remainingTarget + maxBase * 3;
+        const { dp, dpTotal, ch } = buildMinCostDP(pkgs, searchMax);
+
+        // 2. 유효 후보군 생성
+        const candidates = [];
+        for (let b = 0; b <= searchMax; b++) {
+            if (dp[b] === Infinity) continue;
+            const preBase = preBuyCount * best.baseUC;
+            const totalBase = preBase + b;
+            const effective = (dpTotal[b] + preBuyCount * best.totalUC) + (bonusOn ? getBonus(totalBase, true) : 0);
+            if (effective < targetUC) continue;
+            const price = dp[b] + preBuyCount * best.price;
+            candidates.push({ b, price, effective, totalBase });
+        }
+
+        if (candidates.length === 0) {
+            resultDiv.innerHTML = '<div class="empty-msg">계산 가능한 조합을 찾지 못했습니다.</div>';
+            resultDiv.classList.add('show');
+            btn.innerHTML = '계산하기'; btn.disabled = false;
+            return;
+        }
+
+        // 역추적 보조 함수들
+        function countsOf(c) {
+            const dpCounts = traceback(ch, pkgs, c.b, 'baseUC');
+            dpCounts[pkgs.length - 1] += preBuyCount;
+            return dpCounts;
+        }
+        function clicksOf(c) { return totalPaymentClicks(countsOf(c)); }
+
+        // 3. 우승 후보 선출
+        // [카드 1] 최저 가격 (Cheapest)
+        candidates.sort((a, b) => a.price - b.price || b.effective - a.effective);
+        const cCheapest = candidates[0];
+
+        // [카드 2] 최대 획득 (가성비를 고려하여 약간의 마진(15% 이내)에서 획득량 극대화)
+        const yieldCandidates = candidates.filter(c => c.price <= cCheapest.price * 1.15 && c.effective > cCheapest.effective);
+        yieldCandidates.sort((a,b) => (a.price / a.effective) - (b.price / b.effective) || b.effective - a.effective);
+        const cMaxYield = yieldCandidates.length > 0 ? yieldCandidates[0] : cCheapest;
+
+        // [카드 3] 묶음 상품 위주 (25% 예산 추가 한도 내에서 결제 횟수가 최소인 구성)
+        const bundleCandidates = candidates.filter(c => c.price <= cCheapest.price * 1.25);
+        bundleCandidates.sort((a,b) => clicksOf(a) - clicksOf(b) || a.price - b.price);
+        const cBundle = bundleCandidates.length > 0 ? bundleCandidates[0] : cCheapest;
+
+        // 4. 어떤 추천 카드를 "★ 추천(Winner)"으로 강조 표시할지 의사결정폭포 가중치 판정
+        let recommendedCard = cCheapest;
+        let recommendedTag = '최저 가격';
+
+        const priceMargin = Math.max(pkgs[0].price, cCheapest.price * 0.05);
+
+        // [조건 1] 묶음 결제가 최저가와 비슷하거나 더 쌀 경우 묶음을 강력추천
+        if (clicksOf(cBundle) < clicksOf(cCheapest) && (cBundle.price <= cCheapest.price || (cBundle.price - cCheapest.price) <= priceMargin)) {
+            recommendedCard = cBundle;
+            recommendedTag = '묶음 상품 위주';
+        }
+        // [조건 2] 돈 차이는 거의 안 나는데 보너스를 훨씬 더 많이 준다면 가성비 최대 획득을 추천
+        else if (cMaxYield !== cCheapest && (cMaxYield.price - cCheapest.price) <= priceMargin && cMaxYield.effective > cCheapest.effective) {
+            recommendedCard = cMaxYield;
+            recommendedTag = '최대 획득 보너스';
+        }
+
+        // 5. 카드 렌더링 헬퍼 함수
+        function renderPriceCard(tag, tagClass, c) {
+            const counts = countsOf(c);
+            const lines = countsToLines(pkgs, counts);
+            const rate = (c.price / c.effective).toFixed(1);
+            const isWinner = (c === recommendedCard);
+
+            let html = `<div class="rec-card ${isWinner ? 'best' : ''}"><div class="rec-card-head">
+                <span class="rec-tag ${isWinner ? 'tag-min' : tagClass}">${tag}${isWinner ? ' ★ 추천' : ''}</span>
+                <span class="rec-price">${c.price.toLocaleString()}원</span>
+              </div>
+              <div class="rec-sub">획득 UC: <strong>${c.effective.toLocaleString()}</strong> · 단가 ${rate}원/UC</div>`;
+            lines.forEach(l => {
+                html += `<div class="pkg-line"><span>${l.price.toLocaleString()}원 (${l.label})</span><b>× ${l.qty}</b></div>`;
+            });
+            html += `</div>`;
+            return html;
+        }
+
+        const avgRate = (recommendedCard.price / recommendedCard.effective).toFixed(1);
+        let out = `<div class="rate-banner">
+            <div><div class="rb-label">추천 조합 1 UC당 단가</div><div class="rb-value">${avgRate}원 / UC</div></div>
+          </div><div class="cards">`;
+
+        // 3대 카드 렌더링 (동일한 조합일 경우 중복 출력을 걸러줍니다)
+        out += renderPriceCard('최저 가격', 'tag-simple', cCheapest);
+
+        if (cMaxYield !== cCheapest) {
+            out += renderPriceCard('최대 획득', 'tag-value', cMaxYield);
+        }
+        if (cBundle !== cCheapest && cBundle !== cMaxYield) {
+            out += renderPriceCard('묶음 상품 위주', 'tag-min', cBundle);
+        }
+        out += `</div>`;
+
+        resultDiv.innerHTML = out; resultDiv.classList.add('show');
+        btn.innerHTML = '계산하기'; btn.disabled = false;
+    }, 250);
+}
+
+// ---- 모드 B: 예산 입력 -> 최대 UC ----
+function calcMaxUC() {
+    const input = document.getElementById('mainInput');
+    const resultDiv = document.getElementById('result');
+    const btn = document.getElementById('calculateBtn');
+    const bonusOn = platform === 'ios' && document.getElementById('useBonus').checked;
+    const budget = parseInt(input.value);
+    if (isNaN(budget) || budget <= 0) return;
+
+    btn.innerHTML = '<span class="loading"></span> 계산중...'; btn.disabled = true;
+
+    setTimeout(() => {
+        const pkgs = data[platform];
+
+        const cheapestRate = Math.min(...pkgs.map(p => p.price / p.baseUC));
+        const maxBase = Math.ceil(budget / cheapestRate) + 6000;
+
+        const dp = new Array(maxBase + 1).fill(Infinity);
+        const dpTotal = new Array(maxBase + 1).fill(0);
+        const dpClicks = new Array(maxBase + 1).fill(Infinity);
+        const ch = new Array(maxBase + 1).fill(-1);
+        dp[0] = 0; dpClicks[0] = 0;
+
+        for (let i = 0; i < pkgs.length; i++) {
+            for (let b = pkgs[i].baseUC; b <= maxBase; b++) {
+                const prev = dp[b - pkgs[i].baseUC];
+                if (prev === Infinity) continue;
+                const nc = prev + pkgs[i].price;
+                if (nc > budget) continue;
+                const nt = dpTotal[b - pkgs[i].baseUC] + pkgs[i].totalUC;
+                const nClicks = dpClicks[b - pkgs[i].baseUC] + 1;
+                if (nc < dp[b] || (nc === dp[b] && nClicks < dpClicks[b]) || (nc === dp[b] && nClicks === dpClicks[b] && nt > dpTotal[b])) {
+                    dp[b] = nc; dpTotal[b] = nt; dpClicks[b] = nClicks; ch[b] = i;
+                }
+            }
+        }
+
+        function traceCounts(b) {
+            const counts = new Array(pkgs.length).fill(0);
+            let tmp = b;
+            while (tmp > 0 && ch[tmp] !== -1) { counts[ch[tmp]]++; tmp -= pkgs[ch[tmp]].baseUC; }
+            return counts;
+        }
+
+        // 후보 수집
+        const candidates = [];
+        for (let b = 0; b <= maxBase; b++) {
+            if (dp[b] === Infinity) continue;
+            const bonus = bonusOn ? getBonus(b, true) : 0;
+            const total = dpTotal[b] + bonus;
+            if (total <= 0) continue;
+            candidates.push({ base: b, cost: dp[b], total, clicks: dpClicks[b] });
+        }
+
+        if (candidates.length === 0) {
+            resultDiv.innerHTML = '<div class="empty-msg">예산이 부족합니다.</div>';
+            resultDiv.classList.add('show');
+            btn.innerHTML = '계산하기'; btn.disabled = false;
+            return;
+        }
+
+        // 카드 1: 최대 획득 UC
+        candidates.sort((a, b) => b.total - a.total || a.cost - b.cost);
+        const c1 = candidates[0];
+
+        // 카드 2: 갓성비 역전 - UC가 c1보다 살짝 적더라도 단가가 훨씬 좋은 조합
+        let c2 = c1;
+        let bestRate = c1.cost / c1.total;
+        candidates.forEach(c => {
+            if (c1.total - c.total <= Math.max(pkgs[0].totalUC, c1.total * 0.03)) {
+                const rate = c.cost / c.total;
+                if (rate < bestRate - 0.001) { bestRate = rate; c2 = c; }
+            }
+        });
+
+        // 카드 3: 결제 간편 - 총 UC가 c1의 90% 이상이면서 결제 횟수가 가장 적은 조합
+        let c3 = c1;
+        candidates.forEach(c => {
+            if (c.total >= c1.total * 0.9) {
+                if (c.clicks < c3.clicks || (c.clicks === c3.clicks && c.total > c3.total)) c3 = c;
+            }
+        });
+
+        function renderCard(tag, tagClass, c) {
+            const counts = traceCounts(c.base);
+            const bonus = bonusOn ? getBonus(c.base, true) : 0;
+            const remain = budget - c.cost;
+            const rate = (c.cost / c.total).toFixed(1);
+            let html = `<div class="rec-card"><div class="rec-card-head">
+                <span class="rec-tag ${tagClass}">${tag}</span>
+                <span class="rec-price">${c.total.toLocaleString()} UC</span>
+              </div>
+              <div class="rec-sub">사용: <strong>${c.cost.toLocaleString()}원</strong> / ${budget.toLocaleString()}원 · 단가 ${rate}원/UC${bonus ? ` · 누적보너스 ${bonus.toLocaleString()} UC 포함` : ''}${remain > 0 ? `<br>잔여: ${remain.toLocaleString()}원` : ''}</div>`;
+            counts.forEach((cnt, i) => {
+                if (cnt > 0) html += `<div class="pkg-line"><span>${pkgs[i].price.toLocaleString()}원 (${pkgs[i].label})</span><b>× ${cnt}</b></div>`;
+            });
+            html += `</div>`;
+            return html;
+        }
+
+        const avgRate = (c1.cost / c1.total).toFixed(1);
+        let out = `<div class="rate-banner">
+            <div><div class="rb-label">추천 조합 1 UC당 단가</div><div class="rb-value">${avgRate}원 / UC</div></div>
+          </div><div class="cards">`;
+        out += renderCard('최대 획득', 'tag-min', c1);
+        if (c2 !== c1) out += renderCard('갓성비 역전', 'tag-value', c2);
+        if (c3 !== c1 && c3 !== c2) out += renderCard('결제 간편', 'tag-simple', c3);
+        out += `</div>`;
+
+        resultDiv.innerHTML = out; resultDiv.classList.add('show');
+        btn.innerHTML = '계산하기'; btn.disabled = false;
+    }, 250);
+}
+</script>
+</body>
+</html>
+
+```
