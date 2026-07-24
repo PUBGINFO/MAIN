@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>PUBG 모바일 최신 확률표</title>
+</head>
+<body>
+
+  <h2>PUBG Mobile 최신 확률표</h2>
+  
+  <div id="probability-image-container">
+    확률표를 불러오는 중입니다...
+  </div>
+
+  <script>
+    // 워드프레스 확률표 페이지 API 호출
+    fetch('https://pubgmobile.jp/wp-json/wp/v2/pages?slug=probability-chart')
+      .then(response => response.json())
+      .then(data => {
+        if (data && data.length > 0) {
+          // HTML 내용(content.rendered) 받아오기
+          const contentHtml = data[0].content.rendered;
+          
+          // 받아온 HTML을 내 사이트 영역에 삽입
+          document.getElementById('probability-image-container').innerHTML = contentHtml;
+        }
+      })
+      .catch(error => {
+        console.error('데이터를 불러오는 중 오류 발생:', error);
+        document.getElementById('probability-image-container').innerText = '확률표를 불러오지 못했습니다.';
+      });
+  </script>
+
+</body>
+</html>
