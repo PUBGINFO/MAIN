@@ -2,31 +2,44 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>PUBG 모바일 최신 확률표</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PUBG 모바일 확률표</title>
+  <style>
+    /* 이미지가 화면 크기에 맞춰 예쁘게 나오도록 조정 */
+    #probability-image-container img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+  </style>
 </head>
 <body>
 
   <h2>PUBG Mobile 최신 확률표</h2>
-  
+
   <div id="probability-image-container">
     확률표를 불러오는 중입니다...
   </div>
 
   <script>
-    // 워드프레스 확률표 페이지 API 호출
-    fetch('https://pubgmobile.jp/wp-json/wp/v2/pages?slug=probability-chart')
+    // 1. API 주소 및 우회 프록시 설정
+    const targetUrl = 'https://pubgmobile.jp/wp-json/wp/v2/pages?slug=probability-chart';
+    const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(targetUrl);
+
+    // 2. 데이터 불러오기
+    fetch(proxyUrl)
       .then(response => response.json())
       .then(data => {
         if (data && data.length > 0) {
-          // HTML 내용(content.rendered) 받아오기
-          const contentHtml = data[0].content.rendered;
-          
-          // 받아온 HTML을 내 사이트 영역에 삽입
-          document.getElementById('probability-image-container').innerHTML = contentHtml;
+          // 최신 확률표 HTML을 받아서 화면에 넣기
+          document.getElementById('probability-image-container').innerHTML = data[0].content.rendered;
+        } else {
+          document.getElementById('probability-image-container').innerText = '확률표 데이터를 찾을 수 없습니다.';
         }
       })
       .catch(error => {
-        console.error('데이터를 불러오는 중 오류 발생:', error);
+        console.error('에러 발생:', error);
         document.getElementById('probability-image-container').innerText = '확률표를 불러오지 못했습니다.';
       });
   </script>
