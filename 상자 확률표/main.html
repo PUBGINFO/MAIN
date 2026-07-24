@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PUBG INFO - 상자 확률표</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"DM Sans",sans-serif;
+}
+
+body{
+    background:#f4f6fb;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+}
+
+.card{
+    width:min(92%,520px);
+    background:#fff;
+    border-radius:18px;
+    padding:40px 30px;
+    box-shadow:0 15px 45px rgba(0,0,0,.08);
+}
+
+.logo{
+    text-align:center;
+    margin-bottom:35px;
+}
+
+.logo h1{
+    font-size:28px;
+    color:#222;
+}
+
+.logo p{
+    color:#777;
+    margin-top:8px;
+    font-size:14px;
+}
+
+.menu{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+}
+
+.item{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:18px 22px;
+    border:1px solid #e5e7eb;
+    border-radius:14px;
+    text-decoration:none;
+    color:#222;
+    transition:.2s;
+}
+
+.item:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+    border-color:#6c63ff;
+}
+
+.left{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.flag{
+    font-size:30px;
+}
+
+.title{
+    font-size:18px;
+    font-weight:700;
+}
+
+.desc{
+    color:#888;
+    font-size:13px;
+    margin-top:4px;
+}
+
+.arrow{
+    font-size:22px;
+    color:#999;
+}
+
+.footer{
+    margin-top:28px;
+    text-align:center;
+    color:#999;
+    font-size:12px;
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+
+<div class="logo">
+<h1>PUBG INFO</h1>
+<p>상자 확률표를 선택하세요.</p>
+</div>
+
+<div class="menu">
+
+<a class="item" href="./kr/">
+<div class="left">
+<div class="flag">🇰🇷</div>
+<div>
+<div class="title">KR 상자 확률</div>
+<div class="desc">대한민국 서버 확률표</div>
+</div>
+</div>
+<div class="arrow">›</div>
+</a>
+
+<a class="item" href="https://pubgmobile.jp/probability-chart/">
+<div class="left">
+<div class="flag">🇯🇵</div>
+<div>
+<div class="title">JP 상자 확률</div>
+<div class="desc">일본 공식 확률표</div>
+</div>
+</div>
+<div class="arrow">↗</div>
+</a>
+
+</div>
+
+<div class="footer">
+PUBG INFO · CRATE RATE VIEWER
+</div>
+
+</div>
+
+</body>
+</html>
