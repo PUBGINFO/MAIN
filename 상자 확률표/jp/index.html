@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PUBG 모바일 확률표</title>
+  <title>PUBG 모바일 최신 확률표</title>
   <style>
-    /* 이미지가 반응형으로 깔끔하게 보이도록 설정 */
-    #probability-image-container img {
+    #chart-area img {
       max-width: 100%;
       height: auto;
       display: block;
@@ -17,44 +16,58 @@
 <body>
 
   <h2>PUBG Mobile 최신 확률표</h2>
-
-  <div id="probability-image-container">
-    확률표를 불러오는 중입니다...
-  </div>
+  
+  <div id="chart-area">최신 확률표를 불러오는 중...</div>
 
   <script>
-    const targetUrl = 'https://pubgmobile.jp/wp-json/wp/v2/pages?slug=probability-chart';
-    const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(targetUrl);
+    const domain = 'https://pubgmobile.jp';
+    const proxy = 'https://corsproxy.io/?';
 
-    fetch(proxyUrl)
-      .then(response => response.json())
-      .then(data => {
-        if (data && data.length > 0) {
-          const rawHtml = data[0].content.rendered;
-          
-          // HTML을 임시 엘리먼트로 변환
-          const tempDiv = document.createElement('div');
-          tempDiv.innerHTML = rawHtml;
-          
-          // 클릭 시 타 사이트로 이동시키는 <a> 태그(링크)를 모두 제거하고 내용물(이미지)만 남김
-          const links = tempDiv.querySelectorAll('a');
-          links.forEach(a => {
-            while (a.firstChild) {
-              a.parentNode.insertBefore(a.firstChild, a);
-            }
-            a.parentNode.removeChild(a);
-          });
+    // 1. 에디터 ID 자동 검색 후 최신 글 가져오기
+    async function loadLatestChart() {
+      try {
+        // 작성자(yu-murashita) 정보 조회
+        const userUrl = proxy + encodeURIComponent(`${domain}/wp-json/wp/v2/users?slug=yu-murashita`);
+        const userRes = await fetch(userUrl);
+        const userData = await userRes.json();
 
-          // 이동 링크가 제거된 순수 이미지를 화면에 배치
-          document.getElementById('probability-image-container').innerHTML = tempDiv.innerHTML;
-        } else {
-          document.getElementById('probability-image-container').innerText = '확률표 데이터를 찾을 수 없습니다.';
+        if (!userData || userData.length === 0) {
+          document.getElementById('chart-area').innerText = '작성자 정보를 찾을 수 없습니다.';
+          return;
         }
-      })
-      .catch(error => {
-        console.error('에러 발생:', error);
-        document.getElementById('probability-image-container').innerText = '확률표를 불러오지 못했습니다.';
-      });
+
+        const authorId = userData[0].id; // 작성자의 진짜 ID 확보
+
+        // 해당 작성자가 올린 최신 글 1개 조회
+        const postsUrl = proxy + encodeURIComponent(`${domain}/wp-json/wp/v2/posts?author=${authorId}&per_page=1`);
+        const postsRes = await fetch(postsUrl);
+        const postsData = await postsRes.json();
+
+        if (postsData && postsData.length > 0) {
+          const latestPostHtml = postsData[0].content.rendered;
+
+          // HTML 내용 중에서 확률표 이미지 링크 추출
+          const imgMatch = latestPostHtml.match(/src=\\"(https?:[^\"]+\.(?:png|jpg|jpeg))\\"/i) || 
+                           latestPostHtml.match(/src="(https?:[^\"]+\.(?:png|jpg|jpeg))"/i);
+
+          if (imgMatch && imgMatch[1]) {
+            const cleanImgUrl = imgMatch[1].replace(/\\/g, '');
+            document.getElementById('chart-area').innerHTML = 
+              `<img src="${cleanImgUrl}" alt="PUBG Mobile 최신 확률표">`;
+          } else {
+            document.getElementById('chart-area').innerText = '최신 글에 이미지가 없습니다.';
+          }
+        } else {
+          document.getElementById('chart-area').innerText = '작성된 글이 없습니다.';
+        }
+
+      } catch (err) {
+        console.error(err);
+        document.getElementById('chart-area').innerText = '확률표를 불러오지 못했습니다.';
+      }
+    }
+
+    loadLatestChart();
   </script>
 
 </body>
