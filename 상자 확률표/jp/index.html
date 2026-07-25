@@ -6,8 +6,13 @@
 <title>PUBG MOBILE JP 확률표</title>
 
 <style>
-body{
+*{
     margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
     background:#111;
     color:#fff;
     font-family:Arial,sans-serif;
@@ -28,15 +33,71 @@ h2{
     display:block;
     margin:0 auto;
 }
+
+/* ===== 로딩 화면 ===== */
+
+#loading{
+    position:fixed;
+    inset:0;
+    background:#111;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+    transition:.35s;
+}
+
+#loading.hide{
+    opacity:0;
+    visibility:hidden;
+}
+
+.spinner{
+    width:42px;
+    height:42px;
+    border:3px solid rgba(255,255,255,.15);
+    border-top-color:#ffb400;
+    border-radius:50%;
+    animation:spin .8s linear infinite;
+}
+
+@keyframes spin{
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+.loading-title{
+    margin-top:18px;
+    font-size:18px;
+    font-weight:bold;
+}
+
+.loading-text{
+    margin-top:8px;
+    color:#aaa;
+    font-size:13px;
+}
 </style>
 </head>
 <body>
 
+<div id="loading">
+    <div class="spinner"></div>
+    <div class="loading-title">PUBG MOBILE JP</div>
+    <div class="loading-text">최신 확률표를 불러오는 중...</div>
+</div>
+
 <h2>PUBG MOBILE JP 최신 확률표</h2>
 
-<div id="chart-area">불러오는 중...</div>
+<div id="chart-area"></div>
 
 <script>
+function hideLoading(){
+    document.getElementById("loading").classList.add("hide");
+}
+
 async function loadChart() {
     try {
         const response = await fetch("https://pubgm-crate-jp.pubgmk14-kr.workers.dev/");
@@ -51,13 +112,26 @@ async function loadChart() {
 
         if (!img) throw new Error("이미지를 찾을 수 없습니다.");
 
-        document.getElementById("chart-area").innerHTML =
-            `<img src="${img.src}" alt="PUBG MOBILE JP 확률표">`;
+        const image = new Image();
+
+        image.onload = () => {
+            document.getElementById("chart-area").appendChild(image);
+            hideLoading();
+        };
+
+        image.onerror = () => {
+            document.getElementById("chart-area").textContent =
+                "이미지를 불러오지 못했습니다.";
+            hideLoading();
+        };
+
+        image.src = img.src;
 
     } catch (e) {
         console.error(e);
         document.getElementById("chart-area").textContent =
             "확률표를 불러오지 못했습니다.";
+        hideLoading();
     }
 }
 
