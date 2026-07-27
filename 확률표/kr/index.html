@@ -325,6 +325,49 @@
     .load-err.show { display: flex; }
     .load-err-txt { font-size: 13px; color: var(--txt2); font-family: var(--mono); text-align: center; max-width: 300px; line-height: 1.7; }
     .sb-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 99; }
+
+    /* ── Mobile top-bar back pill (목록으로) ── */
+    .mob-back-pill {
+      display: none; align-items: center; gap: 5px;
+      background: #fff; color: #111;
+      border: 1px solid var(--bd2); border-radius: 999px;
+      padding: 7px 14px 7px 10px;
+      font-family: var(--sans); font-size: 13px; font-weight: 600;
+      cursor: pointer; -webkit-tap-highlight-color: transparent; flex-shrink: 0;
+    }
+    .mob-back-pill svg { width: 15px; height: 15px; flex-shrink: 0; }
+    .mob-back-pill.show { display: flex; }
+    @media (max-width: 780px) {
+      .mob-btn.hide-mob { display: none; }
+    }
+
+    /* ── Rate-tier table (Double Lucky Treasure style) ── */
+    .tier-table-wrap {
+      background: var(--surface); border: 1px solid var(--bd);
+      border-radius: var(--radius-lg); overflow-x: auto; box-shadow: var(--sh-sm);
+      margin-bottom: 20px;
+    }
+    .tier-table { width: 100%; border-collapse: collapse; min-width: 640px; }
+    .tier-table th, .tier-table td {
+      padding: 9px 10px; text-align: right; white-space: nowrap;
+      font-size: 12px; border-bottom: 1px solid var(--bd);
+    }
+    .tier-table th:first-child, .tier-table td:first-child { text-align: left; }
+    .tier-table thead th {
+      font-family: var(--mono); font-size: 9.5px; color: var(--txt3);
+      letter-spacing: .06em; text-transform: uppercase; background: var(--surface2);
+      position: sticky; top: 0;
+    }
+    .tier-table tbody tr:last-child td { border-bottom: none; }
+    .tier-table tbody tr:hover { background: var(--surface2); }
+    .tier-round { font-family: var(--mono); font-weight: 700; color: var(--txt); }
+    .tier-exp { font-weight: 600; color: var(--accent-lt); background: var(--accent-bg); border-radius: 6px; }
+    .tier-total { font-family: var(--mono); color: var(--txt3); }
+    .tier-note {
+      font-size: 11px; font-family: var(--mono); color: var(--txt3);
+      padding: 10px 14px; border-top: 1px solid var(--bd); background: var(--surface2);
+    }
+
     @media (max-width: 780px) {
       .sidebar { transform: translateX(-100%); }
       .sidebar.open { transform: translateX(0); }
@@ -334,8 +377,28 @@
       .t-head, .t-row { grid-template-columns: 34px 1fr 72px 80px; }
       .th:nth-child(5), .td:nth-child(5),
       .th:nth-child(6), .td:nth-child(6) { display: none; }
-      .content { padding: 14px; }
+      .content { padding: 14px 14px 84px; }
       .crate-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+      .stat-cards { gap: 6px; }
+      .stat-card { padding: 10px 12px; min-width: 90px; }
+      .sc-val { font-size: 17px; }
+      .detail-title { font-size: 18px; }
+      .gs-chip { padding: 7px 12px; font-size: 11px; }
+      .filter-row { gap: 6px; }
+      .sort-btn { padding: 10px 12px; }
+      .crate-item { padding: 11px 16px; }
+      .ci-name { font-size: 13px; }
+      .breadcrumb { font-size: 12px; }
+      .breadcrumb span { max-width: 32vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; vertical-align: bottom; }
+      /* 상세뷰에서는 "목록" 필이 이미 뒤로가기 역할을 하므로 breadcrumb의 "전체 목록 ›" 접두어는 숨기고 현재 제목만 남김 */
+      .mob-back-pill.show ~ .breadcrumb .sep,
+      .mob-back-pill.show ~ .breadcrumb > span:first-child:not(.cur) { display: none; }
+      .topbar { padding: 0 10px; gap: 6px; }
+      .topbar-l { gap: 6px; flex: 1; min-width: 0; overflow: hidden; }
+      .topbar-r { gap: 6px; flex-shrink: 0; }
+      .live-badge { padding: 4px 8px; font-size: 10px; }
+      .live-suffix { display: none; }
+      .tier-table th, .tier-table td { padding: 8px 8px; font-size: 11px; }
     }
   </style>
 </head>
@@ -399,10 +462,16 @@
   <div class="main">
     <header class="topbar">
       <div class="topbar-l">
-        <button class="icon-btn mob-btn" onclick="openSB()">
+        <button class="icon-btn mob-btn" id="mob-menu-btn" onclick="openSB()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M3 12h18M3 6h18M3 18h18"/>
           </svg>
+        </button>
+        <button class="mob-back-pill" id="mob-back-pill" onclick="goBackToList()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+            <path d="M15 18l-6-6 6-6"/>
+          </svg>
+          목록
         </button>
         <div class="breadcrumb" id="breadcrumb">
           <span>전체 목록</span>
@@ -411,7 +480,7 @@
       <div class="topbar-r">
         <div class="live-badge" id="live-badge" style="display:none">
           <div class="live-dot"></div>
-          <span id="live-count">0</span>개 로드됨
+          <span id="live-count">0</span>개<span class="live-suffix"> 로드됨</span>
         </div>
         <button class="icon-btn" onclick="toggleTheme()" title="테마 전환">
           <!-- 라이트 모드 기본: 달 아이콘(다크로 전환) 표시 -->
@@ -449,6 +518,7 @@
   const GO = ['골드','레드','핑크','퍼플','블루','그린'];
 
   let sheetData = {}, orderedKeys = [];
+  let tierData  = {}; // 라운드/할인율 표 (예: Double Lucky Treasure) 전용 저장소
   let currentView  = 'all';
   let currentCrate = null;
 
@@ -462,13 +532,26 @@
   let sortDir  = 1;
 
   // ─────────────────────────────────────────
-  async function loadSheet() {
+  async function fetchWithTimeout(url, ms) {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), ms);
     try {
-      const r = await fetch(CSV_URL);
-      if (!r.ok) throw new Error();
-      parseSheet(await r.text());
+      const r = await fetch(url, { signal: ctrl.signal, cache: 'no-store' });
+      return r;
+    } finally {
+      clearTimeout(t);
+    }
+  }
+
+  async function loadSheet(attempt = 1) {
+    try {
+      const r = await fetchWithTimeout(CSV_URL, 9000);
+      if (!r.ok) throw new Error('bad status ' + r.status);
+      const text = await r.text();
+      parseSheet(text);
       onLoaded();
     } catch(e) {
+      if (attempt < 2) { loadSheet(attempt + 1); return; } // 한 번 재시도
       document.getElementById('loading').classList.add('hide');
       document.getElementById('load-err').classList.add('show');
     }
@@ -489,23 +572,57 @@
     return rows;
   }
 
+  function sectionNameFromHeaderRow(rows, i) {
+    let nr = i - 1;
+    while (nr >= 0 && !(rows[nr][0]||'').toString().trim()) nr--;
+    const raw  = nr >= 0 ? (rows[nr][0]||'').toString() : '';
+    const name = raw.replace(/[■▣□◆◇●◎▷\[\]]/g,'').replace(/\s*\d{1,2}:\d{2}~?\s*$/,'').replace(/~\s*$/,'').replace(/\s+/g,' ').trim();
+    return { name, nr };
+  }
+
+  function uniqueKey(name, nr, rows, store) {
+    let key = name;
+    if (store[key]) {
+      const bc=(rows[nr]?(rows[nr][1]||rows[nr][2]||''):'').toString();
+      const dm=bc.match(/\d{4}-\d{2}-\d{2}/)||bc.match(/\d{2,4}[.\-]\d{1,2}[.\-]\d{1,2}/);
+      const existing = Object.keys(store).filter(k=>k===name||k.startsWith(name+' ('));
+      key = dm ? `${name} (${dm[0]})` : `${name} (${existing.length+1})`;
+    }
+    return key;
+  }
+
   function parseSheet(text) {
     const rows = csvToRows(text);
     sheetData = {}; orderedKeys = [];
+    tierData  = {};
     const secs = [];
     for (let i = 0; i < rows.length; i++) {
       const c0 = (rows[i][0]||'').toString().trim();
       if (c0 === '아이템 명(KR)' || c0 === '아이템명(KR)' || c0.includes('아이템 명(KR)')) {
-        let nr = i - 1;
-        while (nr >= 0 && !(rows[nr][0]||'').toString().trim()) nr--;
-        const raw  = nr >= 0 ? (rows[nr][0]||'').toString() : '';
-        const name = raw.replace(/[■▣□◆◇●◎▷\[\]]/g,'').replace(/\s*\d{1,2}:\d{2}~?\s*$/,'').replace(/~\s*$/,'').replace(/\s+/g,' ').trim();
-        if (name) secs.push({ name, hi: i, nr });
+        const { name, nr } = sectionNameFromHeaderRow(rows, i);
+        if (name) secs.push({ name, hi: i, nr, type: 'items' });
+      } else if (c0 === '라운드') {
+        // 라운드/할인율/노출확률 다단 표 (예: Double Lucky Treasure 할인 확률표)
+        const { name, nr } = sectionNameFromHeaderRow(rows, i);
+        if (name) secs.push({ name, hi: i, nr, type: 'tiers' });
       }
     }
+    // hi 기준 정렬 후 섹션 경계 계산 (타입 혼재 시에도 안전하게)
+    secs.sort((a,b)=>a.hi-b.hi);
+
     for (let s = 0; s < secs.length; s++) {
-      const { name, hi, nr } = secs[s];
-      const end = s+1 < secs.length ? secs[s+1].hi - 2 : rows.length;
+      const { name, hi, nr, type } = secs[s];
+      const end = s+1 < secs.length ? secs[s+1].nr : rows.length;
+
+      if (type === 'tiers') {
+        const tiers = parseTierSection(rows, hi, end);
+        if (!tiers.length) continue;
+        const key = uniqueKey(name, nr, rows, tierData);
+        tierData[key] = tiers;
+        orderedKeys.push(key);
+        continue;
+      }
+
       const hdr = rows[hi].map(c=>(c||'').toString().trim());
       const gi  = hdr.findIndex(h=>h.includes('등급'));
       const pi  = hdr.findIndex(h=>h==='확률'||h.startsWith('확률'));
@@ -526,20 +643,55 @@
         items.push({ item: c0, grade, prob });
       }
       if (!items.length) continue;
-      let key = name;
-      if (sheetData[key]) {
-        const bc=(rows[nr]?(rows[nr][1]||rows[nr][2]||''):'').toString();
-        const dm=bc.match(/\d{4}-\d{2}-\d{2}/)||bc.match(/\d{2,4}[.\-]\d{1,2}[.\-]\d{1,2}/);
-        key=dm?`${name} (${dm[0]})`:`${name} (${orderedKeys.filter(k=>k===name||k.startsWith(name+' (')).length+1})`;
-      }
+      const key = uniqueKey(name, nr, rows, sheetData);
       sheetData[key]=items; orderedKeys.push(key);
     }
     orderedKeys.reverse();
   }
 
+  /* ── 라운드/할인율 다단 표 파서 (Double Lucky Treasure 형태) ──
+     헤더 예: 라운드 | 적용 할인율 | 노출 확률 | 적용 할인율 | 노출 확률 | ... | 적용 할인율 | 노출 확률 | Total
+     마지막 "적용 할인율" 칼럼 앞에 라벨(예: Lucky)이 오는 변형도 지원 */
+  function parseTierSection(rows, hi, end) {
+    const hdr = rows[hi].map(c=>(c||'').toString().trim());
+    // "적용 할인율" 이 나타나는 각 칼럼 인덱스를 티어(단계)로 취급
+    const tierCols = [];
+    hdr.forEach((h, ci) => { if (h.includes('적용 할인율')) tierCols.push(ci); });
+    const totalCi = hdr.findIndex(h => h.toLowerCase().includes('total'));
+
+    const out = [];
+    for (let r = hi+1; r < end; r++) {
+      const row = rows[r];
+      const c0 = (row[0]||'').toString().trim();
+      if (!c0) continue;
+      const roundLabel = c0;
+      const tiers = tierCols.map(ci => {
+        const rateRaw = (row[ci]||'').toString().trim();
+        const labelOrExposure = (row[ci+1]||'').toString().trim();
+        // 다음 칼럼이 숫자/퍼센트면 노출확률, 아니면 라벨(예: "Lucky")+그 다음 칼럼이 노출확률
+        const asNum = parseFloat(labelOrExposure.replace('%',''));
+        if (!isNaN(asNum) && labelOrExposure.includes('%')) {
+          return { rate: rateRaw, label: '', exposure: labelOrExposure };
+        }
+        const exposureRaw = (row[ci+2]||'').toString().trim();
+        return { rate: rateRaw, label: labelOrExposure, exposure: exposureRaw };
+      });
+      const total = totalCi !== -1 ? (row[totalCi]||'').toString().trim() : '';
+      if (!tiers.some(t => t.rate || t.exposure)) continue;
+      out.push({ round: roundLabel, tiers, total });
+    }
+    return out;
+  }
+
+  // breadcrumb에는 날짜 등 괄호 접미사를 생략해 아래 제목과 중복되지 않게 표시
+  function stripDateSuffix(name) { return name.replace(/\s*\([^)]*\)\s*$/, '').trim() || name; }
+
+  function isTierKey(key) { return !!tierData[key]; }
+  function countFor(key) { return isTierKey(key) ? tierData[key].length : (sheetData[key]||[]).length; }
+
   function onLoaded() {
     document.getElementById('loading').classList.add('hide');
-    const totalItems = orderedKeys.reduce((s,k)=>s+sheetData[k].length,0);
+    const totalItems = orderedKeys.reduce((s,k)=>s+countFor(k),0);
     document.getElementById('stat-crates').textContent = orderedKeys.length;
     document.getElementById('stat-items').textContent  = totalItems;
     document.getElementById('live-count').textContent  = orderedKeys.length;
@@ -554,12 +706,11 @@
     list.querySelectorAll('.crate-item').forEach(e=>e.remove());
     document.getElementById('sb-lbl').textContent = `${keys.length}개 상자`;
     for (const key of keys) {
-      const items = sheetData[key]||[];
       const d = document.createElement('div');
       d.className = 'crate-item';
       d.dataset.key  = key;
       d.dataset.name = key.toLowerCase();
-      d.innerHTML = `<div class="ci-name">${key}</div><div class="ci-count">${items.length}</div>`;
+      d.innerHTML = `<div class="ci-name">${key}</div><div class="ci-count">${countFor(key)}</div>`;
       d.onclick = () => { selectCrate(key); closeSB(); };
       list.appendChild(d);
     }
@@ -584,7 +735,7 @@
     cards.forEach(card => {
       const key = card.dataset.key;
       const nameMatch = key.toLowerCase().includes(q);
-      const matchedItems = q ? (sheetData[key] || []).filter(i => i.item.toLowerCase().includes(q)) : [];
+      const matchedItems = q && !isTierKey(key) ? (sheetData[key] || []).filter(i => i.item.toLowerCase().includes(q)) : [];
       const itemMatch = matchedItems.length > 0;
       const show = !q || nameMatch || itemMatch;
       card.style.display = show ? '' : 'none';
@@ -622,14 +773,18 @@
   }
 
   /* ── ALL VIEW ── */
-  function renderAllView() {
-    currentView = 'all';
-    document.getElementById('svt-all').classList.add('active');
-    document.getElementById('svt-detail').classList.remove('active');
-    document.querySelectorAll('.crate-item').forEach(el=>el.classList.remove('active'));
-    document.getElementById('breadcrumb').innerHTML = `<span class="cur">전체 목록</span>`;
+  let allViewCardsHTML = null; // 전체 목록 카드 HTML 캐시 (뒤로가기 시 재계산 방지)
 
-    const cards = orderedKeys.map(key => {
+  function buildAllViewCards() {
+    return orderedKeys.map(key => {
+      if (isTierKey(key)) {
+        const tiers = tierData[key];
+        return `<div class="crate-card" data-key="${key.replace(/"/g,'&quot;')}" onclick="selectCrateByEl(this)">
+          <div class="cc-name">${key}</div>
+          <div class="cc-meta"><span>뽑기 <span class="hl">${tiers.length}회</span></span><span>유형 <span class="hl">할인 확률표</span></span></div>
+          <div class="cc-grades"><span class="cc-gtag" style="color:${GS['블루'].color};background:${GS['블루'].bg};border-color:${GS['블루'].bd}">TIER TABLE</span></div>
+        </div>`;
+      }
       const items = sheetData[key]||[];
       const gradeSum = {};
       let total = 0;
@@ -653,6 +808,18 @@
         <div class="cc-grades">${tags}</div>
       </div>`;
     }).join('');
+  }
+
+  function renderAllView() {
+    currentView = 'all';
+    document.getElementById('svt-all').classList.add('active');
+    document.getElementById('svt-detail').classList.remove('active');
+    document.querySelectorAll('.crate-item').forEach(el=>el.classList.remove('active'));
+    document.getElementById('breadcrumb').innerHTML = `<span class="cur">전체 목록</span>`;
+    setMobBackPill(false);
+
+    if (allViewCardsHTML === null) allViewCardsHTML = buildAllViewCards();
+    const cards = allViewCardsHTML;
 
     document.getElementById('content').innerHTML = `
       <div class="all-view">
@@ -680,6 +847,7 @@
   }
 
   function showPickPrompt() {
+    setMobBackPill(false);
     document.getElementById('content').innerHTML = `
       <div style="display:flex;align-items:center;justify-content:center;min-height:50vh;flex-direction:column;gap:12px">
         <div style="width:52px;height:52px;background:var(--accent-bg);border:1px solid var(--accent-bd);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center">
@@ -707,6 +875,7 @@
 
   /* ── DETAIL VIEW ── */
   function renderDetailView(key) {
+    if (isTierKey(key)) { renderTierDetailView(key); return; }
     const items = sheetData[key]||[];
     const gradeSum = {}, gradeCnt = {};
     let total = 0;
@@ -738,7 +907,7 @@
         <span class="gs-dot" style="background:${gs.color}"></span>
         <span class="gs-name">${g}</span>
         <span class="gs-pct">${pct}%</span>
-        <span class="gs-cnt">${cnt}종</span>
+        <span class="gs-cnt">${cnt}</span>
       </button>`;
     }).join('');
 
@@ -757,7 +926,9 @@
     document.getElementById('breadcrumb').innerHTML =
       `<span style="color:var(--txt3);cursor:pointer" onclick="renderAllView()">전체 목록</span>
        <span class="sep">›</span>
-       <span class="cur">${key}</span>`;
+       <span class="cur">${stripDateSuffix(key)}</span>`;
+    setMobBackPill(true);
+    window.scrollTo(0,0);
 
     document.getElementById('content').innerHTML = `
       <div class="detail-view">
@@ -805,6 +976,53 @@
       </div>`;
 
     renderTable(items);
+  }
+
+  /* ── TIER TABLE DETAIL VIEW (Double Lucky Treasure 형태) ── */
+  function renderTierDetailView(key) {
+    const tiers = tierData[key]||[];
+    const tierStepCount = tiers.length ? tiers[0].tiers.length : 0;
+
+    document.getElementById('breadcrumb').innerHTML =
+      `<span style="color:var(--txt3);cursor:pointer" onclick="renderAllView()">전체 목록</span>
+       <span class="sep">›</span>
+       <span class="cur">${stripDateSuffix(key)}</span>`;
+    setMobBackPill(true);
+    window.scrollTo(0,0);
+
+    let theadCols = `<th>라운드</th>`;
+    for (let i=0;i<tierStepCount;i++) theadCols += `<th>적용 할인율</th><th>노출 확률</th>`;
+    theadCols += `<th>Total</th>`;
+
+    const bodyRows = tiers.map(t => {
+      let cols = `<td class="tier-round">${t.round}</td>`;
+      for (const step of t.tiers) {
+        const rateIsLabel = step.rate && !/%$/.test(step.rate); // 예: "Lucky" 처럼 %가 아닌 라벨
+        cols += `<td class="${rateIsLabel?'tier-exp':''}">${step.rate||'—'}</td>`;
+        cols += `<td>${step.exposure||'—'}</td>`;
+      }
+      cols += `<td class="tier-total">${t.total||'—'}</td>`;
+      return `<tr>${cols}</tr>`;
+    }).join('');
+
+    document.getElementById('content').innerHTML = `
+      <div class="detail-view">
+        <div class="detail-head">
+          <div class="detail-eyebrow">DISCOUNT / EXPOSURE TABLE</div>
+          <div class="detail-title">${key}</div>
+        </div>
+        <div class="stat-cards">
+          <div class="stat-card"><div class="sc-lbl">라운드</div><div class="sc-val">${tiers.length}<span>개</span></div></div>
+          <div class="stat-card"><div class="sc-lbl">할인 단계</div><div class="sc-val">${tierStepCount}<span>단계</span></div></div>
+        </div>
+        <div class="tier-table-wrap">
+          <table class="tier-table">
+            <thead><tr>${theadCols}</tr></thead>
+            <tbody>${bodyRows}</tbody>
+          </table>
+          <div class="tier-note">라운드별로 순차 적용되는 할인율과 각 단계의 노출 확률을 나타낸 표입니다. 시트 원본 값을 그대로 표시합니다.</div>
+        </div>
+      </div>`;
   }
 
   /* ── 정렬 핵심: sortDir 방향 반영 ── */
@@ -946,6 +1164,13 @@
   /* ── MOBILE ── */
   function openSB()  { document.getElementById('sidebar').classList.add('open'); document.getElementById('sb-overlay').classList.add('show'); }
   function closeSB() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sb-overlay').classList.remove('show'); }
+
+  /* ── 모바일 상단 "목록" 백 필: 상세뷰에선 표시하고 햄버거는 숨김 ── */
+  function setMobBackPill(show) {
+    document.getElementById('mob-back-pill').classList.toggle('show', show);
+    document.getElementById('mob-menu-btn').classList.toggle('hide-mob', show);
+  }
+  function goBackToList() { renderAllView(); }
 
   loadSheet();
 </script>
