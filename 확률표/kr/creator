@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>모배 확률표 뷰어</title>
+  <meta property="og:title" content="PUBG INFO - KR 확률표 뷰어">
+  <meta property="og:description" content="PUBG MOBILE - KR 상자 확률표">
+  <meta property="og:image" content="https://pbs.twimg.com/media/HOCarg-boAAXu4w.jpg:large">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="https://pubginfo.site/확률표/kr">
+  <meta property="og:type" content="website">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --accent:    #6c63ff;
+      --accent-lt: #9d97ff;
+      --accent-bg: rgba(108,99,255,.1);
+      --accent-bd: rgba(108,99,255,.28);
+      --red:    #f04e4e;
+      --pink:   #e060a8;
+      --purple: #9660dc;
+      --blue:   #4488e8;
+      --green:  #38b870;
+      --sans:   'DM Sans', sans-serif;
+      --mono:   'DM Mono', monospace;
+      --ease:   cubic-bezier(.4,0,.2,1);
+    }
+    [data-theme="dark"] {
+      --bg:       #0e1117;
+      --surface:  #161b24;
+      --surface2: #1c2333;
+      --surface3: #232d42;
+      --bd:       rgba(255,255,255,.07);
+      --bd2:      rgba(255,255,255,.13);
+      --txt:      #e8edf5;
+      --txt2:     #8892a4;
+      --txt3:     #4e5a6e;
+      --sh:       0 4px 24px rgba(0,0,0,.4);
+      --sh-sm:    0 2px 8px rgba(0,0,0,.3);
+    }
+    [data-theme="light"] {
+      --bg:       #f2f4f8;
+      --surface:  #ffffff;
+      --surface2: #f8f9fc;
+      --surface3: #edf0f7;
+      --bd:       rgba(0,0,0,.07);
+      --bd2:      rgba(0,0,0,.13);
+      --txt:      #111827;
+      --txt2:     #6b7280;
+      --txt3:     #9ca3af;
+      --sh:       0 4px 24px rgba(0,0,0,.08);
+      --sh-sm:    0 2px 8px rgba(0,0,0,.05);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg); color: var(--txt);
+      font-family: var(--sans); min-height: 100vh;
+      transition: background .3s, color .3s;
+    }
+    .layout { display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 252px; flex-shrink: 0;
+      background: var(--surface); border-right: 1px solid var(--bd);
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
+      transition: transform .25s var(--ease);
+    }
+    .sb-head { padding: 20px 18px 16px; border-bottom: 1px solid var(--bd); }
+    .logo-row { display: flex; align-items: center; gap: 10px; margin-bottom: 3px; }
+    .logo-icon {
+      width: 32px; height: 32px;
+      background: var(--accent-bg); border: 1px solid var(--accent-bd);
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .logo-icon svg { width: 16px; height: 16px; color: var(--accent); }
+    .logo-name { font-size: 15px; font-weight: 700; color: var(--txt); letter-spacing: -.02em; }
+    .logo-sub  { font-size: 10px; color: var(--txt3); font-family: var(--mono); letter-spacing: .08em; }
+    .sb-search { padding: 10px 14px; border-bottom: 1px solid var(--bd); }
+    .sb-search-inner {
+      display: flex; align-items: center; gap: 7px;
+      background: var(--surface2); border: 1px solid var(--bd);
+      border-radius: var(--radius-sm); padding: 7px 10px; transition: border-color .2s;
+    }
+    .sb-search-inner:focus-within { border-color: var(--accent); }
+    .sb-search-inner svg { width: 12px; height: 12px; color: var(--txt3); flex-shrink: 0; }
+    .sb-search-inner input {
+      background: none; border: none; outline: none;
+      font-family: var(--sans); font-size: 12px; color: var(--txt); width: 100%;
+    }
+    .sb-search-inner input::placeholder { color: var(--txt3); }
+    .sb-view-toggle { display: flex; gap: 4px; padding: 10px 14px 6px; }
+    .svt {
+      flex: 1; font-size: 11px; font-family: var(--mono); padding: 6px 0;
+      border: 1px solid var(--bd); border-radius: var(--radius-sm);
+      background: transparent; color: var(--txt3); cursor: pointer;
+      transition: all .15s; text-align: center;
+    }
+    .svt:hover  { color: var(--txt2); border-color: var(--bd2); }
+    .svt.active { background: var(--accent-bg); border-color: var(--accent-bd); color: var(--accent-lt); }
+    .sb-list {
+      flex: 1; overflow-y: auto; padding: 4px 0 8px;
+      scrollbar-width: thin; scrollbar-color: var(--bd2) transparent;
+    }
+    .sb-list::-webkit-scrollbar { width: 3px; }
+    .sb-list::-webkit-scrollbar-thumb { background: var(--bd2); border-radius: 3px; }
+    .sb-section-lbl {
+      font-size: 9px; color: var(--txt3); font-family: var(--mono);
+      letter-spacing: .12em; text-transform: uppercase; padding: 8px 16px 4px;
+    }
+    .crate-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 16px; cursor: pointer; transition: background .12s; position: relative;
+    }
+    .crate-item:hover { background: var(--surface2); }
+    .crate-item.active { background: var(--accent-bg); }
+    .crate-item.active::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 3px; background: var(--accent); border-radius: 0 2px 2px 0;
+    }
+    .ci-name {
+      font-size: 12px; color: var(--txt2); flex: 1;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3;
+    }
+    .crate-item.active .ci-name { color: var(--accent-lt); font-weight: 500; }
+    .ci-count { font-size: 10px; font-family: var(--mono); color: var(--txt3); flex-shrink: 0; }
+    .crate-item.active .ci-count { color: var(--accent); }
+    .sb-foot { padding: 12px 16px; border-top: 1px solid var(--bd); }
+    .sb-stats { display: flex; justify-content: space-between; }
+    .sbs-item { text-align: center; }
+    .sbs-val { font-size: 17px; font-weight: 700; color: var(--txt); }
+    .sbs-lbl { font-size: 9px; color: var(--txt3); font-family: var(--mono); }
+    .main { flex: 1; margin-left: 252px; display: flex; flex-direction: column; min-height: 100vh; }
+    .topbar {
+      background: var(--surface); border-bottom: 1px solid var(--bd);
+      padding: 0 26px; height: 54px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 50;
+    }
+    .topbar-l { display: flex; align-items: center; gap: 8px; }
+    .breadcrumb { font-size: 13px; color: var(--txt2); display: flex; align-items: center; gap: 5px; }
+    .breadcrumb .sep { color: var(--txt3); }
+    .breadcrumb .cur { color: var(--txt); font-weight: 500; }
+    .topbar-r { display: flex; align-items: center; gap: 8px; }
+    .live-badge {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 11px; font-family: var(--mono); color: var(--green);
+      background: rgba(56,184,112,.1); border: 1px solid rgba(56,184,112,.2);
+      border-radius: 20px; padding: 4px 10px;
+    }
+    .live-dot {
+      width: 6px; height: 6px; border-radius: 50%; background: var(--green);
+      animation: blink 2s ease infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.75)} }
+    .icon-btn {
+      width: 34px; height: 34px; border-radius: var(--radius-sm);
+      border: 1px solid var(--bd2); background: var(--surface2);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all .15s; color: var(--txt2);
+    }
+    .icon-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); }
+    .icon-btn svg { width: 14px; height: 14px; }
+    .mob-btn { display: none; }
+    .content { flex: 1; padding: 26px; }
+    .all-view { animation: fadeUp .3s var(--ease); }
+    .view-header { margin-bottom: 18px; }
+    .view-title { font-size: 20px; font-weight: 700; color: var(--txt); letter-spacing: -.02em; }
+    .view-sub   { font-size: 12px; color: var(--txt3); font-family: var(--mono); margin-top: 3px; }
+    .crate-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 10px;
+    }
+    .crate-card {
+      background: var(--surface); border: 1px solid var(--bd);
+      border-radius: var(--radius-md); padding: 15px 16px;
+      cursor: pointer; transition: all .18s var(--ease);
+      position: relative; overflow: hidden;
+    }
+    .crate-card::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 3px; background: var(--accent-bd); border-radius: 2px 0 0 2px;
+      transition: background .18s;
+    }
+    .crate-card:hover { border-color: var(--accent-bd); transform: translateY(-2px); box-shadow: var(--sh-sm); }
+    .crate-card:hover::before { background: var(--accent); }
+    .cc-name { font-size: 13px; font-weight: 600; color: var(--txt); margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cc-meta { font-size: 10px; font-family: var(--mono); color: var(--txt3); display: flex; gap: 10px; margin-bottom: 9px; flex-wrap: wrap; }
+    .cc-meta .hl { color: var(--accent-lt); }
+    .cc-grades { display: flex; flex-wrap: wrap; gap: 4px; }
+    .cc-gtag {
+      font-size: 9px; font-family: var(--mono); padding: 2px 7px;
+      border-radius: 20px; border: 1px solid; font-weight: 500;
+    }
+    .detail-view { animation: fadeUp .3s var(--ease); }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+    .detail-head { margin-bottom: 20px; }
+    .detail-eyebrow { font-size: 10px; font-family: var(--mono); color: var(--accent); letter-spacing: .15em; text-transform: uppercase; margin-bottom: 4px; }
+    .detail-title { font-size: 22px; font-weight: 700; color: var(--txt); letter-spacing: -.02em; line-height: 1.2; }
+    .stat-cards { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+    .stat-card {
+      background: var(--surface); border: 1px solid var(--bd);
+      border-radius: var(--radius-md); padding: 13px 16px; flex: 1; min-width: 110px;
+    }
+    .sc-lbl { font-size: 9px; color: var(--txt3); font-family: var(--mono); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 5px; }
+    .sc-val { font-size: 21px; font-weight: 700; color: var(--txt); line-height: 1; }
+    .sc-val span { font-size: 11px; color: var(--txt3); font-weight: 400; margin-left: 2px; }
+    .grade-sum-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
+    .gs-chip {
+      display: flex; align-items: center; gap: 7px;
+      font-family: var(--mono); font-size: 11px;
+      padding: 6px 13px; border-radius: 20px; border: 1px solid;
+      cursor: pointer; transition: all .15s; font-weight: 500; user-select: none;
+    }
+    .gs-chip:hover { transform: translateY(-1px); box-shadow: var(--sh-sm); }
+    .gs-chip.selected { box-shadow: 0 0 0 2px var(--accent); }
+    .gs-chip.all { color: var(--txt2); background: var(--surface2); border-color: var(--bd2); }
+    .gs-chip.all.selected { color: var(--txt); }
+    /* 멀티셀렉트 강조: 선택된 등급 칩은 테두리 두껍게 */
+    .gs-chip:not(.all).selected { box-shadow: 0 0 0 2px currentColor; }
+    .gs-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .gs-pct  { opacity: .75; }
+    .gs-cnt  { opacity: .5; font-size: 9px; }
+    /* 멀티셀렉트 힌트 배지 */
+    .multi-hint {
+      font-size: 9px; font-family: var(--mono); color: var(--accent-lt);
+      background: var(--accent-bg); border: 1px solid var(--accent-bd);
+      border-radius: 20px; padding: 3px 9px; align-self: center;
+      display: none;
+    }
+    .multi-hint.show { display: inline-flex; }
+    .filter-row { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+    .filter-search {
+      display: flex; align-items: center; gap: 7px;
+      background: var(--surface); border: 1px solid var(--bd);
+      border-radius: var(--radius-sm); padding: 8px 11px;
+      flex: 1; min-width: 160px; transition: border-color .2s;
+    }
+    .filter-search:focus-within { border-color: var(--accent); }
+    .filter-search svg { width: 12px; height: 12px; color: var(--txt3); flex-shrink: 0; }
+    .filter-search input {
+      background: none; border: none; outline: none;
+      font-family: var(--sans); font-size: 13px; color: var(--txt); width: 100%;
+    }
+    .filter-search input::placeholder { color: var(--txt3); }
+    .sort-btn {
+      display: flex; align-items: center; gap: 5px;
+      padding: 8px 12px; background: var(--surface); border: 1px solid var(--bd);
+      border-radius: var(--radius-sm); font-family: var(--sans); font-size: 12px;
+      color: var(--txt2); cursor: pointer; transition: all .15s; white-space: nowrap;
+    }
+    .sort-btn:hover { border-color: var(--bd2); color: var(--txt); }
+    .sort-btn.active { border-color: var(--accent-bd); color: var(--accent-lt); background: var(--accent-bg); }
+    .sort-btn svg { width: 11px; height: 11px; }
+    /* 방향 아이콘 트랜지션 */
+    .sort-dir-icon { font-size: 11px; opacity: .7; transition: transform .2s; }
+    .table-wrap {
+      background: var(--surface); border: 1px solid var(--bd);
+      border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--sh-sm);
+    }
+    .t-head {
+      display: grid;
+      grid-template-columns: 40px 1fr 84px 90px 150px 88px;
+      padding: 0 14px; border-bottom: 1px solid var(--bd);
+      background: var(--surface2);
+    }
+    .th {
+      font-size: 9px; font-family: var(--mono); color: var(--txt3);
+      letter-spacing: .1em; text-transform: uppercase; padding: 10px 7px;
+    }
+    .th.r { text-align: right; }
+    .t-row {
+      display: grid;
+      grid-template-columns: 40px 1fr 84px 90px 150px 88px;
+      padding: 0 14px; border-bottom: 1px solid var(--bd);
+      align-items: center; transition: background .12s;
+    }
+    .t-row:last-child { border-bottom: none; }
+    .t-row:hover { background: var(--surface2); }
+    .t-row.hidden { display: none; }
+    .td { padding: 9px 7px; }
+    .td-rank  { font-size: 11px; font-family: var(--mono); color: var(--txt3); }
+    .td-name  { font-size: 13px; color: var(--txt); font-weight: 500; }
+    .grade-pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 9px; font-family: var(--mono); font-weight: 500;
+      padding: 3px 8px; border-radius: 20px; border: 1px solid; white-space: nowrap;
+    }
+    .grade-pill-dot { width: 5px; height: 5px; border-radius: 50%; }
+    .td-prob    { text-align: right; }
+    .prob-num   { font-size: 14px; font-weight: 700; color: var(--txt); font-family: var(--mono); }
+    .prob-unit  { font-size: 10px; color: var(--txt3); margin-left: 1px; }
+    .bar-track  { height: 5px; background: var(--surface3); border-radius: 3px; overflow: hidden; }
+    .bar-fill   { height: 100%; border-radius: 3px; transition: width .5s var(--ease); }
+    .td-cumul   { text-align: right; font-size: 11px; font-family: var(--mono); color: var(--txt3); }
+    .t-empty {
+      padding: 36px; text-align: center;
+      font-size: 12px; color: var(--txt3); font-family: var(--mono); display: none;
+    }
+    .t-empty.show { display: block; }
+    .loading-overlay {
+      position: fixed; inset: 0; background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 14px; z-index: 9999; transition: opacity .4s;
+    }
+    .loading-overlay.hide { opacity: 0; pointer-events: none; }
+    .spinner {
+      width: 32px; height: 32px; border: 2.5px solid var(--bd2);
+      border-top-color: var(--accent); border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-txt { font-size: 12px; color: var(--txt2); font-family: var(--mono); }
+    .load-err {
+      position: fixed; inset: 0; background: var(--bg);
+      display: none; align-items: center; justify-content: center;
+      flex-direction: column; gap: 10px; z-index: 9999;
+    }
+    .load-err.show { display: flex; }
+    .load-err-txt { font-size: 13px; color: var(--txt2); font-family: var(--mono); text-align: center; max-width: 300px; line-height: 1.7; }
+    .sb-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 99; }
+
+    /* ── Mobile top-bar back pill (목록으로) ── */
+    .mob-back-pill {
+      display: none; align-items: center; gap: 5px;
+      background: #fff; color: #111;
+      border: 1px solid var(--bd2); border-radius: 999px;
+      padding: 7px 14px 7px 10px;
+      font-family: var(--sans); font-size: 13px; font-weight: 600;
+      cursor: pointer; -webkit-tap-highlight-color: transparent; flex-shrink: 0;
+    }
+    .mob-back-pill svg { width: 15px; height: 15px; flex-shrink: 0; }
+    .mob-back-pill.show { display: flex; }
+    @media (max-width: 780px) {
+      .mob-btn.hide-mob { display: none; }
+    }
+
+    /* ── Rate-tier table (Double Lucky Treasure style) ── */
+    .tier-table-wrap {
+      background: var(--surface); border: 1px solid var(--bd);
+      border-radius: var(--radius-lg); overflow-x: auto; box-shadow: var(--sh-sm);
+      margin-bottom: 20px;
+    }
+    .tier-table { width: 100%; border-collapse: collapse; min-width: 640px; }
+    .tier-table th, .tier-table td {
+      padding: 9px 10px; text-align: right; white-space: nowrap;
+      font-size: 12px; border-bottom: 1px solid var(--bd);
+    }
+    .tier-table th:first-child, .tier-table td:first-child { text-align: left; }
+    .tier-table thead th {
+      font-family: var(--mono); font-size: 9.5px; color: var(--txt3);
+      letter-spacing: .06em; text-transform: uppercase; background: var(--surface2);
+      position: sticky; top: 0;
+    }
+    .tier-table tbody tr:last-child td { border-bottom: none; }
+    .tier-table tbody tr:hover { background: var(--surface2); }
+    .tier-round { font-family: var(--mono); font-weight: 700; color: var(--txt); }
+    .tier-exp { font-weight: 600; color: var(--accent-lt); background: var(--accent-bg); border-radius: 6px; }
+    .tier-total { font-family: var(--mono); color: var(--txt3); }
+    .tier-note {
+      font-size: 11px; font-family: var(--mono); color: var(--txt3);
+      padding: 10px 14px; border-top: 1px solid var(--bd); background: var(--surface2);
+    }
+
+    /* ── 캡쳐 보기(시트뷰) 버튼 & 모달 ── */
+    .capture-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 12px; background: var(--surface); border: 1px solid var(--bd);
+      border-radius: var(--radius-sm); font-family: var(--sans); font-size: 12px;
+      color: var(--txt2); cursor: pointer; transition: all .15s; white-space: nowrap;
+    }
+    .capture-btn:hover { border-color: var(--accent-bd); color: var(--accent-lt); background: var(--accent-bg); }
+    .capture-btn svg { width: 12px; height: 12px; }
+
+    .capture-modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 2000;
+      background: rgba(0,0,0,.55); backdrop-filter: blur(2px);
+      align-items: flex-start; justify-content: center;
+      padding: 16px; overflow-y: auto;
+    }
+    .capture-modal-overlay.show { display: flex; }
+    .capture-modal {
+      background: #ffffff; color: #111827;
+      width: 100%; max-width: 760px; border-radius: 10px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.4);
+      overflow: hidden; animation: fadeUp .25s var(--ease);
+      display: flex; flex-direction: column;
+      max-height: calc(100vh - 32px);
+    }
+    .capture-modal-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px; background: #f2f4f8; border-bottom: 1px solid #e2e5ec;
+      flex-shrink: 0; flex-wrap: wrap; gap: 8px;
+    }
+    .capture-modal-bar-l { font-size: 12px; font-family: var(--mono); color: #6b7280; }
+    .capture-modal-actions { display: flex; gap: 6px; }
+    .capture-modal-scroll { overflow-y: auto; flex: 1; }
+    .capture-action-btn {
+      font-size: 12px; font-family: var(--sans); font-weight: 500;
+      padding: 6px 12px; border-radius: 7px; border: 1px solid #d7dbe3;
+      background: #fff; color: #374151; cursor: pointer; transition: all .15s;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .capture-action-btn:hover { border-color: #6c63ff; color: #6c63ff; background: #f2f1ff; }
+    .capture-action-btn.close-btn:hover { border-color: #f04e4e; color: #f04e4e; background: #fef1f1; }
+    #capture-sheet { padding: 18px 22px 22px; }
+    .cap-title-bar {
+      display: flex; justify-content: space-between; align-items: baseline;
+      border-bottom: 2px solid #1a1a1a; padding-bottom: 6px; margin-bottom: 0;
+    }
+    .cap-title-bar h2 { font-size: 17px; margin: 0; font-family: var(--sans); }
+    .cap-meta { font-size: 12px; color: #333; font-family: var(--mono); }
+    .cap-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+    .cap-table thead th {
+      background: #dbe7f5; border: 1px solid #999; padding: 5px 6px;
+      font-weight: 700; text-align: center; font-family: var(--sans);
+    }
+    .cap-table tbody td { border: 1px solid #ccc; padding: 3px 6px; font-family: var(--sans); }
+    .cap-table td.cap-name { text-align: left; }
+    .cap-table td.cap-grade { text-align: center; font-weight: 700; }
+    .cap-table td.cap-prob { text-align: right; font-family: var(--mono); }
+    .cap-table tbody tr:nth-child(even) { background: #f7f9fc; }
+    .cap-table thead th { position: static; }
+    .cap-table tfoot { position: static; }
+    .cap-table tfoot td {
+      position: static;
+      border: 1px solid #1a1a1a; font-weight: 700; padding: 5px 6px; background: #eef2f7;
+    }
+    .cap-table tfoot .cap-total-label { text-align: center; }
+    .cap-table tfoot .cap-total-val { text-align: right; color: #0a7a3d; font-family: var(--mono); }
+    @media print {
+      body * { visibility: hidden; }
+      .capture-modal, .capture-modal * { visibility: visible; }
+      .capture-modal-bar { display: none; }
+      .capture-modal-overlay { position: absolute; inset: auto; padding: 0; background: none; }
+      .capture-modal { box-shadow: none; max-width: 100%; }
+    }
+
+    @media (max-width: 780px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .sb-overlay.show { display: block; }
+      .main { margin-left: 0; }
+      .mob-btn { display: flex; }
+      .t-head, .t-row { grid-template-columns: 34px 1fr 72px 80px; }
+      .th:nth-child(5), .td:nth-child(5),
+      .th:nth-child(6), .td:nth-child(6) { display: none; }
+      .content { padding: 14px 14px 84px; }
+      .crate-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+      .stat-cards { gap: 6px; }
+      .stat-card { padding: 10px 12px; min-width: 90px; }
+      .sc-val { font-size: 17px; }
+      .detail-title { font-size: 18px; }
+      .gs-chip { padding: 7px 12px; font-size: 11px; }
+      .filter-row { gap: 6px; }
+      .sort-btn { padding: 10px 12px; }
+      .crate-item { padding: 11px 16px; }
+      .ci-name { font-size: 13px; }
+      .breadcrumb { font-size: 12px; }
+      .breadcrumb span { max-width: 32vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; vertical-align: bottom; }
+      /* 상세뷰에서는 "목록" 필이 이미 뒤로가기 역할을 하므로 breadcrumb의 "전체 목록 ›" 접두어는 숨기고 현재 제목만 남김 */
+      .mob-back-pill.show ~ .breadcrumb .sep,
+      .mob-back-pill.show ~ .breadcrumb > span:first-child:not(.cur) { display: none; }
+      .topbar { padding: 0 10px; gap: 6px; }
+      .topbar-l { gap: 6px; flex: 1; min-width: 0; overflow: hidden; }
+      .topbar-r { gap: 6px; flex-shrink: 0; }
+      .live-badge { padding: 4px 8px; font-size: 10px; }
+      .live-suffix { display: none; }
+      .tier-table th, .tier-table td { padding: 8px 8px; font-size: 11px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loading">
+  <div class="spinner"></div>
+  <div class="loading-txt">확률 데이터 불러오는 중...</div>
+</div>
+<div class="load-err" id="load-err">
+  <div style="font-size:28px">⚠</div>
+  <div class="load-err-txt">데이터를 불러오지 못했습니다.<br>인터넷 연결 또는 시트 공개 설정을 확인해주세요.</div>
+</div>
+
+<div class="layout">
+  <div class="sb-overlay" id="sb-overlay" onclick="closeSB()"></div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-head">
+      <div class="logo-row">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect x="3" y="6" width="18" height="12" rx="2"/>
+            <path d="M7 10h10M7 14h6"/>
+          </svg>
+        </div>
+        <div>
+          <div class="logo-name">확률표 뷰어</div>
+        </div>
+      </div>
+      <div class="logo-sub">PUBG MOBILE · CRATE RATES</div>
+    </div>
+
+    <div class="sb-search">
+      <div class="sb-search-inner">
+        <svg viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+        </svg>
+        <input type="text" id="sb-search-input" placeholder="상자 검색..." oninput="filterSidebar()">
+      </div>
+    </div>
+
+    <div class="sb-view-toggle">
+      <button class="svt active" id="svt-all"    onclick="switchView('all')">전체 목록</button>
+      <button class="svt"        id="svt-detail" onclick="switchView('detail')">상자별</button>
+    </div>
+
+    <div class="sb-list" id="sb-list">
+      <div class="sb-section-lbl" id="sb-lbl">로딩 중...</div>
+    </div>
+
+    <div class="sb-foot">
+      <div class="sb-stats">
+        <div class="sbs-item"><div class="sbs-val" id="stat-crates">—</div><div class="sbs-lbl">CRATES</div></div>
+        <div class="sbs-item"><div class="sbs-val" id="stat-items">—</div><div class="sbs-lbl">ITEMS</div></div>
+        <div class="sbs-item"><div class="sbs-val" id="stat-grades">6</div><div class="sbs-lbl">GRADES</div></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-l">
+        <button class="icon-btn mob-btn" id="mob-menu-btn" onclick="openSB()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12h18M3 6h18M3 18h18"/>
+          </svg>
+        </button>
+        <button class="mob-back-pill" id="mob-back-pill" onclick="goBackToList()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+            <path d="M15 18l-6-6 6-6"/>
+          </svg>
+          목록
+        </button>
+        <div class="breadcrumb" id="breadcrumb">
+          <span>전체 목록</span>
+        </div>
+      </div>
+      <div class="topbar-r">
+        <div class="live-badge" id="live-badge" style="display:none">
+          <div class="live-dot"></div>
+          <span id="live-count">0</span>개<span class="live-suffix"> 로드됨</span>
+        </div>
+        <button class="icon-btn" onclick="toggleTheme()" title="테마 전환">
+          <!-- 라이트 모드 기본: 달 아이콘(다크로 전환) 표시 -->
+          <svg id="ico-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+          </svg>
+          <svg id="ico-light" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="content" id="content"></div>
+  </div>
+</div>
+
+<div class="capture-modal-overlay" id="capture-modal-overlay" onclick="if(event.target===this) closeCaptureView()">
+  <div class="capture-modal">
+    <div class="capture-modal-bar">
+      <div class="capture-modal-bar-l">📸 아래 표를 이미지로 저장하거나, 화면에 다 보이니 캡쳐하세요</div>
+      <div class="capture-modal-actions">
+        <button class="capture-action-btn" id="save-img-btn" onclick="saveCaptureAsImage()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          이미지 저장
+        </button>
+        <button class="capture-action-btn close-btn" onclick="closeCaptureView()">✕ 닫기</button>
+      </div>
+    </div>
+    <div class="capture-modal-scroll">
+      <div id="capture-sheet"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const SHEET_ID = '1K2Q4loa65fnmIWM70UW4BA_bs894VUIBClE6gqUHOMU';
+  const CSV_URL  = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=확률표`;
+
+  // ── 등급 정의: 골드 추가 (GO 배열 = 높은 등급 → 낮은 등급 순서) ──
+  const GS = {
+    '골드':  { color:'#e8a020', bg:'rgba(232,160,32,.13)', bd:'rgba(232,160,32,.3)' },
+    '레드':  { color:'#f04e4e', bg:'rgba(240,78,78,.13)',  bd:'rgba(240,78,78,.3)'  },
+    '핑크':  { color:'#e060a8', bg:'rgba(224,96,168,.13)', bd:'rgba(224,96,168,.3)' },
+    '퍼플':  { color:'#9660dc', bg:'rgba(150,96,220,.13)', bd:'rgba(150,96,220,.3)' },
+    '블루':  { color:'#4488e8', bg:'rgba(68,136,232,.13)', bd:'rgba(68,136,232,.3)' },
+    '그린':  { color:'#38b870', bg:'rgba(56,184,112,.13)', bd:'rgba(56,184,112,.3)' },
+  };
+  const GO = ['골드','레드','핑크','퍼플','블루','그린'];
+
+  let sheetData = {}, orderedKeys = [];
+  let tierData  = {}; // 라운드/할인율 표 (예: Double Lucky Treasure) 전용 저장소
+  let currentView  = 'all';
+  let currentCrate = null;
+
+  // ── 등급 멀티셀렉트: 빈 Set = 전체 표시 ──
+  let selectedGrades = new Set();
+
+  // ── 정렬 상태 ──
+  // sortMode: 'grade' | 'prob'
+  // sortDir : 1 = 기본(골드↓ / 높은 확률↓), -1 = 반전(그린↓ / 낮은 확률↓)
+  let sortMode = 'grade';
+  let sortDir  = 1;
+
+  // ─────────────────────────────────────────
+  async function fetchWithTimeout(url, ms) {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), ms);
+    try {
+      const r = await fetch(url, { signal: ctrl.signal, cache: 'no-store' });
+      return r;
+    } finally {
+      clearTimeout(t);
+    }
+  }
+
+  async function loadSheet(attempt = 1) {
+    try {
+      const r = await fetchWithTimeout(CSV_URL, 9000);
+      if (!r.ok) throw new Error('bad status ' + r.status);
+      const text = await r.text();
+      parseSheet(text);
+      onLoaded();
+    } catch(e) {
+      if (attempt < 2) { loadSheet(attempt + 1); return; } // 한 번 재시도
+      document.getElementById('loading').classList.add('hide');
+      document.getElementById('load-err').classList.add('show');
+    }
+  }
+
+  function csvToRows(text) {
+    const rows = [];
+    for (const line of text.split('\n')) {
+      const cols = []; let cur = '', inQ = false;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (ch === '"') { inQ = !inQ; continue; }
+        if (ch === ',' && !inQ) { cols.push(cur.trim()); cur = ''; continue; }
+        cur += ch;
+      }
+      cols.push(cur.trim()); rows.push(cols);
+    }
+    return rows;
+  }
+
+  function sectionNameFromHeaderRow(rows, i) {
+    let nr = i - 1;
+    while (nr >= 0 && !(rows[nr][0]||'').toString().trim()) nr--;
+    const raw  = nr >= 0 ? (rows[nr][0]||'').toString() : '';
+    const name = raw.replace(/[■▣□◆◇●◎▷\[\]]/g,'').replace(/\s*\d{1,2}:\d{2}~?\s*$/,'').replace(/~\s*$/,'').replace(/\s+/g,' ').trim();
+    return { name, nr };
+  }
+
+  function uniqueKey(name, nr, rows, store) {
+    let key = name;
+    if (store[key]) {
+      const bc=(rows[nr]?(rows[nr][1]||rows[nr][2]||''):'').toString();
+      const dm=bc.match(/\d{4}-\d{2}-\d{2}/)||bc.match(/\d{2,4}[.\-]\d{1,2}[.\-]\d{1,2}/);
+      const existing = Object.keys(store).filter(k=>k===name||k.startsWith(name+' ('));
+      key = dm ? `${name} (${dm[0]})` : `${name} (${existing.length+1})`;
+    }
+    return key;
+  }
+
+  function parseSheet(text) {
+    const rows = csvToRows(text);
+    sheetData = {}; orderedKeys = [];
+    tierData  = {};
+    const secs = [];
+    for (let i = 0; i < rows.length; i++) {
+      const c0 = (rows[i][0]||'').toString().trim();
+      if (c0 === '아이템 명(KR)' || c0 === '아이템명(KR)' || c0.includes('아이템 명(KR)')) {
+        const { name, nr } = sectionNameFromHeaderRow(rows, i);
+        if (name) secs.push({ name, hi: i, nr, type: 'items' });
+      } else if (c0 === '라운드') {
+        // 라운드/할인율/노출확률 다단 표 (예: Double Lucky Treasure 할인 확률표)
+        const { name, nr } = sectionNameFromHeaderRow(rows, i);
+        if (name) secs.push({ name, hi: i, nr, type: 'tiers' });
+      }
+    }
+    // hi 기준 정렬 후 섹션 경계 계산 (타입 혼재 시에도 안전하게)
+    secs.sort((a,b)=>a.hi-b.hi);
+
+    for (let s = 0; s < secs.length; s++) {
+      const { name, hi, nr, type } = secs[s];
+      const end = s+1 < secs.length ? secs[s+1].nr : rows.length;
+
+      if (type === 'tiers') {
+        const tiers = parseTierSection(rows, hi, end);
+        if (!tiers.length) continue;
+        const key = uniqueKey(name, nr, rows, tierData);
+        tierData[key] = tiers;
+        orderedKeys.push(key);
+        continue;
+      }
+
+      const hdr = rows[hi].map(c=>(c||'').toString().trim());
+      const gi  = hdr.findIndex(h=>h.includes('등급'));
+      const pi  = hdr.findIndex(h=>h==='확률'||h.startsWith('확률'));
+      const items = [];
+      for (let r = hi+1; r < end; r++) {
+        const row = rows[r];
+        const c0  = (row[0]||'').toString().trim();
+        if (!c0 || c0==='총합' || c0.startsWith('*') || /^\d+\./.test(c0)) continue;
+        const grade = gi !== -1 ? (row[gi]||'').toString().trim() : '';
+        let prob = pi !== -1 ? parseFloat((row[pi]||'').toString().replace('%','')) : NaN;
+        if (isNaN(prob)||prob<=0) {
+          for (let ci=2;ci<row.length;ci++) {
+            const n=parseFloat((row[ci]||'').toString().replace('%',''));
+            if(!isNaN(n)&&n>0&&n<100){prob=n;break;}
+          }
+        }
+        if (isNaN(prob)||prob<=0||prob>=100) continue;
+        items.push({ item: c0, grade, prob });
+      }
+      if (!items.length) continue;
+      const key = uniqueKey(name, nr, rows, sheetData);
+      sheetData[key]=items; orderedKeys.push(key);
+    }
+    orderedKeys.reverse();
+  }
+
+  /* ── 라운드/할인율 다단 표 파서 (Double Lucky Treasure 형태) ──
+     헤더 예: 라운드 | 적용 할인율 | 노출 확률 | 적용 할인율 | 노출 확률 | ... | 적용 할인율 | 노출 확률 | Total
+     마지막 "적용 할인율" 칼럼 앞에 라벨(예: Lucky)이 오는 변형도 지원 */
+  function parseTierSection(rows, hi, end) {
+    const hdr = rows[hi].map(c=>(c||'').toString().trim());
+    // "적용 할인율" 이 나타나는 각 칼럼 인덱스를 티어(단계)로 취급
+    const tierCols = [];
+    hdr.forEach((h, ci) => { if (h.includes('적용 할인율')) tierCols.push(ci); });
+    const totalCi = hdr.findIndex(h => h.toLowerCase().includes('total'));
+
+    const out = [];
+    for (let r = hi+1; r < end; r++) {
+      const row = rows[r];
+      const c0 = (row[0]||'').toString().trim();
+      if (!c0) continue;
+      const roundLabel = c0;
+      const tiers = tierCols.map(ci => {
+        const rateRaw = (row[ci]||'').toString().trim();
+        const labelOrExposure = (row[ci+1]||'').toString().trim();
+        // 다음 칼럼이 숫자/퍼센트면 노출확률, 아니면 라벨(예: "Lucky")+그 다음 칼럼이 노출확률
+        const asNum = parseFloat(labelOrExposure.replace('%',''));
+        if (!isNaN(asNum) && labelOrExposure.includes('%')) {
+          return { rate: rateRaw, label: '', exposure: labelOrExposure };
+        }
+        const exposureRaw = (row[ci+2]||'').toString().trim();
+        return { rate: rateRaw, label: labelOrExposure, exposure: exposureRaw };
+      });
+      const total = totalCi !== -1 ? (row[totalCi]||'').toString().trim() : '';
+      if (!tiers.some(t => t.rate || t.exposure)) continue;
+      out.push({ round: roundLabel, tiers, total });
+    }
+    return out;
+  }
+
+  // breadcrumb에는 날짜 등 괄호 접미사를 생략해 아래 제목과 중복되지 않게 표시
+  function stripDateSuffix(name) { return name.replace(/\s*\([^)]*\)\s*$/, '').trim() || name; }
+
+  function isTierKey(key) { return !!tierData[key]; }
+  function countFor(key) { return isTierKey(key) ? tierData[key].length : (sheetData[key]||[]).length; }
+
+  function onLoaded() {
+    document.getElementById('loading').classList.add('hide');
+    const totalItems = orderedKeys.reduce((s,k)=>s+countFor(k),0);
+    document.getElementById('stat-crates').textContent = orderedKeys.length;
+    document.getElementById('stat-items').textContent  = totalItems;
+    document.getElementById('live-count').textContent  = orderedKeys.length;
+    document.getElementById('live-badge').style.display = 'flex';
+    renderSidebar(orderedKeys);
+    renderAllView();
+  }
+
+  /* ── SIDEBAR ── */
+  function renderSidebar(keys) {
+    const list = document.getElementById('sb-list');
+    list.querySelectorAll('.crate-item').forEach(e=>e.remove());
+    document.getElementById('sb-lbl').textContent = `${keys.length}개 상자`;
+    for (const key of keys) {
+      const d = document.createElement('div');
+      d.className = 'crate-item';
+      d.dataset.key  = key;
+      d.dataset.name = key.toLowerCase();
+      d.innerHTML = `<div class="ci-name">${key}</div><div class="ci-count">${countFor(key)}</div>`;
+      d.onclick = () => { selectCrate(key); closeSB(); };
+      list.appendChild(d);
+    }
+  }
+
+  function filterSidebar() {
+    const q = document.getElementById('sb-search-input').value.toLowerCase();
+    let vis = 0;
+    document.querySelectorAll('.crate-item').forEach(el => {
+      const show = !q || el.dataset.name.includes(q);
+      el.style.display = show ? '' : 'none';
+      if (show) vis++;
+    });
+    document.getElementById('sb-lbl').textContent = `${vis}개 상자`;
+  }
+
+  /* ── ALL VIEW 아이템 검색 ── */
+  function filterAllView() {
+    const q = (document.getElementById('all-search-input')?.value || '').toLowerCase().trim();
+    const cards = document.querySelectorAll('#all-grid .crate-card');
+    let vis = 0;
+    cards.forEach(card => {
+      const key = card.dataset.key;
+      const nameMatch = key.toLowerCase().includes(q);
+      const matchedItems = q && !isTierKey(key) ? (sheetData[key] || []).filter(i => i.item.toLowerCase().includes(q)) : [];
+      const itemMatch = matchedItems.length > 0;
+      const show = !q || nameMatch || itemMatch;
+      card.style.display = show ? '' : 'none';
+      const prev = card.querySelector('.match-badge');
+      if (prev) prev.remove();
+      if (show && q && itemMatch && !nameMatch) {
+        const meta = card.querySelector('.cc-meta');
+        if (meta) {
+          const badge = document.createElement('span');
+          badge.className = 'match-badge';
+          badge.style.cssText = 'color:var(--accent-lt);font-weight:600';
+          badge.textContent = `"${q}" ${matchedItems.length}개 매칭`;
+          meta.appendChild(badge);
+        }
+      }
+      if (show) vis++;
+    });
+    const countEl = document.getElementById('all-search-count');
+    const emptyEl = document.getElementById('all-empty');
+    if (countEl) countEl.textContent = q ? `${vis}개 결과` : '';
+    if (emptyEl) emptyEl.style.display = vis === 0 ? 'block' : 'none';
+  }
+
+  /* ── VIEW SWITCH ── */
+  function switchView(v) {
+    currentView = v;
+    document.getElementById('svt-all').classList.toggle('active',    v==='all');
+    document.getElementById('svt-detail').classList.toggle('active', v==='detail');
+    if (v === 'all') {
+      renderAllView();
+    } else {
+      if (currentCrate) renderDetailView(currentCrate);
+      else showPickPrompt();
+    }
+  }
+
+  /* ── ALL VIEW ── */
+  let allViewCardsHTML = null; // 전체 목록 카드 HTML 캐시 (뒤로가기 시 재계산 방지)
+
+  function buildAllViewCards() {
+    return orderedKeys.map(key => {
+      if (isTierKey(key)) {
+        const tiers = tierData[key];
+        return `<div class="crate-card" data-key="${key.replace(/"/g,'&quot;')}" onclick="selectCrateByEl(this)">
+          <div class="cc-name">${key}</div>
+          <div class="cc-meta"><span>뽑기 <span class="hl">${tiers.length}회</span></span><span>유형 <span class="hl">할인 확률표</span></span></div>
+          <div class="cc-grades"><span class="cc-gtag" style="color:${GS['블루'].color};background:${GS['블루'].bg};border-color:${GS['블루'].bd}">TIER TABLE</span></div>
+        </div>`;
+      }
+      const items = sheetData[key]||[];
+      const gradeSum = {};
+      let total = 0;
+      for (const {grade,prob} of items) {
+        if (grade) gradeSum[grade]=(gradeSum[grade]||0)+prob;
+        total += prob;
+      }
+      const sortedG = Object.keys(gradeSum).sort((a,b)=>{
+        const ai=GO.indexOf(a),bi=GO.indexOf(b);
+        return (ai===-1?99:ai)-(bi===-1?99:bi);
+      });
+      const tags = sortedG.map(g=>{
+        const gs=GS[g]||{color:'#888',bg:'rgba(128,128,128,.12)',bd:'rgba(128,128,128,.3)'};
+        const pct=Math.round(gradeSum[g]*100)/100;
+        return `<span class="cc-gtag" style="color:${gs.color};background:${gs.bg};border-color:${gs.bd}">${g} ${pct}%</span>`;
+      }).join('');
+
+      return `<div class="crate-card" data-key="${key.replace(/"/g,'&quot;')}" onclick="selectCrateByEl(this)">
+        <div class="cc-name">${key}</div>
+        <div class="cc-meta"><span>아이템 <span class="hl">${items.length}종</span></span><span>합계 <span class="hl">${Math.round(total*100)/100}%</span></span></div>
+        <div class="cc-grades">${tags}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function renderAllView() {
+    currentView = 'all';
+    document.getElementById('svt-all').classList.add('active');
+    document.getElementById('svt-detail').classList.remove('active');
+    document.querySelectorAll('.crate-item').forEach(el=>el.classList.remove('active'));
+    document.getElementById('breadcrumb').innerHTML = `<span class="cur">전체 목록</span>`;
+    setMobBackPill(false);
+
+    if (allViewCardsHTML === null) allViewCardsHTML = buildAllViewCards();
+    const cards = allViewCardsHTML;
+
+    document.getElementById('content').innerHTML = `
+      <div class="all-view">
+        <div class="view-header">
+          <div class="view-title">전체 상자 목록</div>
+          <div class="view-sub">${orderedKeys.length}개 상자 · 시트 실시간 연동</div>
+        </div>
+        <div class="filter-row" style="margin-bottom:14px">
+          <div class="filter-search">
+            <svg viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+            </svg>
+            <input type="text" id="all-search-input" placeholder="상자 이름 또는 아이템 검색..." oninput="filterAllView()">
+          </div>
+          <div id="all-search-count" style="font-size:11px;font-family:var(--mono);color:var(--txt3);white-space:nowrap;padding:0 4px"></div>
+        </div>
+        <div class="crate-grid" id="all-grid">${cards}</div>
+        <div class="t-empty" id="all-empty" style="padding:36px;text-align:center;font-size:12px;color:var(--txt3);font-family:var(--mono);display:none">검색 결과 없음</div>
+      </div>`;
+  }
+
+  function selectCrateByEl(el) {
+    const key = el.dataset.key;
+    if (key) selectCrate(key);
+  }
+
+  function showPickPrompt() {
+    setMobBackPill(false);
+    document.getElementById('content').innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:center;min-height:50vh;flex-direction:column;gap:12px">
+        <div style="width:52px;height:52px;background:var(--accent-bg);border:1px solid var(--accent-bd);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.6">
+            <rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10h10M7 14h6"/>
+          </svg>
+        </div>
+        <div style="font-size:16px;font-weight:700;color:var(--txt)">상자를 선택하세요</div>
+        <div style="font-size:12px;color:var(--txt3);font-family:var(--mono)">좌측 목록에서 상자를 클릭하거나 전체 목록 탭을 이용하세요</div>
+      </div>`;
+  }
+
+  /* ── SELECT CRATE ── */
+  function selectCrate(key) {
+    currentCrate = key;
+    selectedGrades = new Set(); // 멀티셀렉트 초기화
+    sortMode = 'grade';
+    sortDir  = 1;
+    document.querySelectorAll('.crate-item').forEach(el=>el.classList.toggle('active', el.dataset.key===key));
+    currentView = 'detail';
+    document.getElementById('svt-all').classList.remove('active');
+    document.getElementById('svt-detail').classList.add('active');
+    renderDetailView(key);
+  }
+
+  /* ── DETAIL VIEW ── */
+  function renderDetailView(key) {
+    if (isTierKey(key)) { renderTierDetailView(key); return; }
+    const items = sheetData[key]||[];
+    const gradeSum = {}, gradeCnt = {};
+    let total = 0;
+    for (const {grade,prob} of items) {
+      if (grade) { gradeSum[grade]=(gradeSum[grade]||0)+prob; gradeCnt[grade]=(gradeCnt[grade]||0)+1; }
+      total += prob;
+    }
+    const sortedG = Object.keys(gradeSum).sort((a,b)=>{
+      const ai=GO.indexOf(a),bi=GO.indexOf(b);
+      return (ai===-1?99:ai)-(bi===-1?99:bi);
+    });
+
+    // ── ALL 칩: selectedGrades 비어있으면 선택 상태 ──
+    const allChipSelected = selectedGrades.size === 0;
+    const allChip = `<button class="gs-chip all ${allChipSelected?'selected':''}" id="gsc-ALL" onclick="setGrade('ALL')">
+      <span class="gs-dot" style="background:var(--txt3)"></span>
+      <span class="gs-name">ALL</span>
+    </button>`;
+
+    // ── 등급 칩: 멀티셀렉트 상태 반영 ──
+    const gradeChips = sortedG.map(g => {
+      const gs  = GS[g]||{color:'#888',bg:'rgba(128,128,128,.12)',bd:'rgba(128,128,128,.3)'};
+      const pct = Math.round(gradeSum[g]*1000)/1000;
+      const cnt = gradeCnt[g]||0;
+      const isSelected = selectedGrades.has(g);
+      return `<button class="gs-chip ${isSelected?'selected':''}" id="gsc-${g}"
+        style="color:${gs.color};background:${gs.bg};border-color:${gs.bd}"
+        onclick="setGrade('${g}')">
+        <span class="gs-dot" style="background:${gs.color}"></span>
+        <span class="gs-name">${g}</span>
+        <span class="gs-pct">${pct}%</span>
+        <span class="gs-cnt">${cnt}</span>
+      </button>`;
+    }).join('');
+
+    // ── 멀티셀렉트 힌트 배지 ──
+    const multiHint = `<span class="multi-hint ${selectedGrades.size>1?'show':''}" id="multi-hint">
+      ${selectedGrades.size}개 등급 선택됨
+    </span>`;
+
+    // ── 정렬 버튼 상태 ──
+    const isGradeActive = sortMode === 'grade';
+    const isProbActive  = sortMode === 'prob';
+    // 방향 레이블
+    const gradeDirLabel = (isGradeActive && sortDir === -1) ? '그린→골드 ↑' : '골드→그린 ↓';
+    const probDirLabel  = (isProbActive  && sortDir === -1) ? '낮은순 ↑'    : '높은순 ↓';
+
+    document.getElementById('breadcrumb').innerHTML =
+      `<span style="color:var(--txt3);cursor:pointer" onclick="renderAllView()">전체 목록</span>
+       <span class="sep">›</span>
+       <span class="cur">${stripDateSuffix(key)}</span>`;
+    setMobBackPill(true);
+    window.scrollTo(0,0);
+
+    document.getElementById('content').innerHTML = `
+      <div class="detail-view">
+        <div class="detail-head">
+          <div class="detail-eyebrow">CRATE DROP RATES</div>
+          <div class="detail-title">${key}</div>
+        </div>
+        <div class="stat-cards">
+          <div class="stat-card"><div class="sc-lbl">아이템</div><div class="sc-val">${items.length}<span>종</span></div></div>
+          <div class="stat-card"><div class="sc-lbl">등급</div><div class="sc-val">${sortedG.length}<span>종류</span></div></div>
+          <div class="stat-card"><div class="sc-lbl">확률 합계</div><div class="sc-val">${Math.round(total*100)/100}<span>%</span></div></div>
+          <div class="stat-card"><div class="sc-lbl">최저 확률</div><div class="sc-val">${Math.min(...items.map(i=>i.prob)).toFixed(2)}<span>%</span></div></div>
+        </div>
+        <div class="grade-sum-row">${allChip}${gradeChips}${multiHint}</div>
+        <div class="filter-row">
+          <div class="filter-search">
+            <svg viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+            </svg>
+            <input type="text" placeholder="아이템 이름 검색..." oninput="filterTable()">
+          </div>
+          <button class="sort-btn ${isGradeActive?'active':''}" id="sort-grade" onclick="setSort('grade')" title="같은 버튼을 다시 누르면 순서 반전">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m4 4l-4-4"/></svg>
+            <span id="sort-grade-lbl">등급순</span>
+            <span class="sort-dir-icon" id="sort-grade-dir">${isGradeActive ? (sortDir===1?'↓':'↑') : '↓'}</span>
+          </button>
+          <button class="sort-btn ${isProbActive?'active':''}" id="sort-prob" onclick="setSort('prob')" title="같은 버튼을 다시 누르면 순서 반전">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4h13M3 8h9m-9 4h9m5-4v12m0 0l-4-4m4 4l4-4"/></svg>
+            <span id="sort-prob-lbl">확률순</span>
+            <span class="sort-dir-icon" id="sort-prob-dir">${isProbActive ? (sortDir===1?'↓':'↑') : '↓'}</span>
+          </button>
+          <button class="capture-btn" onclick="openCaptureView('${key.replace(/'/g,"\\'")}')" title="한 화면에 표 전체를 보여줘서 캡쳐하기 좋게 만듭니다">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            캡쳐 보기
+          </button>
+        </div>
+        <div class="table-wrap">
+          <div class="t-head">
+            <div class="th">#</div>
+            <div class="th">아이템</div>
+            <div class="th">등급</div>
+            <div class="th r">확률</div>
+            <div class="th">비율</div>
+            <div class="th r">누적</div>
+          </div>
+          <div id="t-body"></div>
+          <div class="t-empty" id="t-empty">검색 결과 없음</div>
+        </div>
+      </div>`;
+
+    renderTable(items);
+  }
+
+  /* ── 확률 % 포맷: 불필요한 끝 0만 제거, 부동소수점 오차 보정 ── */
+  function fmtProb(n) {
+    // 부동소수점 누적 오차 보정을 위해 소수점 6자리에서 반올림
+    let s = (Math.round(n*1e6)/1e6).toString();
+    if (s.includes('.')) {
+      s = s.replace(/0+$/, '').replace(/\.$/, '');
+    }
+    return s;
+  }
+
+  /* ── 캡쳐 보기: 시트 캡쳐처럼 한 화면에 표 전체를 쫙 펼쳐서 보여줌 ── */
+  let captureRows = [], captureTitle = '', captureTotal = 0;
+
+  function openCaptureView(key) {
+    const items = sheetData[key] || [];
+    const sorted = getSorted(items);
+    let total = 0;
+    const rowsHtml = sorted.map(item => {
+      total += item.prob;
+      const gs = GS[item.grade];
+      const color = gs ? gs.color : '#333';
+      return `<tr>
+        <td class="cap-name">${item.item}</td>
+        <td class="cap-grade" style="color:${color}">${item.grade||''}</td>
+        <td class="cap-prob">${fmtProb(item.prob)}%</td>
+      </tr>`;
+    }).join('');
+
+    const now = new Date();
+    const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+
+    captureRows = sorted.map(item => ({
+      name: item.item, grade: item.grade || '',
+      color: (GS[item.grade] && GS[item.grade].color) || '#333',
+      prob: item.prob
+    }));
+    captureTitle = stripDateSuffix(key);
+    captureTotal = total;
+
+    document.getElementById('capture-sheet').innerHTML = `
+      <div class="cap-title-bar">
+        <h2>${stripDateSuffix(key)}</h2>
+        <div class="cap-meta">캡쳐 생성일 ${dateStr}</div>
+      </div>
+      <table class="cap-table">
+        <thead>
+          <tr>
+            <th style="width:52%">아이템 명(KR)</th>
+            <th style="width:18%">등급</th>
+            <th style="width:30%">확률</th>
+          </tr>
+        </thead>
+        <tbody>${rowsHtml}</tbody>
+        <tfoot>
+          <tr>
+            <td class="cap-total-label" colspan="2">총합</td>
+            <td class="cap-total-val">${fmtProb(total)}%</td>
+          </tr>
+        </tfoot>
+      </table>`;
+
+    document.getElementById('capture-modal-overlay').classList.add('show');
+  }
+  function closeCaptureView() {
+    document.getElementById('capture-modal-overlay').classList.remove('show');
+  }
+
+  /* ── 캔버스로 표 전체를 하나의 PNG 이미지로 그려서 다운로드 ── */
+  function saveCaptureAsImage() {
+    const btn = document.getElementById('save-img-btn');
+    const btnOrigHtml = btn.innerHTML;
+    btn.innerHTML = '저장 중...';
+    btn.disabled = true;
+
+    // 레이아웃 상수 (원본 엑셀 캡처처럼 촘촘하게)
+    const W = 1020;
+    const padX = 20;
+    const rowH = 24;
+    const headH = 30;
+    const titleH = 42;
+    const footH = 26;
+    const colName = W - padX*2 - 150 - 200; // 이름 컬럼 너비
+    const colGradeW = 150;
+    const colProbW = 200;
+
+    const rows = captureRows;
+    const H = titleH + headH + rows.length*rowH + footH + 24;
+
+    const canvas = document.createElement('canvas');
+    const scale = 2; // 레티나 화질
+    canvas.width = W*scale;
+    canvas.height = H*scale;
+    canvas.style.width = W+'px';
+    canvas.style.height = H+'px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(scale, scale);
+
+    // 배경
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0,0,W,H);
+
+    let y = 14;
+    // 타이틀
+    ctx.fillStyle = '#111827';
+    ctx.font = '700 16px "Malgun Gothic","Apple SD Gothic Neo",sans-serif';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillText(captureTitle, padX, y+16);
+
+    const now = new Date();
+    const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+    ctx.font = '400 11px "DM Mono",monospace';
+    ctx.fillStyle = '#333333';
+    ctx.textAlign = 'right';
+    ctx.fillText('캡쳐 생성일 ' + dateStr, W-padX, y+15);
+    ctx.textAlign = 'left';
+
+    y = titleH;
+    // 제목 아래 굵은 선
+    ctx.strokeStyle = '#1a1a1a';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(padX, y); ctx.lineTo(W-padX, y); ctx.stroke();
+
+    // 헤더
+    const tableX = padX, tableW = W - padX*2;
+    ctx.fillStyle = '#dbe7f5';
+    ctx.fillRect(tableX, y, tableW, headH);
+    ctx.strokeStyle = '#999999';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(tableX, y, tableW, headH);
+
+    const xName = tableX;
+    const xGrade = tableX + colName;
+    const xProb  = tableX + colName + colGradeW;
+
+    ctx.strokeStyle = '#999999';
+    ctx.beginPath(); ctx.moveTo(xGrade,y); ctx.lineTo(xGrade,y+headH); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(xProb,y); ctx.lineTo(xProb,y+headH); ctx.stroke();
+
+    ctx.fillStyle = '#111827';
+    ctx.font = '700 12px "Malgun Gothic","Apple SD Gothic Neo",sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('아이템 명(KR)', xName+colName/2, y+headH/2+4);
+    ctx.fillText('등급', xGrade+colGradeW/2, y+headH/2+4);
+    ctx.fillText('확률', xProb+colProbW/2, y+headH/2+4);
+
+    y += headH;
+
+    // 바디 행
+    rows.forEach((r, i) => {
+      const rowY = y + i*rowH;
+      if (i%2===1) { ctx.fillStyle = '#f7f9fc'; ctx.fillRect(tableX, rowY, tableW, rowH); }
+      ctx.strokeStyle = '#cccccc';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(tableX, rowY, tableW, rowH);
+      ctx.beginPath(); ctx.moveTo(xGrade,rowY); ctx.lineTo(xGrade,rowY+rowH); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(xProb,rowY); ctx.lineTo(xProb,rowY+rowH); ctx.stroke();
+
+      // 이름 (좌측 정렬, 길면 줄임)
+      ctx.fillStyle = '#111827';
+      ctx.font = '400 11.5px "Malgun Gothic","Apple SD Gothic Neo",sans-serif';
+      ctx.textAlign = 'left';
+      let name = r.name;
+      const maxW = colName - 14;
+      while (ctx.measureText(name).width > maxW && name.length > 1) {
+        name = name.slice(0, -1);
+      }
+      if (name !== r.name) name = name.slice(0, -1) + '…';
+      ctx.fillText(name, xName+7, rowY+rowH/2+4);
+
+      // 등급 (중앙, 색상)
+      ctx.fillStyle = r.color;
+      ctx.font = '700 11.5px "Malgun Gothic","Apple SD Gothic Neo",sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(r.grade, xGrade+colGradeW/2, rowY+rowH/2+4);
+
+      // 확률 (우측 정렬)
+      ctx.fillStyle = '#111827';
+      ctx.font = '400 11.5px "DM Mono",monospace';
+      ctx.textAlign = 'right';
+      ctx.fillText(fmtProb(r.prob)+'%', xProb+colProbW-8, rowY+rowH/2+4);
+    });
+
+    y += rows.length*rowH;
+
+    // 총합 행
+    ctx.fillStyle = '#eef2f7';
+    ctx.fillRect(tableX, y, tableW, footH);
+    ctx.strokeStyle = '#1a1a1a';
+    ctx.lineWidth = 1.4;
+    ctx.strokeRect(tableX, y, tableW, footH);
+    ctx.beginPath(); ctx.moveTo(xProb,y); ctx.lineTo(xProb,y+footH); ctx.stroke();
+
+    ctx.fillStyle = '#111827';
+    ctx.font = '700 12px "Malgun Gothic","Apple SD Gothic Neo",sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('총합', tableX + (colName+colGradeW)/2, y+footH/2+4);
+
+    ctx.fillStyle = '#0a7a3d';
+    ctx.font = '700 12px "DM Mono",monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText(fmtProb(captureTotal)+'%', xProb+colProbW-8, y+footH/2+4);
+
+    // 폰트 로딩 뒤 재렌더 필요할 수 있어 약간 지연 후 다운로드
+    setTimeout(() => {
+      canvas.toBlob(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${captureTitle.replace(/[\\/:*?"<>|]/g,'_')}_확률표.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        btn.innerHTML = btnOrigHtml;
+        btn.disabled = false;
+      }, 'image/png');
+    }, 80);
+  }
+
+  /* ── TIER TABLE DETAIL VIEW (Double Lucky Treasure 형태) ── */
+  function renderTierDetailView(key) {
+    const tiers = tierData[key]||[];
+    const tierStepCount = tiers.length ? tiers[0].tiers.length : 0;
+
+    document.getElementById('breadcrumb').innerHTML =
+      `<span style="color:var(--txt3);cursor:pointer" onclick="renderAllView()">전체 목록</span>
+       <span class="sep">›</span>
+       <span class="cur">${stripDateSuffix(key)}</span>`;
+    setMobBackPill(true);
+    window.scrollTo(0,0);
+
+    let theadCols = `<th>라운드</th>`;
+    for (let i=0;i<tierStepCount;i++) theadCols += `<th>적용 할인율</th><th>노출 확률</th>`;
+    theadCols += `<th>Total</th>`;
+
+    const bodyRows = tiers.map(t => {
+      let cols = `<td class="tier-round">${t.round}</td>`;
+      for (const step of t.tiers) {
+        const rateIsLabel = step.rate && !/%$/.test(step.rate); // 예: "Lucky" 처럼 %가 아닌 라벨
+        cols += `<td class="${rateIsLabel?'tier-exp':''}">${step.rate||'—'}</td>`;
+        cols += `<td>${step.exposure||'—'}</td>`;
+      }
+      cols += `<td class="tier-total">${t.total||'—'}</td>`;
+      return `<tr>${cols}</tr>`;
+    }).join('');
+
+    document.getElementById('content').innerHTML = `
+      <div class="detail-view">
+        <div class="detail-head">
+          <div class="detail-eyebrow">DISCOUNT / EXPOSURE TABLE</div>
+          <div class="detail-title">${key}</div>
+        </div>
+        <div class="stat-cards">
+          <div class="stat-card"><div class="sc-lbl">라운드</div><div class="sc-val">${tiers.length}<span>개</span></div></div>
+          <div class="stat-card"><div class="sc-lbl">할인 단계</div><div class="sc-val">${tierStepCount}<span>단계</span></div></div>
+        </div>
+        <div class="tier-table-wrap">
+          <table class="tier-table">
+            <thead><tr>${theadCols}</tr></thead>
+            <tbody>${bodyRows}</tbody>
+          </table>
+          <div class="tier-note">라운드별로 순차 적용되는 할인율과 각 단계의 노출 확률을 나타낸 표입니다. 시트 원본 값을 그대로 표시합니다.</div>
+        </div>
+      </div>`;
+  }
+
+  /* ── 정렬 핵심: sortDir 방향 반영 ── */
+  function getSorted(items) {
+    return [...items].sort((a, b) => {
+      if (sortMode === 'prob') {
+        // sortDir 1 = 높은 확률 먼저, -1 = 낮은 확률 먼저
+        return sortDir === 1 ? b.prob - a.prob : a.prob - b.prob;
+      }
+      // 등급순
+      const ai = GO.indexOf(a.grade), bi = GO.indexOf(b.grade);
+      const diff = (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+      if (diff !== 0) {
+        // sortDir 1 = 골드(인덱스0)→그린(인덱스5) 순, -1 = 반전
+        return sortDir === 1 ? diff : -diff;
+      }
+      // 같은 등급 내에서는 확률 오름차순 (방향 무관)
+      return a.prob - b.prob;
+    });
+  }
+
+  function renderTable(items) {
+    const sorted  = getSorted(items);
+    const maxProb = Math.max(...items.map(i=>i.prob));
+    const tbody   = document.getElementById('t-body');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    let cumul = 0;
+    sorted.forEach((item, idx) => {
+      cumul += item.prob;
+      const gs  = GS[item.grade];
+      const pct = maxProb > 0 ? (item.prob/maxProb*100).toFixed(1) : 0;
+      const barColor = gs ? gs.color : '#5a6a7a';
+      const pill = item.grade
+        ? `<span class="grade-pill" style="color:${gs?.color||'#888'};background:${gs?.bg||'rgba(128,128,128,.12)'};border-color:${gs?.bd||'rgba(128,128,128,.3)'}">
+             <span class="grade-pill-dot" style="background:${gs?.color||'#888'}"></span>${item.grade}
+           </span>` : '';
+      const tr = document.createElement('div');
+      tr.className = 't-row';
+      tr.dataset.grade = item.grade;
+      tr.dataset.item  = item.item.toLowerCase();
+      tr.innerHTML = `
+        <div class="td td-rank">${idx+1}</div>
+        <div class="td td-name">${item.item}</div>
+        <div class="td">${pill}</div>
+        <div class="td td-prob"><span class="prob-num">${item.prob}</span><span class="prob-unit">%</span></div>
+        <div class="td"><div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${barColor}"></div></div></div>
+        <div class="td td-cumul">${Math.round(cumul*1000)/1000}%</div>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  /* ── 등급 멀티셀렉트 ── */
+  function setGrade(g) {
+    if (g === 'ALL') {
+      // ALL 클릭 시 모든 선택 해제 → 전체 표시
+      selectedGrades.clear();
+    } else {
+      // 토글: 있으면 제거, 없으면 추가
+      if (selectedGrades.has(g)) {
+        selectedGrades.delete(g);
+      } else {
+        selectedGrades.add(g);
+      }
+    }
+
+    // ALL 칩: selectedGrades가 비어있을 때만 selected
+    const allChipEl = document.getElementById('gsc-ALL');
+    if (allChipEl) allChipEl.classList.toggle('selected', selectedGrades.size === 0);
+
+    // 각 등급 칩 업데이트
+    document.querySelectorAll('.gs-chip:not(.all)').forEach(el => {
+      const chipGrade = el.id.replace('gsc-', '');
+      el.classList.toggle('selected', selectedGrades.has(chipGrade));
+    });
+
+    // 멀티셀렉트 힌트 배지 업데이트
+    const hintEl = document.getElementById('multi-hint');
+    if (hintEl) {
+      hintEl.textContent = selectedGrades.size > 1 ? `${selectedGrades.size}개 등급 선택됨` : '';
+      hintEl.classList.toggle('show', selectedGrades.size > 1);
+    }
+
+    filterTable();
+  }
+
+  /* ── 정렬 모드 및 방향 토글 ── */
+  function setSort(mode) {
+    if (sortMode === mode) {
+      // 같은 버튼 다시 누르면 방향 반전
+      sortDir = sortDir === 1 ? -1 : 1;
+    } else {
+      // 다른 버튼 누르면 해당 모드로 전환, 방향 초기화
+      sortMode = mode;
+      sortDir  = 1;
+    }
+
+    // 버튼 active 상태 업데이트
+    const gradeBtn = document.getElementById('sort-grade');
+    const probBtn  = document.getElementById('sort-prob');
+    if (gradeBtn) gradeBtn.classList.toggle('active', sortMode === 'grade');
+    if (probBtn)  probBtn.classList.toggle('active',  sortMode === 'prob');
+
+    // 방향 아이콘 업데이트
+    const gradeDirEl = document.getElementById('sort-grade-dir');
+    const probDirEl  = document.getElementById('sort-prob-dir');
+    if (gradeDirEl) gradeDirEl.textContent = (sortMode === 'grade' && sortDir === -1) ? '↑' : '↓';
+    if (probDirEl)  probDirEl.textContent  = (sortMode === 'prob'  && sortDir === -1) ? '↑' : '↓';
+
+    if (currentCrate) renderTable(sheetData[currentCrate]||[]);
+    filterTable();
+  }
+
+  /* ── 테이블 필터 (멀티셀렉트 + 이름 검색) ── */
+  function filterTable() {
+    const q = (document.querySelector('.filter-search input')?.value||'').toLowerCase();
+    let vis = 0;
+    document.querySelectorAll('#t-body .t-row').forEach(tr => {
+      // 멀티셀렉트: 선택 Set이 비어있으면 전체, 아니면 포함 여부 확인
+      const gradeOk = selectedGrades.size === 0 || selectedGrades.has(tr.dataset.grade);
+      const ok = gradeOk && (!q || tr.dataset.item.includes(q));
+      tr.classList.toggle('hidden', !ok);
+      if (ok) vis++;
+    });
+    const empty = document.getElementById('t-empty');
+    if (empty) empty.classList.toggle('show', vis===0);
+  }
+
+  /* ── THEME (기본: 라이트 모드) ── */
+  let dark = false;
+  function toggleTheme() {
+    dark = !dark;
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    // dark=true: 달 아이콘 표시 / dark=false: 해 아이콘 표시
+    document.getElementById('ico-dark').style.display  = dark ? 'none' : '';
+    document.getElementById('ico-light').style.display = dark ? '' : 'none';
+  }
+
+  /* ── MOBILE ── */
+  function openSB()  { document.getElementById('sidebar').classList.add('open'); document.getElementById('sb-overlay').classList.add('show'); }
+  function closeSB() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sb-overlay').classList.remove('show'); }
+
+  /* ── 모바일 상단 "목록" 백 필: 상세뷰에선 표시하고 햄버거는 숨김 ── */
+  function setMobBackPill(show) {
+    document.getElementById('mob-back-pill').classList.toggle('show', show);
+    document.getElementById('mob-menu-btn').classList.toggle('hide-mob', show);
+  }
+  function goBackToList() { renderAllView(); }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeCaptureView();
+  });
+
+  loadSheet();
+</script>
+</body>
+</html>
