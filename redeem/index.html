@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" data-theme="dark">
+<html lang="ko" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,28 +23,10 @@
 
       --sans: 'DM Sans', 'Noto Sans KR', sans-serif;
       --mono: 'DM Mono', monospace;
-
       --ease: cubic-bezier(.4,0,.2,1);
     }
 
-    /* DARK */
-
-    [data-theme="dark"] {
-      --bg: #0e1117;
-      --surface: #161b24;
-      --surface2: #1c2333;
-
-      --bd: rgba(255,255,255,.07);
-      --bd2: rgba(255,255,255,.13);
-
-      --txt: #e8edf5;
-      --txt2: #8892a4;
-      --txt3: #4e5a6e;
-
-      --sh-sm: 0 2px 8px rgba(0,0,0,.3);
-    }
-
-    /* LIGHT */
+    /* ───────── LIGHT ───────── */
 
     [data-theme="light"] {
       --bg: #f5f4ef;
@@ -61,6 +43,23 @@
       --sh-sm: 0 2px 8px rgba(0,0,0,.05);
     }
 
+    /* ───────── DARK ───────── */
+
+    [data-theme="dark"] {
+      --bg: #0e1117;
+      --surface: #161b24;
+      --surface2: #1c2333;
+
+      --bd: rgba(255,255,255,.07);
+      --bd2: rgba(255,255,255,.13);
+
+      --txt: #e8edf5;
+      --txt2: #8892a4;
+      --txt3: #4e5a6e;
+
+      --sh-sm: 0 2px 8px rgba(0,0,0,.3);
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -70,9 +69,7 @@
     body {
       background: var(--bg);
       color: var(--txt);
-
       font-family: var(--sans);
-
       min-height: 100vh;
 
       transition:
@@ -80,14 +77,13 @@
         color .3s;
     }
 
-    /* ───────────────── TOPBAR ───────────────── */
+    /* ───────── TOPBAR ───────── */
 
     .topbar {
       background: var(--surface);
       border-bottom: 1px solid var(--bd);
 
       padding: 0 clamp(16px,4vw,36px);
-
       height: 54px;
 
       display: flex;
@@ -96,7 +92,6 @@
 
       position: sticky;
       top: 0;
-
       z-index: 50;
     }
 
@@ -123,32 +118,25 @@
     .logo-icon svg {
       width: 16px;
       height: 16px;
-
       color: var(--accent);
     }
 
     .logo-name {
       font-size: 14px;
       font-weight: 700;
-
       color: var(--txt);
-
       letter-spacing: -.02em;
     }
 
     .logo-sub {
       font-size: 9px;
-
       color: var(--txt3);
-
       font-family: var(--mono);
-
       letter-spacing: .1em;
-
       margin-top: 2px;
     }
 
-    /* THEME BUTTON */
+    /* ───────── THEME BUTTON ───────── */
 
     .icon-btn {
       width: 34px;
@@ -181,11 +169,10 @@
       height: 14px;
     }
 
-    /* ───────────────── PAGE ───────────────── */
+    /* ───────── PAGE ───────── */
 
     .page {
       max-width: 860px;
-
       margin: 0 auto;
 
       padding:
@@ -194,29 +181,24 @@
         clamp(32px,6vw,64px);
     }
 
-    /* ───────────────── HERO ───────────────── */
+    /* ───────── HERO ───────── */
 
     .hero {
       margin-bottom: 28px;
-
-      animation:
-        fadeUp .35s var(--ease) both;
+      animation: fadeUp .35s var(--ease) both;
     }
 
     .hero-eyebrow {
       display: flex;
       align-items: center;
-
       gap: 6px;
 
       font-size: 10px;
-
       font-family: var(--mono);
 
       color: var(--accent);
 
       letter-spacing: .18em;
-
       text-transform: uppercase;
 
       margin-bottom: 10px;
@@ -227,7 +209,6 @@
       height: 1px;
 
       background: var(--accent);
-
       flex-shrink: 0;
     }
 
@@ -235,11 +216,9 @@
       font-size: clamp(20px,4vw,28px);
 
       font-weight: 700;
-
       color: var(--txt);
 
       letter-spacing: -.03em;
-
       line-height: 1.2;
 
       margin-bottom: 12px;
@@ -247,11 +226,9 @@
 
     .hero-desc {
       font-size: 13px;
-
       color: var(--txt2);
 
       line-height: 1.8;
-
       max-width: 600px;
 
       font-weight: 300;
@@ -259,19 +236,16 @@
       margin-bottom: 16px;
     }
 
-    /* ───────────────── NOTICE ───────────────── */
+    /* ───────── NOTICE ───────── */
 
     .notice {
       display: flex;
-
       gap: 9px;
-
       align-items: flex-start;
 
       background: var(--surface2);
 
       border: 1px solid var(--bd);
-
       border-left: 2px solid var(--accent-bd);
 
       border-radius: var(--radius-sm);
@@ -283,25 +257,21 @@
 
     .notice-txt {
       font-size: 12px;
-
       color: var(--txt2);
 
       line-height: 1.9;
-
       font-weight: 400;
     }
 
     .notice-txt b {
       color: var(--txt);
-
       font-weight: 600;
     }
 
-    /* ───────────────── DIVIDER ───────────────── */
+    /* ───────── DIVIDER ───────── */
 
     .divider {
       height: 1px;
-
       background: var(--bd);
 
       margin-bottom: 24px;
@@ -310,13 +280,12 @@
         fadeUp .35s .1s var(--ease) both;
     }
 
-    /* ───────────────── FORM CARD ───────────────── */
+    /* ───────── FORM CARD ───────── */
 
     .form-card {
       background: var(--surface);
 
       border: 1px solid var(--bd);
-
       border-radius: var(--radius-lg);
 
       overflow: hidden;
@@ -329,9 +298,7 @@
 
     .form-card-head {
       display: flex;
-
       align-items: center;
-
       justify-content: space-between;
 
       padding: 13px 18px;
@@ -341,15 +308,12 @@
       background: var(--surface2);
 
       flex-wrap: wrap;
-
       gap: 8px;
     }
 
     .form-title-row {
       display: flex;
-
       align-items: center;
-
       gap: 8px;
     }
 
@@ -360,7 +324,6 @@
       border-radius: 50%;
 
       background: var(--green);
-
       box-shadow: 0 0 6px var(--green);
 
       animation:
@@ -381,34 +344,27 @@
 
     .form-title {
       font-size: 13px;
-
       font-weight: 600;
-
       color: var(--txt);
-
       letter-spacing: -.01em;
     }
 
-    /* GOOGLE FORM HEADER */
+    /* ───────── FORM HEADER ───────── */
 
     .chrome-bar {
       display: flex;
-
       align-items: center;
-
       gap: 6px;
     }
 
     .chrome-dots {
       display: flex;
-
       gap: 4px;
     }
 
     .chrome-dot {
       width: 7px;
       height: 7px;
-
       border-radius: 50%;
     }
 
@@ -426,15 +382,12 @@
 
     .chrome-url {
       font-family: var(--mono);
-
       font-size: 10px;
-
       color: var(--txt3);
-
       margin-left: 2px;
     }
 
-    /* GOOGLE FORM */
+    /* ───────── GOOGLE FORM ───────── */
 
     .form-card-body {
       width: 100%;
@@ -445,19 +398,13 @@
       display: block;
 
       width: 100%;
+      height: 962px;
 
       border: none;
-
       background: #fff;
-
-      /*
-       * Google Forms 원본 높이 962px 기준.
-       * 모바일에서는 화면 높이에 맞춰 조금 줄임.
-       */
-      height: 962px;
     }
 
-    /* ───────────────── FOOTER ───────────────── */
+    /* ───────── FOOTER ───────── */
 
     .footer {
       margin-top: 24px;
@@ -468,13 +415,11 @@
 
     .footer-copy {
       font-size: 11px;
-
       font-family: var(--mono);
-
       color: var(--txt3);
     }
 
-    /* ───────────────── ANIMATION ───────────────── */
+    /* ───────── ANIMATION ───────── */
 
     @keyframes fadeUp {
       from {
@@ -488,7 +433,7 @@
       }
     }
 
-    /* ───────────────── MOBILE ───────────────── */
+    /* ───────── MOBILE ───────── */
 
     @media (max-width: 560px) {
 
@@ -522,7 +467,7 @@
 
       <div class="logo-icon">
 
-        <!-- Email Icon -->
+        <!-- EMAIL ICON -->
 
         <svg
           viewBox="0 0 24 24"
@@ -568,10 +513,11 @@
       title="테마 전환"
     >
 
-      <!-- Dark -->
+      <!-- MOON -->
 
       <svg
         id="ico-dark"
+        style="display:none"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -583,11 +529,10 @@
       </svg>
 
 
-      <!-- Light -->
+      <!-- SUN -->
 
       <svg
         id="ico-light"
-        style="display:none"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -654,7 +599,7 @@
 
   <!-- PAGE -->
 
-  <div class="page">
+  <main class="page">
 
 
     <!-- HERO -->
@@ -708,14 +653,12 @@
     </section>
 
 
-    <!-- DIVIDER -->
-
     <div class="divider"></div>
 
 
-    <!-- FORM -->
+    <!-- FORM CARD -->
 
-    <div class="form-card">
+    <section class="form-card">
 
 
       <div class="form-card-head">
@@ -734,7 +677,6 @@
 
         <div class="chrome-bar">
 
-
           <div class="chrome-dots">
 
             <div class="chrome-dot"></div>
@@ -743,11 +685,9 @@
 
           </div>
 
-
           <span class="chrome-url">
             docs.google.com/forms
           </span>
-
 
         </div>
 
@@ -768,29 +708,27 @@
 
       </div>
 
-
-    </div>
+    </section>
 
 
     <!-- FOOTER -->
 
-    <div class="footer">
+    <footer class="footer">
 
       <span class="footer-copy">
         © 2026 PUBGINFO Community
       </span>
 
-    </div>
+    </footer>
 
+  </main>
 
-  </div>
-
-
-  <!-- SCRIPT -->
 
   <script>
 
-    let dark = true;
+    /* 처음에는 화이트 모드 */
+
+    let dark = false;
 
 
     function toggleTheme() {
@@ -814,7 +752,6 @@
     }
 
   </script>
-
 
 </body>
 </html>
