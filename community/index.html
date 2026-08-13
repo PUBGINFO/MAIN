@@ -1,537 +1,491 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PUBG INFO - 커뮤니티</title>
+<meta name="description" content="PUBG INFO 커뮤니티 - Discord에서 등록된 최신 게시물" />
 
-  <title>PUBG INFO - 커뮤니티</title>
+<meta property="og:title" content="PUBG INFO - 커뮤니티">
+<meta property="og:description" content="Discord에서 등록된 PUBG INFO 커뮤니티 게시물">
+<meta property="og:url" content="https://pubginfo.site/community/">
+<meta property="og:type" content="website">
 
-  <meta
-    name="description"
-    content="PUBG INFO 커뮤니티 - Discord에서 등록된 최신 게시물"
-  >
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" as="style" crossorigin
+  href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 
-  <link rel="preconnect" href="https://cdn.jsdelivr.net">
-  <link
-    rel="stylesheet"
-    as="style"
-    crossorigin
-    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
-  >
+<style>
+:root {
+  --bg: #ffffff;
+  --bg-item: #ffffff;
+  --bg-item-hover: #f7f7f7;
+  --line: #cccccc;
+  --text: #111111;
+  --text-sub: #888888;
+  --text-muted: #bbbbbb;
+  --tag-update-bg: #e8f1ff;
+  --tag-update-text: #1a5abf;
+  --tag-notice-bg: #ffeaea;
+  --tag-notice-text: #c02020;
+}
 
-  <!-- 메인 사이트 CSS 재사용 -->
-  <link rel="stylesheet" href="../style.css">
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111111;
+    --bg-item: #111111;
+    --bg-item-hover: #1c1c1c;
+    --line: #3d3d3d;
+    --text: #f0f0f0;
+    --text-sub: #777777;
+    --text-muted: #444444;
+    --tag-update-bg: #001228;
+    --tag-update-text: #5090e0;
+    --tag-notice-bg: #2a0a0a;
+    --tag-notice-text: #e05050;
+  }
+}
 
-  <style>
-    .community-meta {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 5px;
-      font-size: 12px;
-      color: var(--text-muted, #888);
-    }
+[data-theme="dark"] {
+  --bg: #111111;
+  --bg-item: #111111;
+  --bg-item-hover: #1c1c1c;
+  --line: #3d3d3d;
+  --text: #f0f0f0;
+  --text-sub: #777777;
+  --text-muted: #444444;
+  --tag-update-bg: #001228;
+  --tag-update-text: #5090e0;
+  --tag-notice-bg: #2a0a0a;
+  --tag-notice-text: #e05050;
+}
 
-    .community-source {
-      padding: 3px 7px;
-      border-radius: 6px;
-      background: rgba(88, 101, 242, 0.12);
-      color: #5865f2;
-      font-weight: 600;
-    }
+[data-theme="light"] {
+  --bg: #ffffff;
+  --bg-item: #ffffff;
+  --bg-item-hover: #f7f7f7;
+  --line: #222222;
+  --text: #111111;
+  --text-sub: #888888;
+  --text-muted: #bbbbbb;
+  --tag-update-bg: #e8f1ff;
+  --tag-update-text: #1a5abf;
+  --tag-notice-bg: #ffeaea;
+  --tag-notice-text: #c02020;
+}
 
-    .community-content {
-      white-space: pre-wrap;
-      word-break: break-word;
-      line-height: 1.6;
-    }
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-    .community-empty {
-      text-align: center;
-      padding: 40px 20px;
-      color: var(--text-muted, #888);
-    }
+html {
+  font-family: 'Pretendard Variable', Pretendard, -apple-system,
+    BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
-    .community-status {
-      font-size: 12px;
-      color: var(--text-muted, #888);
-      margin-left: 8px;
-    }
+body {
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  transition: background 0.2s, color 0.2s;
+}
 
-    .community-loading {
-      text-align: center;
-      padding: 40px 20px;
-      color: var(--text-muted, #888);
-    }
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
 
-    .community-error {
-      text-align: center;
-      padding: 40px 20px;
-      color: #e5484d;
-    }
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
 
-    .community-refresh {
-      border: 0;
-      background: transparent;
-      cursor: pointer;
-      font-family: inherit;
-      font-size: 13px;
-      color: var(--text-muted, #888);
-      padding: 4px 0;
-    }
+.header-wrap {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 20px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
-    .community-refresh:hover {
-      color: inherit;
-    }
-  </style>
+.logo {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: var(--text);
+}
+
+.toggle {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-sub);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.toggle:hover {
+  background: var(--bg-item-hover);
+  color: var(--text);
+}
+
+.main {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 0 60px;
+}
+
+.section { padding: 32px 0 0; }
+
+.section-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-sub);
+  letter-spacing: 0.5px;
+  padding: 0 20px;
+  margin-bottom: 8px;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  margin-bottom: 10px;
+}
+
+.toolbar-status {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.toolbar-refresh {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-sub);
+  padding: 4px 0;
+}
+
+.toolbar-refresh:hover { color: var(--text); }
+
+.list {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.list li + li { border-top: 1px solid var(--line); }
+
+.list-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 15px 20px;
+  background: var(--bg-item);
+}
+
+.list-icon {
+  font-size: 20px;
+  width: 28px;
+  text-align: center;
+  flex-shrink: 0;
+  line-height: 1.3;
+}
+
+.list-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.list-name {
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.list-desc {
+  font-size: 12px;
+  color: var(--text-sub);
+  line-height: 1.3;
+}
+
+.list-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--text-sub);
+}
+
+.list-tag {
+  padding: 3px 7px;
+  border-radius: 4px;
+  background: var(--tag-update-bg);
+  color: var(--tag-update-text);
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.2px;
+  flex-shrink: 0;
+}
+
+.state-msg {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-sub);
+  font-size: 13px;
+}
+
+.state-msg.error { color: var(--tag-notice-text); }
+
+.footer {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 32px 20px 48px;
+  border-top: 1px solid var(--line);
+}
+
+.clock {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 20px;
+}
+
+.clock-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.clock-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  width: 28px;
+}
+
+.clock-val {
+  font-size: 13px;
+  color: var(--text-sub);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.3px;
+}
+
+.clock-kst .clock-val {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.footer-copy { font-size: 11px; color: var(--text-muted); }
+
+.fade-up {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: fadeUp 0.4s ease forwards;
+  animation-delay: calc(var(--d) * 0.07s + 0.05s);
+}
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (min-width: 641px) {
+  .header-wrap, .main, .footer { max-width: 720px; }
+  .section-title, .toolbar { padding-left: 24px; padding-right: 24px; }
+  .list-item { padding: 16px 24px; }
+  .list {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 0 24px;
+  }
+}
+</style>
 </head>
-
 <body>
 
-  <!-- 헤더 -->
-  <header class="header">
-    <div class="header-wrap">
+<header class="header">
+  <div class="header-wrap">
+    <a class="logo" href="/">PUBG INFO</a>
+    <button class="toggle" id="theme-toggle" aria-label="테마 전환">
+      <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+</header>
 
-      <a class="logo" href="/">
-        PUBG INFO
-      </a>
+<main class="main">
 
-      <button
-        class="toggle"
-        id="theme-toggle"
-        aria-label="테마 전환"
-      >
-        <svg
-          id="icon-sun"
-          xmlns="http://www.w3.org/2000/svg"
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <circle cx="12" cy="12" r="5"/>
-          <line x1="12" y1="1" x2="12" y2="3"/>
-          <line x1="12" y1="21" x2="12" y2="23"/>
-          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-          <line x1="1" y1="12" x2="3" y2="12"/>
-          <line x1="21" y1="12" x2="23" y2="12"/>
-          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-        </svg>
-
-        <svg
-          id="icon-moon"
-          xmlns="http://www.w3.org/2000/svg"
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          style="display:none"
-        >
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-        </svg>
-      </button>
-
+  <section class="section fade-up" style="--d:0">
+    <h2 class="section-title">커뮤니티</h2>
+    <div class="toolbar">
+      <span id="community-status" class="toolbar-status">불러오는 중...</span>
+      <button id="refresh-button" class="toolbar-refresh">새로고침</button>
     </div>
-  </header>
+    <ul class="list" id="community-list">
+      <li><div class="state-msg">게시물을 불러오는 중...</div></li>
+    </ul>
+  </section>
 
 
-  <main class="main">
+</main>
 
-    <!-- 페이지 제목 -->
-    <section class="section fade-up" style="--d:0">
-
-      <h2 class="section-title">
-        PUBG INFO 커뮤니티
-      </h2>
-
-      <p style="margin: 0 0 15px; color: var(--text-muted, #888);">
-        Discord에서 등록된 게시물을 확인할 수 있습니다.
-      </p>
-
-      <div
-        style="
-          display:flex;
-          justify-content:space-between;
-          align-items:center;
-          margin-bottom:10px;
-        "
-      >
-
-        <span
-          id="community-status"
-          class="community-status"
-        >
-          불러오는 중...
-        </span>
-
-        <button
-          id="refresh-button"
-          class="community-refresh"
-        >
-          새로고침
-        </button>
-
-      </div>
-
-    </section>
-
-
-    <!-- 게시물 -->
-    <section
-      class="section fade-up"
-      style="--d:1"
-    >
-
-      <ul
-        class="list"
-        id="community-list"
-      >
-
-        <li>
-          <div class="community-loading">
-            게시물을 불러오는 중...
-          </div>
-        </li>
-
-      </ul>
-
-    </section>
-
-
-    <!-- 안내 -->
-    <section
-      class="section fade-up"
-      style="--d:2"
-    >
-
-      <h2 class="section-title">
-        안내
-      </h2>
-
-      <ul class="list">
-
-        <li>
-          <div class="list-item">
-
-            <span class="list-icon">
-              💬
-            </span>
-
-            <span class="list-body">
-
-              <span class="list-name">
-                Discord에서 게시물 등록
-              </span>
-
-              <span class="list-desc">
-                Discord의 /등록 명령어를 이용해 게시물을 등록할 수 있습니다.
-              </span>
-
-            </span>
-
-          </div>
-        </li>
-
-      </ul>
-
-    </section>
-
-  </main>
-
-
-  <!-- 푸터 -->
-  <footer class="footer fade-up" style="--d:3">
-
-    <div class="clock">
-
-      <div class="clock-row">
-        <span class="clock-label">
-          UTC
-        </span>
-
-        <span
-          class="clock-val"
-          id="utc-time"
-        >
-          —
-        </span>
-      </div>
-
-      <div class="clock-row clock-kst">
-        <span class="clock-label">
-          KST
-        </span>
-
-        <span
-          class="clock-val"
-          id="kst-time"
-        >
-          —
-        </span>
-      </div>
-
+<footer class="footer fade-up" style="--d:2">
+  <div class="clock">
+    <div class="clock-row">
+      <span class="clock-label">UTC</span>
+      <span class="clock-val" id="utc-time">—</span>
     </div>
+    <div class="clock-row clock-kst">
+      <span class="clock-label">KST</span>
+      <span class="clock-val" id="kst-time">—</span>
+    </div>
+  </div>
+  <p class="footer-copy">© PUBG INFO / All rights reserved</p>
+</footer>
 
-    <p class="footer-copy">
-      © PUBG INFO / All rights reserved
-    </p>
+<script>
+const root   = document.documentElement;
+const toggle = document.getElementById('theme-toggle');
+const sun    = document.getElementById('icon-sun');
+const moon   = document.getElementById('icon-moon');
 
-  </footer>
+function applyTheme(theme) {
+  root.setAttribute('data-theme', theme);
+  if (theme === 'dark') {
+    sun.style.display  = 'block';
+    moon.style.display = 'none';
+  } else {
+    sun.style.display  = 'none';
+    moon.style.display = 'block';
+  }
+}
 
+const saved = localStorage.getItem('pubg-theme');
+if (saved) {
+  applyTheme(saved);
+} else {
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  applyTheme(prefersDark ? 'dark' : 'light');
+}
 
-  <script>
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+  if (!localStorage.getItem('pubg-theme')) applyTheme(e.matches ? 'dark' : 'light');
+});
 
-    /*
-      ============================================
-      Cloudflare Worker API
-      ============================================
-    */
+toggle?.addEventListener('click', () => {
+  const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  localStorage.setItem('pubg-theme', next);
+  applyTheme(next);
+});
 
-    const API_URL =
-      "https://pubginfo-api.pubgmk14-kr.workers.dev/messages";
+function updateClock() {
+  const now = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  const fmt = (y, mo, d, h, m, s) =>
+    `${y}.${pad(mo)}.${pad(d)} ${pad(h)}:${pad(m)}:${pad(s)}`;
 
+  const utcEl = document.getElementById('utc-time');
+  const kstEl = document.getElementById('kst-time');
 
-    /*
-      ============================================
-      HTML 특수문자 처리
-      ============================================
-    */
+  if (utcEl) utcEl.textContent = fmt(
+    now.getUTCFullYear(), now.getUTCMonth()+1, now.getUTCDate(),
+    now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds()
+  );
+  if (kstEl) kstEl.textContent = fmt(
+    now.getFullYear(), now.getMonth()+1, now.getDate(),
+    now.getHours(), now.getMinutes(), now.getSeconds()
+  );
+}
+setInterval(updateClock, 1000);
+updateClock();
 
-    function escapeHTML(value) {
+const API_URL = "https://pubginfo-api.pubgmk14-kr.workers.dev/messages";
 
-      const div =
-        document.createElement("div");
+function escapeHTML(value) {
+  const div = document.createElement("div");
+  div.textContent = value ?? "";
+  return div.innerHTML;
+}
 
-      div.textContent =
-        value ?? "";
+function formatDate(dateString) {
+  if (!dateString) return "";
+  const date = new Date(dateString.replace(" ", "T") + "+09:00");
+  if (Number.isNaN(date.getTime())) return dateString;
+  return new Intl.DateTimeFormat("ko-KR", {
+    timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit"
+  }).format(date);
+}
 
-      return div.innerHTML;
+async function loadCommunity() {
+  const list   = document.getElementById("community-list");
+  const status = document.getElementById("community-status");
+
+  try {
+    status.textContent = "불러오는 중...";
+    const response = await fetch(API_URL, { cache: "no-store" });
+    if (!response.ok) throw new Error("API 응답 오류: " + response.status);
+
+    const messages = await response.json();
+
+    if (!Array.isArray(messages) || messages.length === 0) {
+      list.innerHTML = `<li><div class="state-msg">아직 등록된 게시물이 없습니다.</div></li>`;
+      status.textContent = "게시물 0개";
+      return;
     }
 
+    list.innerHTML = "";
+    messages.forEach(message => {
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <div class="list-item">
+          <span class="list-icon">💬</span>
+          <span class="list-body">
+            <span class="list-name">${escapeHTML(message.content)}</span>
+            <span class="list-meta">
+              <span class="list-tag">Discord</span>
+              <span>${escapeHTML(message.author || "알 수 없음")}</span>
+            </span>
+            <span class="list-desc">${escapeHTML(formatDate(message.created_at))}</span>
+          </span>
+        </div>
+      `;
+      list.appendChild(li);
+    });
 
-    /*
-      ============================================
-      날짜 표시
-      ============================================
-    */
+    status.textContent = `게시물 ${messages.length}개`;
+  } catch (error) {
+    console.error(error);
+    list.innerHTML = `<li><div class="state-msg error">게시물을 불러오지 못했습니다.</div></li>`;
+    status.textContent = "연결 오류";
+  }
+}
 
-    function formatDate(dateString) {
-
-      if (!dateString) {
-        return "";
-      }
-
-      const date =
-        new Date(
-          dateString.replace(" ", "T") + "+09:00"
-        );
-
-      if (Number.isNaN(date.getTime())) {
-        return dateString;
-      }
-
-      return new Intl.DateTimeFormat(
-        "ko-KR",
-        {
-          timeZone: "Asia/Seoul",
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit"
-        }
-      ).format(date);
-    }
-
-
-    /*
-      ============================================
-      게시물 불러오기
-      ============================================
-    */
-
-    async function loadCommunity() {
-
-      const list =
-        document.getElementById(
-          "community-list"
-        );
-
-      const status =
-        document.getElementById(
-          "community-status"
-        );
-
-      try {
-
-        status.textContent =
-          "불러오는 중...";
-
-        const response =
-          await fetch(API_URL, {
-            cache: "no-store"
-          });
-
-        if (!response.ok) {
-          throw new Error(
-            "API 응답 오류: " +
-            response.status
-          );
-        }
-
-        const messages =
-          await response.json();
-
-
-        /*
-          게시물이 없는 경우
-        */
-
-        if (
-          !Array.isArray(messages) ||
-          messages.length === 0
-        ) {
-
-          list.innerHTML = `
-            <li>
-              <div class="community-empty">
-                아직 등록된 게시물이 없습니다.
-              </div>
-            </li>
-          `;
-
-          status.textContent =
-            "게시물 0개";
-
-          return;
-        }
-
-
-        /*
-          게시물 표시
-        */
-
-        list.innerHTML = "";
-
-        messages.forEach(message => {
-
-          const li =
-            document.createElement("li");
-
-          li.innerHTML = `
-
-            <div class="list-item">
-
-              <span class="list-icon">
-                💬
-              </span>
-
-              <span class="list-body">
-
-                <span class="list-name community-content">
-                  ${escapeHTML(message.content)}
-                </span>
-
-                <span class="community-meta">
-
-                  <span class="community-source">
-                    Discord
-                  </span>
-
-                  <span>
-                    ${escapeHTML(message.author || "알 수 없음")}
-                  </span>
-
-                </span>
-
-                <span class="list-desc">
-                  ${escapeHTML(
-                    formatDate(message.created_at)
-                  )}
-                </span>
-
-              </span>
-
-            </div>
-
-          `;
-
-          list.appendChild(li);
-
-        });
-
-
-        status.textContent =
-          `게시물 ${messages.length}개`;
-
-      } catch (error) {
-
-        console.error(error);
-
-        list.innerHTML = `
-          <li>
-            <div class="community-error">
-              게시물을 불러오지 못했습니다.
-            </div>
-          </li>
-        `;
-
-        status.textContent =
-          "연결 오류";
-      }
-
-    }
-
-
-    /*
-      ============================================
-      새로고침 버튼
-      ============================================
-    */
-
-    document
-      .getElementById("refresh-button")
-      .addEventListener(
-        "click",
-        loadCommunity
-      );
-
-
-    /*
-      ============================================
-      30초마다 자동 갱신
-      ============================================
-    */
-
-    setInterval(
-      loadCommunity,
-      30000
-    );
-
-
-    /*
-      ============================================
-      첫 실행
-      ============================================
-    */
-
-    loadCommunity();
-
-  </script>
-
-
-  <!-- 기존 PUBG INFO 스크립트 -->
-  <script src="../script.js" defer></script>
+document.getElementById("refresh-button").addEventListener("click", loadCommunity);
+setInterval(loadCommunity, 30000);
+loadCommunity();
+</script>
 
 </body>
 </html>
