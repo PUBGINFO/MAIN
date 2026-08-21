@@ -123,6 +123,19 @@
   .btn-edit { background: #2563eb; color: #fff; margin-right: 4px; } .btn-copy { background: #059669; color: #fff; margin-right: 4px; }
   .btn-del { background: #dc2626; color: #fff; } .btn-green { background: #059669; color: #fff; }
 
+  /* 온/오프 토글 스위치 */
+  .switch { position: relative; display: inline-block; width: 38px; height: 21px; flex-shrink: 0; vertical-align: middle; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .switch .slider { position: absolute; cursor: pointer; inset: 0; background-color: #cbd5e1; transition: .2s; border-radius: 21px; }
+  .switch .slider:before { content: ""; position: absolute; height: 15px; width: 15px; left: 3px; bottom: 3px; background-color: #fff; transition: .2s; border-radius: 50%; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+  .switch input:checked + .slider { background-color: #10b981; }
+  .switch input:checked + .slider:before { transform: translateX(17px); }
+  .toggle-row { display: inline-flex; align-items: center; gap: 6px; }
+  .toggle-label { font-size: 0.7rem; font-weight: 700; color: var(--txt3); }
+  .session-card.session-off { opacity: 0.55; }
+  .session-card.session-off .session-card-header { background: repeating-linear-gradient(45deg, var(--surface2), var(--surface2) 10px, var(--surface3) 10px, var(--surface3) 20px); }
+  tr.round-off td { opacity: 0.45; text-decoration: line-through; }
+
   .empty { text-align: center; padding: 40px; color: var(--txt3); font-size: 0.88rem; }
   .empty-inline { display: inline-flex; align-items: center; gap: 8px; }
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
@@ -661,7 +674,8 @@ onValue(ref(db, 'sessions'), snapshot => {
   const data = snapshot.val();
   allSessions = data ? Object.entries(data).map(([id, v]) => ({
         id, date: v.date || '', title: v.title || '', team: v.team || '', link: v.link || '',
-        rounds: v.rounds ? Object.entries(v.rounds).map(([rid, rv]) => ({ id: rid, ...rv })) : []
+        enabled: v.enabled !== false,
+        rounds: v.rounds ? Object.entries(v.rounds).map(([rid, rv]) => ({ id: rid, ...rv, enabled: rv.enabled !== false })) : []
       })) : [];
   allSessions.sort((a,b) => a.date.localeCompare(b.date));
   
@@ -675,20 +689,23 @@ function renderPublic() {
   const now = Date.now();
   $('nowTime').textContent = `현재 시각: ${new Date(now).toLocaleString('ko-KR')}`;
   
-  if (!allSessions.length) { $('publicBody').innerHTML = `<tr><td colspan="7" class="empty">등록된 일정이 없습니다</td></tr>`; $('tabs').innerHTML = ''; return; }
+  const visibleSessions = allSessions.filter(s => s.enabled !== false);
 
-  const daySet = new Set(allSessions.map(s => s.date));
+  if (!visibleSessions.length) { $('publicBody').innerHTML = `<tr><td colspan="7" class="empty">등록된 일정이 없습니다</td></tr>`; $('tabs').innerHTML = ''; return; }
+
+  const daySet = new Set(visibleSessions.map(s => s.date));
   $('tabs').innerHTML = [`<button class="tab ${!selectedDay?'active':''}" onclick="window._day(null)">전체</button>`, ...[...daySet].sort().map(d => `<button class="tab ${selectedDay===d?'active':''}" onclick="window._day('${d}')">${fmtDate(dateToTs(d,'00:00'))}</button>`)].join('');
 
-  let dynamicSessions = allSessions.map(sess => {
+  let dynamicSessions = visibleSessions.map(sess => {
+    const visRounds = sess.rounds.filter(r => r.enabled !== false);
     let isSessionEnded = false;
-    if(sess.rounds.length > 0) {
-      const sorted = sess.rounds.slice().sort((a,b) => dateToTs(sess.date, a.time||'00:00') - dateToTs(sess.date, b.time||'00:00'));
+    if(visRounds.length > 0) {
+      const sorted = visRounds.slice().sort((a,b) => dateToTs(sess.date, a.time||'00:00') - dateToTs(sess.date, b.time||'00:00'));
       const lastRoundTs = dateToTs(sess.date, sorted[sorted.length - 1].time || '00:00');
       // 대기 버퍼 시간을 최상단 선언 변수(SESSION_CLOSE_DELAY_MINUTES)로 유연하게 처리
       if (now >= lastRoundTs + (SESSION_CLOSE_DELAY_MINUTES * 60 * 1000)) isSessionEnded = true; 
     }
-    return { ...sess, isSessionEnded };
+    return { ...sess, rounds: visRounds, isSessionEnded };
   });
 
   // 복합 배열 해체 전 1차 상태 동합
@@ -792,16 +809,30 @@ window.toggleRoundAddCustom = function(sessId){ const sel = $(`rl_${sessId}`), i
 function renderAdmin() {
   if (!allSessions.length) { $('sessionsWrap').innerHTML = '<div class="empty">등록된 세션이 없습니다.</div>'; return; }
   $('sessionsWrap').innerHTML = allSessions.map(sess => {
-    const roundRows = sess.rounds.length ? sess.rounds.slice().sort((a,b) => dateToTs(sess.date, a.time||'00:00') - dateToTs(sess.date, b.time||'00:00')).map(r => `
-          <tr><td>${r.time || '-'}</td><td>${r.label || '-'}</td><td>${r.map || '-'}</td>
-          <td><button class="btn-sm btn-edit" onclick="openRoundEdit('${sess.id}','${r.id}')">${ic('edit')} 수정</button> <button class="btn-sm btn-del" onclick="delRound('${sess.id}','${r.id}')">${ic('trash')} 삭제</button></td></tr>`).join('') 
+    const sessOn = sess.enabled !== false;
+    const roundRows = sess.rounds.length ? sess.rounds.slice().sort((a,b) => dateToTs(sess.date, a.time||'00:00') - dateToTs(sess.date, b.time||'00:00')).map(r => {
+          const rOn = r.enabled !== false;
+          return `
+          <tr class="${rOn ? '' : 'round-off'}"><td>${r.time || '-'}</td><td>${r.label || '-'}</td><td>${r.map || '-'}</td>
+          <td>
+            <span class="toggle-row" style="margin-right:8px;" title="공개 노출 여부">
+              <label class="switch"><input type="checkbox" ${rOn ? 'checked' : ''} onchange="toggleRoundEnabled('${sess.id}','${r.id}', this.checked)"><span class="slider"></span></label>
+            </span>
+            <button class="btn-sm btn-edit" onclick="openRoundEdit('${sess.id}','${r.id}')">${ic('edit')} 수정</button> <button class="btn-sm btn-del" onclick="delRound('${sess.id}','${r.id}')">${ic('trash')} 삭제</button>
+          </td></tr>`; }).join('') 
           : `<tr><td colspan="4">라운드가 없습니다.</td></tr>`;
     return `
-    <div class="session-card">
+    <div class="session-card ${sessOn ? '' : 'session-off'}">
       <div class="session-card-header">
-        <div class="session-card-title"><span class="session-tag">${sess.title || '대회'}</span><strong>${sess.date}</strong><span style="font-size:0.8rem;color:var(--txt2);">${sess.team || ''}</span></div>
-        <div style="display:flex;gap:4px;flex-shrink:0;">
-          <button class="btn-sm btn-edit" onclick="openSessionEdit('${sess.id}')">${ic('edit')} 수정</button><button class="btn-sm btn-copy" onclick="copySession('${sess.id}')">${ic('copy')} 복사</button><button class="btn-sm btn-del" onclick="delSession('${sess.id}')">${ic('trash')} 삭제</button>
+        <div class="session-card-title"><span class="session-tag">${sess.title || '대회'}</span><strong>${sess.date}</strong><span style="font-size:0.8rem;color:var(--txt2);">${sess.team || ''}</span>${sessOn ? '' : '<span style="font-size:0.7rem;color:var(--txt3);font-weight:700;">(비공개)</span>'}</div>
+        <div style="display:flex;gap:10px;align-items:center;flex-shrink:0;flex-wrap:wrap;">
+          <span class="toggle-row" title="공개 페이지 노출 여부">
+            <span class="toggle-label">${sessOn ? '공개중' : '숨김'}</span>
+            <label class="switch"><input type="checkbox" ${sessOn ? 'checked' : ''} onchange="toggleSessionEnabled('${sess.id}', this.checked)"><span class="slider"></span></label>
+          </span>
+          <div style="display:flex;gap:4px;">
+            <button class="btn-sm btn-edit" onclick="openSessionEdit('${sess.id}')">${ic('edit')} 수정</button><button class="btn-sm btn-copy" onclick="copySession('${sess.id}')">${ic('copy')} 복사</button><button class="btn-sm btn-del" onclick="delSession('${sess.id}')">${ic('trash')} 삭제</button>
+          </div>
         </div>
       </div>
       <table class="round-table"><thead><tr><th>시간</th><th>라운드</th><th>MAP</th><th>관리</th></tr></thead><tbody>${roundRows}</tbody></table>
@@ -825,14 +856,22 @@ window.addSession = async function() {
   let title = $('sTitle').value; if(title==='custom') title=$('sTitleCustom').value.trim();
   let team = $('sTeam').value; if(team==='custom') team=$('sTeamCustom').value.trim();
   if (!date || !title) return showToast('필수 필드 누락!', '#ef4444');
-  await push(ref(db, 'sessions'), { date, title, team, link }); showToast('세션이 추가되었습니다.');
+  await push(ref(db, 'sessions'), { date, title, team, link, enabled: true }); showToast('세션이 추가되었습니다.');
+};
+window.toggleSessionEnabled = async function(sessId, checked) {
+  await set(ref(db, `sessions/${sessId}/enabled`), checked);
+  showToast(checked ? '세션이 공개로 전환되었습니다.' : '세션이 숨김 처리되었습니다.', checked ? '#10b981' : '#64748b');
+};
+window.toggleRoundEnabled = async function(sessId, roundId, checked) {
+  await set(ref(db, `sessions/${sessId}/rounds/${roundId}/enabled`), checked);
+  showToast(checked ? '라운드가 공개로 전환되었습니다.' : '라운드가 숨김 처리되었습니다.', checked ? '#10b981' : '#64748b');
 };
 window.copySession = async function(sessId) {
   const original = allSessions.find(s => s.id === sessId); if (!original || !confirm('세션을 복사하시겠습니까?')) return;
   try {
-    const sessionData = { date: original.date, title: original.title, team: original.team, link: original.link };
+    const sessionData = { date: original.date, title: original.title, team: original.team, link: original.link, enabled: true };
     if (original.rounds && original.rounds.length > 0) {
-      sessionData.rounds = {}; original.rounds.forEach(r => sessionData.rounds[push(ref(db, `dummy`)).key] = { time: r.time||'', label: r.label||'', map: r.map||'' });
+      sessionData.rounds = {}; original.rounds.forEach(r => sessionData.rounds[push(ref(db, `dummy`)).key] = { time: r.time||'', label: r.label||'', map: r.map||'', enabled: true });
     }
     await set(push(ref(db, 'sessions')), sessionData); showToast('세션 복사 성공!');
   } catch(e) { showToast('복사 실패', '#ef4444'); }
@@ -849,8 +888,9 @@ window.saveSession = async function() {
   let title = $('mTitle').value; if(title==='custom') title=$('mTitleCustom').value.trim();
   let team = $('mTeam').value; if(team==='custom') team=$('mTeamCustom').value.trim();
   const sess = allSessions.find(s => s.id === editSessId); const roundsData = {};
-  if (sess && sess.rounds.length) sess.rounds.forEach(r => { roundsData[r.id] = { time: r.time, label: r.label, map: r.map }; });
-  await set(ref(db, `sessions/${editSessId}`), { date, title, team, link, rounds: roundsData }); closeModal('sessionModal'); showToast('수정 완료!');
+  if (sess && sess.rounds.length) sess.rounds.forEach(r => { roundsData[r.id] = { time: r.time, label: r.label, map: r.map, enabled: r.enabled !== false }; });
+  const enabled = sess ? sess.enabled !== false : true;
+  await set(ref(db, `sessions/${editSessId}`), { date, title, team, link, enabled, rounds: roundsData }); closeModal('sessionModal'); showToast('수정 완료!');
 };
 window.delSession = async function(sessId) { if (confirm('삭제할까요?')) await remove(ref(db, `sessions/${sessId}`)); };
 // HH:MM 형식 검증 (시는 0~29, 자정 넘김 표기 25:00 등 허용 / 분은 0~59)
@@ -866,7 +906,7 @@ window.addRound = async function(sessId) {
   let label = $(`rl_${sessId}`).value; if (label === 'custom') label = $(`rlc_${sessId}`).value.trim();
   if (!time || !label) return;
   if (!isValidTimeStr(time)) return showToast('시간 형식이 올바르지 않습니다. 예: 20:00, 자정 초과 시 25:00', '#ef4444');
-  await push(ref(db, `sessions/${sessId}/rounds`), { time, label, map }); showToast('라운드 추가 완료!');
+  await push(ref(db, `sessions/${sessId}/rounds`), { time, label, map, enabled: true }); showToast('라운드 추가 완료!');
 };
 window.openRoundEdit = function(sessId, roundId) {
   const s = allSessions.find(x => x.id === sessId); const r = s.rounds.find(x => x.id === roundId);
@@ -878,7 +918,9 @@ window.saveRound = async function() {
   const time = $('rTime').value.trim(), map = $('rMap').value;
   let label = $('rLabel').value; if (label === 'custom') label = $('rLabelCustom').value.trim();
   if (!isValidTimeStr(time)) return showToast('시간 형식이 올바르지 않습니다. 예: 20:00, 자정 초과 시 25:00', '#ef4444');
-  await set(ref(db, `sessions/${editRoundSessId}/rounds/${editRoundId}`), { time, label, map }); closeModal('roundModal'); showToast('라운드 수정 완료!');
+  const s = allSessions.find(x => x.id === editRoundSessId); const oldR = s ? s.rounds.find(x => x.id === editRoundId) : null;
+  const enabled = oldR ? oldR.enabled !== false : true;
+  await set(ref(db, `sessions/${editRoundSessId}/rounds/${editRoundId}`), { time, label, map, enabled }); closeModal('roundModal'); showToast('라운드 수정 완료!');
 };
 window.delRound = async function(sessId, roundId) { if(confirm('삭제할까요?')) await remove(ref(db, `sessions/${sessId}/rounds/${roundId}`)); };
 window.closeModal = id => $(id).classList.remove('open');
