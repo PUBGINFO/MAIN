@@ -31,4 +31,4 @@ else:
     # 기존 코드가 email.txt를 반드시 요구하는 경우를 피하기 위해
     # 입력한 이메일들로 임시 파일을 생성
     Path("/content/email.txt").write_text("\n".join(emails), encoding="utf-8")
-    subprocess.run([sys.executable, str(APP)], check=True)
+    
