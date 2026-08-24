@@ -8,8 +8,21 @@ APP = Path("/content/MAIN/redeem/ferrari/app(4).py")
 if not APP.exists():
     raise FileNotFoundError("app(4).py를 Colab에 업로드하세요.")
 
-emails_input = input("이메일을 쉼표(,)로 구분해서 입력하세요: ")
-emails = [e.strip() for e in emails_input.split(",") if e.strip()]
+emails = []
+
+while True:
+    emails_input = input("이메일을 쉼표(,)로 구분해서 입력하세요 (종료: Enter): ").strip()
+
+    if not emails_input:
+        break
+
+    emails.extend(
+        e.strip()
+        for e in emails_input.split(",")
+        if e.strip()
+    )
+
+print(f"총 {len(emails)}개의 이메일을 입력했습니다.")
 
 # 수정된 앱 코드가 직접 입력을 지원하는 경우
 if False:
