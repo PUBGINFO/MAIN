@@ -11,9 +11,9 @@ if not APP.exists():
 emails = []
 
 while True:
-    emails_input = input("이메일을 쉼표(,)로 구분해서 입력하세요 (종료: Enter): ").strip()
+    emails_input = input("이메일 입력 (쉼표로 구분 / 종료: end): ").strip()
 
-    if not emails_input:
+    if emails_input.lower() == "end":
         break
 
     emails.extend(
