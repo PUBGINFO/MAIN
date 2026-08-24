@@ -1,6 +1,3 @@
-# Google Colab 실행용
-!pip -q install requests
-
 from pathlib import Path
 import subprocess
 import sys
