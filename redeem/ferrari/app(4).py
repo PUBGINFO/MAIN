@@ -3,7 +3,7 @@ import subprocess
 import sys
 import os
 
-APP = Path("/content/app(4).py")
+APP = Path("/content/MAIN/redeem/ferrari/app(4).py")
 
 if not APP.exists():
     raise FileNotFoundError("app(4).py를 Colab에 업로드하세요.")
