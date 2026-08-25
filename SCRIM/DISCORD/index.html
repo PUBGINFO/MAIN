@@ -87,7 +87,7 @@
 
   label{display:block;font-size:12.5px;font-weight:600;color:var(--text-dim);margin-bottom:7px;letter-spacing:.01em;}
   .field{margin-bottom:18px;}
-  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .field-row{display:grid;grid-template-columns:1fr;gap:12px;}
 
   select, input[type=text], input[type=datetime-local], textarea{
     width:100%;background:var(--bg-elevated);
@@ -199,9 +199,8 @@
 
   ::selection{background:var(--indigo-dim);}
 
-  @media(max-width:520px){
-    .field-row{grid-template-columns:1fr;}
-    .wrap{padding:32px 16px 80px;}
+  @media(min-width:520px){
+    .field-row{grid-template-columns:1fr 1fr;}
   }
 </style>
 </head>
@@ -263,15 +262,9 @@
       <div id="role-chip-list"><span class="role-chip-empty">서버를 선택하면 역할 목록이 표시됩니다</span></div>
     </div>
 
-    <div class="field-row">
-      <div class="field">
-        <label>시작 날짜 및 시간</label>
-        <input id="start-at-input" type="datetime-local">
-      </div>
-      <div class="field">
-        <label>시간대</label>
-        <input id="timezone-input" type="text" value="Asia/Seoul" readonly style="opacity:.6;cursor:not-allowed;">
-      </div>
+    <div class="field">
+      <label>시작 날짜 및 시간 (KST 기준)</label>
+      <input id="start-at-input" type="datetime-local">
     </div>
 
     <div class="field">
@@ -304,7 +297,6 @@
   let selectedRoleIds = new Set();
   let currentRoles = [];
 
-  // 새로고침 및 리디렉션 시 세션 토큰 안전하게 가져오기 및 저장 로직
   function getActiveToken() {
     const urlParams = new URLSearchParams(location.search);
     const urlSession = urlParams.get("session");
@@ -436,6 +428,13 @@
     const statusMsg = document.getElementById('status-msg');
     try {
       statusMsg.textContent = "저장 중...";
+      
+      const rawDate = document.getElementById('start-at-input').value;
+      if (!rawDate) throw new Error("시작 날짜와 시간을 선택해주세요.");
+      
+      // 사용자가 입력한 KST 시간을 서버 저장용 ISO(UTC) 형식으로 정확하게 변환
+      const kstDate = new Date(rawDate + "+09:00");
+
       await api("/api/schedules", {
         method: "POST",
         body: JSON.stringify({
@@ -443,8 +442,8 @@
           channelId: document.getElementById('channel-select').value,
           message: document.getElementById('message-input').value,
           roleIds: Array.from(selectedRoleIds),
-          startAt: document.getElementById('start-at-input').value,
-          timezone: document.getElementById('timezone-input').value || "Asia/Seoul",
+          startAt: kstDate.toISOString(),
+          timezone: "Asia/Seoul",
           months: Number(document.getElementById('months-input').value || 0),
           days: Number(document.getElementById('days-input').value || 1),
           hours: Number(document.getElementById('hours-input').value || 0),
@@ -471,6 +470,24 @@
     }).filter(Boolean);
   }
 
+  // 데이터베이스의 UTC 시간을 보기 편한 한국 시간(KST) 문자열로 변환하는 함수
+  function formatKstTime(utcIsoString) {
+    try {
+      const d = new Date(utcIsoString);
+      return d.toLocaleString("ko-KR", {
+        timeZone: "Asia/Seoul",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+      });
+    } catch (e) {
+      return utcIsoString;
+    }
+  }
+
   async function loadSchedules() {
     const schedules = await api("/api/schedules");
     const container = document.getElementById('schedules-list');
@@ -483,6 +500,7 @@
     container.innerHTML = `<div class="timeline">` + schedules.map(s => {
       const enabled = Number(s.enabled);
       const roleNames = roleNamesFor(s.role_id);
+      const formattedTime = formatKstTime(s.next_run_at);
       return `
       <div class="tl-item ${enabled ? '' : 'paused'}">
         <div class="tl-node"></div>
@@ -490,7 +508,7 @@
           <div class="tl-message">${escapeHtml(s.message)}</div>
           <div class="tl-meta">
             <span class="badge ${enabled ? 'on' : 'off'}"><span class="dot"></span>${enabled ? '활성화' : '일시중지'}</span>
-            <span class="tl-time">${escapeHtml(s.next_run_at)}</span>
+            <span class="tl-time">${escapeHtml(formattedTime)}</span>
             <span class="sep">·</span>
             <span>${s.months}M ${s.days}D ${s.hours}H ${s.minutes}Min 반복</span>
             ${roleNames.length ? `<span class="sep">·</span><span>${roleNames.map(escapeHtml).join(', ')}</span>` : ''}
