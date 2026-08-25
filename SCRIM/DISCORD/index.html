@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Discord Scheduler</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#202225] text-[#f2f3f5] font-sans min-h-screen">
+  <div class="max-w-4xl mx-auto px-4 py-10">
+    <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+      <div>
+        <h1 class="text-3xl font-bold">Discord Scheduler</h1>
+        <p id="user-status" class="text-sm text-gray-400 mt-1">로그인 상태 확인 중...</p>
+      </div>
+      <button id="login-btn" class="bg-[#5865f2] hover:bg-[#4752c4] text-white font-bold py-2 px-4 rounded-lg transition-colors">
+        Discord 로그인
+      </button>
+    </header>
+
+    <!-- Custom Modal -->
+    <div id="custom-modal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+      <div class="bg-[#2f3136] rounded-xl p-6 max-w-sm w-full shadow-xl border border-[#4f545c]">
+        <h3 id="modal-title" class="text-lg font-bold mb-2">알림</h3>
+        <p id="modal-message" class="text-sm text-gray-300 mb-4"></p>
+        <div class="flex justify-end gap-2">
+          <button id="modal-cancel" class="hidden bg-gray-600 hover:bg-gray-500 text-white px-4 py-2 rounded-lg text-sm">취소</button>
+          <button id="modal-confirm" class="bg-[#5865f2] hover:bg-[#4752c4] text-white px-4 py-2 rounded-lg text-sm">확인</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Create Schedule Card -->
+    <section class="bg-[#2f3136] rounded-xl p-6 mb-6 shadow-md border border-[#4f545c]/30">
+      <h2 class="text-xl font-bold mb-4">예약 만들기</h2>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block mb-2 font-bold text-sm text-gray-300">관리 서버 (Guild)</label>
+          <select id="guild-select" class="w-full bg-[#40444b] border border-[#4f545c] rounded-lg p-3 text-white focus:outline-none focus:border-[#5865f2]">
+            <option value="">로그인 후 서버 목록이 표시됩니다</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block mb-2 font-bold text-sm text-gray-300">전송 채널</label>
+          <select id="channel-select" class="w-full bg-[#40444b] border border-[#4f545c] rounded-lg p-3 text-white focus:outline-none focus:border-[#5865f2]">
+            <option value="">서버를 먼저 선택하세요</option>
+          </select>
+        </div>
+
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <label class="font-bold text-sm text-gray-300">메시지 내용</label>
+            <span id="char-count" class="text-xs text-gray-400">0/2000</span>
+          </div>
+          <textarea id="message-input" maxlength="2000" rows="4" placeholder="보낼 메시지를 입력하세요" class="w-full bg-[#40444b] border border-[#4f545c] rounded-lg p-3 text-white resize-vertical focus:outline-none focus:border-[#5865f2]"></textarea>
+        </div>
+
+        <div>
+          <label class="block mb-2 font-bold text-sm text-gray-300">역할 멘션 (선택사항)</label>
+          <input id="role-input" placeholder="예: 123456789012345678 (역할 ID)" class="w-full bg-[#40444b] border border-[#4f545c] rounded-lg p-3 text-white focus:outline-none focus:border-[#5865f2]">
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block mb-2 font-bold text-sm text-gray-300">시작 날짜 및 시간</label>
+            <input id="start-at-input" type="datetime-local" class="w-full bg-[#40444b] border border-[#4f545c] rounded-lg p-3 text-white focus:outline-none focus:border-[#5865f2]">
+          </div>
+          <div>
+            <label class="block mb-2 font-bold text-sm text-gray-300">시간대 (Timezone)</label>
+            <input id="timezone-input" value="Asia/Seoul" class="w-full bg-[#40444b] border border-[#4f545c] rounded-lg p-3 text-white focus:outline-none focus:border-[#5865f2]">
+          </div>
+        </div>
+
+        <div>
+          <h3 class="font-bold text-sm text-gray-300 mb-2">반복 간격</h3>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <input id="months-input" type="number" min="0" value="0" placeholder="Months" class="bg-[#40444b] border border-[#4f545c] rounded-lg p-3 text-white text-center">
+            <input id="days-input" type="number" min="0" value="1" placeholder="Days" class="bg-[#40444b] border border-[#4f545c] rounded-lg p-3 text-white text-center">
+            <input id="hours-input" type="number" min="0" value="0" placeholder="Hours" class="bg-[#40444b] border border-[#4f545c] rounded-lg p-3 text-white text-center">
+            <input id="minutes-input" type="number" min="0" value="0" placeholder="Minutes" class="bg-[#40444b] border border-[#4f545c] rounded-lg p-3 text-white text-center">
+          </div>
+        </div>
+
+        <button id="create-btn" class="w-full bg-[#5865f2] hover:bg-[#4752c4] text-white font-bold py-3 px-4 rounded-lg transition-colors">
+          예약 생성하기
+        </button>
+        <p id="status-msg" class="text-center text-sm text-gray-400 mt-2"></p>
+      </div>
+    </section>
+
+    <!-- Schedule List Card -->
+    <section class="bg-[#2f3136] rounded-xl p-6 shadow-md border border-[#4f545c]/30">
+      <h2 class="text-xl font-bold mb-4">예약 목록</h2>
+      <div id="schedules-list" class="space-y-3">
+        <p class="text-gray-400 text-sm">로그인 후 예약을 확인하세요.</p>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const API_BASE = "https://discord-bot.pubgmk14-kr.workers.dev";
+
+    let token = new URLSearchParams(location.search).get("session") || localStorage.getItem("session");
+
+    if (token) {
+      localStorage.setItem("session", token);
+      history.replaceState({}, document.title, location.pathname);
+    }
+
+    const showModal = (title, message, onConfirm, showCancel = false) => {
+      document.getElementById('modal-title').textContent = title;
+      document.getElementById('modal-message').textContent = message;
+      const cancelBtn = document.getElementById('modal-cancel');
+      const confirmBtn = document.getElementById('modal-confirm');
+      
+      if (showCancel) {
+        cancelBtn.classList.remove('hidden');
+      } else {
+        cancelBtn.classList.add('hidden');
+      }
+
+      const modal = document.getElementById('custom-modal');
+      modal.classList.remove('hidden');
+
+      const newConfirm = confirmBtn.cloneNode(true);
+      confirmBtn.parentNode.replaceChild(newConfirm, confirmBtn);
+      const newCancel = cancelBtn.cloneNode(true);
+      cancelBtn.parentNode.replaceChild(newCancel, cancelBtn);
+
+      newConfirm.onclick = () => {
+        modal.classList.add('hidden');
+        if (onConfirm) onConfirm();
+      };
+      newCancel.onclick = () => {
+        modal.classList.add('hidden');
+      };
+    };
+
+    async function api(path, options = {}) {
+      const headers = {
+        ...(options.headers || {}),
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      };
+
+      const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+      return data;
+    }
+
+    async function init() {
+      if (!token) {
+        document.getElementById('user-status').textContent = "로그인하지 않았습니다.";
+        return;
+      }
+
+      try {
+        const me = await api("/api/me");
+        document.getElementById('user-status').textContent = `로그인: ${me.username}`;
+        const loginBtn = document.getElementById('login-btn');
+        loginBtn.textContent = "로그아웃";
+        loginBtn.className = "bg-[#ed4245] hover:bg-[#c03537] text-white font-bold py-2 px-4 rounded-lg transition-colors";
+        loginBtn.onclick = () => {
+          localStorage.removeItem("session");
+          location.href = location.pathname;
+        };
+
+        const guilds = await api("/api/guilds");
+        const guildSelect = document.getElementById('guild-select');
+        guildSelect.innerHTML = guilds
+          .map(g => `<option value="${g.id}">${escapeHtml(g.name)}</option>`)
+          .join("");
+
+        await loadChannels();
+        await loadSchedules();
+      } catch (e) {
+        document.getElementById('user-status').textContent = "세션이 만료되었습니다.";
+        localStorage.removeItem("session");
+      }
+    }
+
+    document.getElementById('login-btn').onclick = () => {
+      if (token) return;
+      location.href = `${API_BASE}/api/login`;
+    };
+
+    document.getElementById('guild-select').onchange = loadChannels;
+
+    async function loadChannels() {
+      const guildId = document.getElementById('guild-select').value;
+      if (!guildId) return;
+
+      try {
+        const channels = await api(`/api/guilds/${guildId}/channels`);
+        document.getElementById('channel-select').innerHTML = channels
+          .map(c => `<option value="${c.id}"># ${escapeHtml(c.name)}</option>`)
+          .join("");
+      } catch (e) {
+        document.getElementById('channel-select').innerHTML = `<option value="">채널 로드 실패 (봇 권한 확인)</option>`;
+      }
+    }
+
+    document.getElementById('message-input').oninput = (e) => {
+      document.getElementById('char-count').textContent = `${e.target.value.length}/2000`;
+    };
+
+    document.getElementById('create-btn').onclick = async () => {
+      if (!token) {
+        showModal('로그인 필요', '예약을 생성하려면 먼저 로그인이 필요합니다.');
+        return;
+      }
+
+      try {
+        document.getElementById('status-msg').textContent = "저장 중...";
+
+        await api("/api/schedules", {
+          method: "POST",
+          body: JSON.stringify({
+            guildId: document.getElementById('guild-select').value,
+            channelId: document.getElementById('channel-select').value,
+            message: document.getElementById('message-input').value,
+            roleId: document.getElementById('role-input').value || null,
+            startAt: document.getElementById('start-at-input').value,
+            timezone: document.getElementById('timezone-input').value || "Asia/Seoul",
+            months: Number(document.getElementById('months-input').value || 0),
+            days: Number(document.getElementById('days-input').value || 1),
+            hours: Number(document.getElementById('hours-input').value || 0),
+            minutes: Number(document.getElementById('minutes-input').value || 0)
+          })
+        });
+
+        document.getElementById('status-msg').textContent = "예약이 생성되었습니다.";
+        document.getElementById('message-input').value = "";
+        document.getElementById('char-count').textContent = "0/2000";
+        await loadSchedules();
+      } catch (e) {
+        document.getElementById('status-msg').textContent = e.message;
+      }
+    };
+
+    async function loadSchedules() {
+      const schedules = await api("/api/schedules");
+      const container = document.getElementById('schedules-list');
+
+      if (!schedules.length) {
+        container.innerHTML = '<p class="text-gray-400 text-sm">등록된 예약이 없습니다.</p>';
+        return;
+      }
+
+      container.innerHTML = schedules.map(s => `
+        <div class="bg-[#40444b] p-4 rounded-lg border border-[#4f545c]">
+          <div class="font-bold text-white mb-1">${escapeHtml(s.message)}</div>
+          <div class="text-xs text-gray-300 space-y-0.5">
+            <div>시간대: <span class="text-indigo-300">${s.timezone}</span> · 다음 실행: <span class="text-indigo-300">${escapeHtml(s.next_run_at)}</span></div>
+            <div>반복 주기: ${s.months}M ${s.days}D ${s.hours}H ${s.minutes}Min · 상태: <span class="${Number(s.enabled) ? 'text-green-400' : 'text-yellow-400'} font-bold">${Number(s.enabled) ? '활성화' : '일시중지'}</span></div>
+          </div>
+          <div class="flex gap-2 mt-3">
+            <button onclick="toggleSchedule('${s.id}')" class="bg-[#5865f2] hover:bg-[#4752c4] text-white text-xs px-3 py-1.5 rounded font-bold transition-colors">
+              ${Number(s.enabled) ? '일시중지' : '재개'}
+            </button>
+            <button onclick="deleteSchedule('${s.id}')" class="bg-[#ed4245] hover:bg-[#c03537] text-white text-xs px-3 py-1.5 rounded font-bold transition-colors">
+              삭제
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    window.toggleSchedule = async id => {
+      await api(`/api/schedules/${id}/toggle`, { method: "POST" });
+      await loadSchedules();
+    };
+
+    window.deleteSchedule = async id => {
+      showModal('예약 삭제', '이 예약을 정말로 삭제하시겠습니까?', async () => {
+        await api(`/api/schedules/${id}`, { method: "DELETE" });
+        await loadSchedules();
+      }, true);
+    };
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    init();
+  </script>
+</body>
+</html>
