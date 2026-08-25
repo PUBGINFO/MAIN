@@ -233,7 +233,7 @@
       <div>
         <div class="title-row">
           <h1 class="display">Scrim Scheduler</h1>
-          <span class="version-badge">v1.0</span>
+          <span class="version-badge">v1.2</span>
         </div>
         <p id="user-status"><span class="dot"></span>로그인 상태 확인 중...</p>
       </div>
@@ -312,7 +312,7 @@
   </section>
 
   <footer class="page-footer">
-    Scrim Scheduler Dashboard v1.0 (KST Supported)
+    Scrim Scheduler Dashboard v1.1.1 (Stable Session)
   </footer>
 
 </div>
@@ -322,7 +322,8 @@
   let selectedRoleIds = new Set();
   let currentRoles = [];
 
-  function getActiveToken() {
+  // 안정적인 세션 토큰 관리 (새로고침 시 풀림 현상 원천 차단)
+  function initToken() {
     const urlParams = new URLSearchParams(location.search);
     const urlSession = urlParams.get("session");
     if (urlSession) {
@@ -333,7 +334,7 @@
     return localStorage.getItem("session");
   }
 
-  let token = getActiveToken();
+  let token = initToken();
 
   const showModal = (title, message, onConfirm, showCancel = false) => {
     document.getElementById('modal-title').textContent = title;
@@ -355,8 +356,7 @@
   };
 
   async function api(path, options = {}) {
-    const currentToken = getActiveToken();
-    const headers = { ...(options.headers || {}), Authorization: `Bearer ${currentToken}`, "Content-Type": "application/json" };
+    const headers = { ...(options.headers || {}), Authorization: `Bearer ${token}`, "Content-Type": "application/json" };
     const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
@@ -364,8 +364,7 @@
   }
 
   async function init() {
-    const activeToken = getActiveToken();
-    if (!activeToken) {
+    if (!token) {
       document.getElementById('user-status').textContent = "로그인하지 않았습니다.";
       return;
     }
@@ -378,7 +377,11 @@
       const loginBtn = document.getElementById('login-btn');
       loginBtn.textContent = "로그아웃";
       loginBtn.className = "btn btn-danger";
-      loginBtn.onclick = () => { localStorage.removeItem("session"); location.href = location.pathname; };
+      loginBtn.onclick = () => { 
+        localStorage.removeItem("session"); 
+        token = null;
+        location.href = location.pathname; 
+      };
 
       const guilds = await api("/api/guilds");
       const guildSelect = document.getElementById('guild-select');
@@ -388,14 +391,15 @@
       await loadRoles();
       await loadSchedules();
     } catch (e) {
+      // 서버에서 유효하지 않은 세션이라고 판단했을 때만 안전하게 로그아웃 처리
       document.getElementById('user-status').textContent = "세션이 만료되었습니다.";
       localStorage.removeItem("session");
+      token = null;
     }
   }
 
   document.getElementById('login-btn').onclick = () => {
-    const activeToken = getActiveToken();
-    if (activeToken) return;
+    if (token) return;
     location.href = `${API_BASE}/api/login`;
   };
 
@@ -448,8 +452,7 @@
   };
 
   document.getElementById('create-btn').onclick = async () => {
-    const activeToken = getActiveToken();
-    if (!activeToken) { showModal('로그인 필요', '예약을 생성하려면 먼저 로그인이 필요합니다.'); return; }
+    if (!token) { showModal('로그인 필요', '예약을 생성하려면 먼저 로그인이 필요합니다.'); return; }
     const statusMsg = document.getElementById('status-msg');
     try {
       statusMsg.textContent = "저장 중...";
