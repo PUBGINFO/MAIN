@@ -37,11 +37,13 @@
     font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
     min-height:100vh;
     -webkit-font-smoothing:antialiased;
+    position:relative;
+    padding-bottom:40px;
   }
   .display{font-family:'Space Grotesk',sans-serif;}
   .mono{font-family:'JetBrains Mono',monospace;}
 
-  .wrap{max-width:760px;margin:0 auto;padding:48px 20px 100px;}
+  .wrap{max-width:760px;margin:0 auto;padding:48px 20px 60px;}
 
   /* Header */
   header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:40px;}
@@ -54,8 +56,18 @@
     flex-shrink:0;
   }
   .brand-mark svg{width:20px;height:20px;}
+  
+  .title-row{display:flex;align-items:center;gap:10px;}
   h1{font-size:22px;font-weight:700;margin:0;letter-spacing:-0.02em;}
-  #user-status{font-size:13px;color:var(--text-dim);margin:2px 0 0;}
+  
+  .version-badge{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;font-weight:600;
+    background:rgba(108,92,231,0.15);color:var(--indigo-bright);
+    padding:2px 8px;border-radius:999px;border:1px solid rgba(108,92,231,0.3);
+  }
+
+  #user-status{font-size:13px;color:var(--text-dim);margin:4px 0 0;}
   #user-status .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--text-faint);margin-right:6px;}
   #user-status.online .dot{background:var(--green);box-shadow:0 0 6px var(--green);}
 
@@ -178,6 +190,12 @@
     text-align:center;padding:36px 20px;color:var(--text-faint);font-size:13.5px;
   }
 
+  /* Footer Version Display */
+  footer.page-footer{
+    text-align:center;font-size:11.5px;color:var(--text-faint);
+    font-family:'JetBrains Mono',monospace;margin-top:40px;
+  }
+
   /* Modal */
   #custom-modal{
     display:none;position:fixed;inset:0;background:rgba(10,10,12,0.7);
@@ -213,7 +231,10 @@
         <svg viewBox="0 0 24 24" fill="none"><path d="M12 6v6l4 2" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/></svg>
       </div>
       <div>
-        <h1 class="display">Scrim Scheduler</h1>
+        <div class="title-row">
+          <h1 class="display">Scrim Scheduler</h1>
+          <span class="version-badge">v1.0</span>
+        </div>
         <p id="user-status"><span class="dot"></span>로그인 상태 확인 중...</p>
       </div>
     </div>
@@ -289,6 +310,10 @@
     </div>
     <div id="schedules-list"><p class="empty-state">로그인 후 예약을 확인하세요.</p></div>
   </section>
+
+  <footer class="page-footer">
+    Scrim Scheduler Dashboard v1.0 (KST Supported)
+  </footer>
 
 </div>
 
@@ -432,7 +457,6 @@
       const rawDate = document.getElementById('start-at-input').value;
       if (!rawDate) throw new Error("시작 날짜와 시간을 선택해주세요.");
       
-      // 사용자가 입력한 KST 시간을 서버 저장용 ISO(UTC) 형식으로 정확하게 변환
       const kstDate = new Date(rawDate + "+09:00");
 
       await api("/api/schedules", {
@@ -470,7 +494,6 @@
     }).filter(Boolean);
   }
 
-  // 데이터베이스의 UTC 시간을 보기 편한 한국 시간(KST) 문자열로 변환하는 함수
   function formatKstTime(utcIsoString) {
     try {
       const d = new Date(utcIsoString);
