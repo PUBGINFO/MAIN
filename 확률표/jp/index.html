@@ -108,7 +108,7 @@ function hideLoading(){
 
 async function loadChart() {
     try {
-        const response = await fetch("https://pubgm-crate-jp.pubgmk14-kr.workers.dev/");
+        const response = await fetch("https://pubgm-crate-jp.pubginfo-kr.workers.dev");
         const data = await response.json();
 
         const html = data[0].content.rendered;
