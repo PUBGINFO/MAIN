@@ -1,5 +1,6 @@
 import argparse
 import os
+import re
 import time
 from datetime import datetime
 from pathlib import Path
@@ -82,6 +83,21 @@ class PUBGRedeemer:
         path = self.resolve_input_file(filename)
         with path.open("r", encoding="utf-8-sig") as file:
             return [line.strip() for line in file if line.strip()]
+
+    @staticmethod
+    def parse_uid_text(text):
+        """Parse UIDs entered as spaces, commas, or new lines."""
+        ids = []
+        invalid = []
+        for value in re.split(r"[\s,]+", text.strip()):
+            if not value:
+                continue
+            if value.isdigit():
+                if value not in ids:
+                    ids.append(value)
+            else:
+                invalid.append(value)
+        return ids, invalid
 
     def parse_url(self, url):
         parsed = urlparse(url.strip())
@@ -307,6 +323,16 @@ def main(argv=None):
         help="UID 목록 파일 (기본값: id.txt)",
     )
     parser.add_argument(
+        "--ids",
+        default=None,
+        help="UID 직접 입력. 여러 개는 쉼표/공백으로 구분",
+    )
+    parser.add_argument(
+        "--prompt-ids",
+        action="store_true",
+        help="Colab에서 실행 중 UID를 직접 입력",
+    )
+    parser.add_argument(
         "--retries",
         type=int,
         default=3,
@@ -333,7 +359,6 @@ def main(argv=None):
 
     try:
         urls = redeemer.read_lines(args.url_file)
-        target_ids = redeemer.read_lines(args.id_file)
     except FileNotFoundError as error:
         print(f"❌ {error}")
         return
@@ -344,11 +369,50 @@ def main(argv=None):
     if not urls:
         print(f"❌ {args.url_file} 파일에 URL이 없습니다.")
         return
+
+    # --ids/--prompt-ids를 쓰면 id.txt 없이 Colab에서 UID를 입력할 수 있습니다.
+    if args.prompt_ids or args.ids:
+        entered = args.ids
+        if entered is None:
+            try:
+                entered = input(
+                    "\n처리할 UID를 입력하세요 "
+                    "(여러 개는 쉼표 또는 공백으로 구분):\n> "
+                )
+            except EOFError:
+                print("❌ UID 입력을 받지 못했습니다.")
+                return
+        target_ids, invalid_ids = redeemer.parse_uid_text(entered)
+        if invalid_ids:
+            print(f"⚠️ 숫자가 아닌 UID는 제외했습니다: {', '.join(invalid_ids)}")
+    else:
+        try:
+            target_ids = redeemer.read_lines(args.id_file)
+        except FileNotFoundError:
+            print(f"ℹ️ {args.id_file}를 찾지 못해 UID 직접 입력 모드로 전환합니다.")
+            try:
+                entered = input(
+                    "\n처리할 UID를 입력하세요 "
+                    "(여러 개는 쉼표 또는 공백으로 구분):\n> "
+                )
+            except EOFError:
+                print("❌ UID 입력을 받지 못했습니다.")
+                return
+            target_ids, invalid_ids = redeemer.parse_uid_text(entered)
+            if invalid_ids:
+                print(f"⚠️ 숫자가 아닌 UID는 제외했습니다: {', '.join(invalid_ids)}")
+        except OSError as error:
+            print(f"❌ UID 파일 읽기 오류: {error}")
+            return
+
     if not target_ids:
-        print(f"❌ {args.id_file} 파일에 UID가 없습니다.")
+        print("❌ 처리할 UID가 없습니다.")
         return
 
-    print(f"\n📋 총 {len(urls)}개의 URL, {len(target_ids)}개의 UID를 발견했습니다.")
+    print(
+        f"\n📋 총 {len(urls)}개의 쿠폰 URL, "
+        f"{len(target_ids)}개의 UID를 처리합니다."
+    )
     all_results = []
 
     for index, url in enumerate(urls, 1):
