@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="ko" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PUBG INFO - 클라이언트 비디오 최적화 도구</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .slider-divider {
+            position: absolute;
+            top: 0; bottom: 0; width: 4px;
+            background: #fff;
+            cursor: ew-resize;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 flex flex-col min-h-full">
+
+    <header class="border-b border-gray-200 bg-white sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <span class="font-bold text-xl tracking-tight text-black">PUBG INFO</span>
+                <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full font-medium">기기 내 처리</span>
+            </div>
+            <nav class="hidden md:flex space-x-8 text-sm font-medium text-gray-600">
+                <a href="#home" class="hover:text-black">HOME</a>
+                <a href="#tools" class="hover:text-black">TOOLS</a>
+                <a href="#howitworks" class="hover:text-black">HOW IT WORKS</a>
+                <a href="#faq" class="hover:text-black">FAQ</a>
+            </nav>
+            <div>
+                <button onclick="scrollToUpload()" class="text-xs bg-black text-white px-3.5 py-2 rounded-lg font-medium hover:bg-gray-800 transition">기기 내 처리</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <section id="home" class="py-16 md:py-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto text-center">
+            <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-black mb-6 leading-tight">
+                YOUR VIDEO.<br>DON'T LET THE UPLOAD DESTROY IT.
+            </h1>
+            <p class="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto mb-12">
+                업로드 과정에서 뭉개지기 전에, 먼저 다듬어 두세요. 영상을 고르면 이 기기 안에서 바로 최적화하고, 끝나면 파일을 그대로 내려받을 수 있습니다.
+            </p>
+
+            <!-- Upload Box -->
+            <div id="upload-card" class="bg-white border-2 border-dashed border-gray-300 rounded-2xl p-8 sm:p-12 text-center transition hover:border-gray-400 cursor-pointer shadow-sm relative" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)" onclick="document.getElementById('file-input').click()">
+                <input type="file" id="file-input" class="hidden" accept="video/*,.mp4,.mov,.webm,.mkv,.m4v" onchange="handleFileSelect(event)">
+                <div class="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                </div>
+                <h3 class="text-lg font-semibold text-black mb-1">영상 선택 · 드래그 앤 드롭</h3>
+                <p class="text-xs text-gray-500 mb-4">MP4 · MOV · WebM · MKV</p>
+                <p class="text-xs text-gray-400">선택한 영상은 서버로 전송되지 않고 이 기기 안에서만 처리됩니다.</p>
+            </div>
+
+            <!-- Optimization Panel (Hidden initially) -->
+            <div id="action-bar" class="hidden mt-6 text-left grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6">
+                <div>
+                    <div class="relative w-full aspect-video bg-black rounded-2xl overflow-hidden flex items-center justify-center">
+                        <video id="preview-video" class="w-full h-full object-contain" playsinline></video>
+                    </div>
+                    <div class="border border-gray-200 rounded-2xl p-5 mt-4 bg-white">
+                        <p class="text-xs font-semibold text-gray-400 mb-3">영상 정보</p>
+                        <div class="space-y-0 text-sm">
+                            <div class="flex justify-between py-2 border-t border-gray-100 first:border-t-0">
+                                <span class="text-gray-500">파일명</span>
+                                <span id="file-name" class="font-semibold text-black truncate max-w-[60%] text-right">-</span>
+                            </div>
+                            <div class="flex justify-between py-2 border-t border-gray-100">
+                                <span class="text-gray-500">크기</span>
+                                <span id="file-size" class="font-semibold text-black">-</span>
+                            </div>
+                            <div class="flex justify-between py-2 border-t border-gray-100">
+                                <span class="text-gray-500">해상도</span>
+                                <span id="file-res" class="font-semibold text-black">-</span>
+                            </div>
+                            <div class="flex justify-between py-2 border-t border-gray-100">
+                                <span class="text-gray-500">FPS</span>
+                                <span id="file-fps" class="font-semibold text-black">-</span>
+                            </div>
+                            <div class="flex justify-between py-2 border-t border-gray-100">
+                                <span class="text-gray-500">길이</span>
+                                <span id="file-dur" class="font-semibold text-black">-</span>
+                            </div>
+                            <div class="flex justify-between py-2 border-t border-gray-100">
+                                <span class="text-gray-500">코덱</span>
+                                <span id="file-codec" class="font-semibold text-black text-right text-xs">MOV 컨테이너 (정확한 코덱은 브라우저에서 확인 불가)</span>
+                            </div>
+                            <div class="flex justify-between py-2 border-t border-gray-100">
+                                <span class="text-gray-500">소리</span>
+                                <span id="file-audio" class="font-semibold text-black">확인 중...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border border-gray-200 rounded-2xl p-5 bg-white h-fit">
+                    <p class="text-sm font-bold text-black mb-3">Preset</p>
+                    <div class="grid grid-cols-2 gap-2 mb-6" id="preset-grid">
+                        <button type="button" data-preset="tiktok" class="preset-btn text-left border-2 border-black bg-black text-white rounded-lg p-3 transition">
+                            <p class="text-sm font-bold">TikTok High Quality</p>
+                            <p class="text-xs opacity-70 mt-0.5">1080p · 30fps · 업로드 후 뭉개짐 최소화</p>
+                        </button>
+                        <button type="button" data-preset="smooth" class="preset-btn text-left border-2 border-gray-200 rounded-lg p-3 transition hover:border-gray-400">
+                            <p class="text-sm font-bold text-black">Smooth</p>
+                            <p class="text-xs text-gray-500 mt-0.5">60fps 우선 · 움직임 많은 영상에 적합</p>
+                        </button>
+                        <button type="button" data-preset="max" class="preset-btn text-left border-2 border-gray-200 rounded-lg p-3 transition hover:border-gray-400">
+                            <p class="text-sm font-bold text-black">Maximum</p>
+                            <p class="text-xs text-gray-500 mt-0.5">원본 해상도 유지 · 화질 최우선 (용량 큼)</p>
+                        </button>
+                        <button type="button" data-preset="compact" class="preset-btn text-left border-2 border-gray-200 rounded-lg p-3 transition hover:border-gray-400">
+                            <p class="text-sm font-bold text-black">Compact</p>
+                            <p class="text-xs text-gray-500 mt-0.5">720p · 30fps · 용량 최소화 우선</p>
+                        </button>
+                    </div>
+
+                    <div class="flex justify-between items-baseline mb-1">
+                        <p class="text-sm font-bold text-black">품질</p>
+                        <p id="quality-val" class="text-sm font-bold text-black">90%</p>
+                    </div>
+                    <input type="range" id="quality-slider" min="40" max="100" value="90" class="w-full mb-2 accent-black">
+                    <p class="text-xs text-gray-400 mb-6 leading-relaxed">100%는 원본에 최대한 가깝게 유지한다는 뜻입니다. 원본 화질을 넘어설 수는 없습니다.</p>
+
+                    <div class="grid grid-cols-2 gap-3 mb-4">
+                        <div>
+                            <label class="text-xs text-gray-500 block mb-1">해상도</label>
+                            <select id="res-select" class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2">
+                                <option value="2160">최대 2160p</option>
+                                <option value="1440">최대 1440p</option>
+                                <option value="1080" selected>최대 1080p</option>
+                                <option value="720">최대 720p</option>
+                                <option value="480">최대 480p</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-500 block mb-1">FPS</label>
+                            <select id="fps-select" class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2">
+                                <option value="60">60 fps</option>
+                                <option value="30" selected>30 fps</option>
+                                <option value="24">24 fps</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 mb-4">
+                        <div>
+                            <label class="text-xs text-gray-500 block mb-1">코덱</label>
+                            <select id="codec-select" class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2">
+                                <option value="auto">자동 (권장)</option>
+                                <option value="vp9">VP9</option>
+                                <option value="vp8">VP8</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-500 block mb-1">소리</label>
+                            <select id="audio-select" class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2">
+                                <option value="keep">유지</option>
+                                <option value="mute">소리 제거</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-3 text-xs text-gray-500 mb-5" id="estimate-box">예상 결과: -</div>
+
+                    <button onclick="startOptimization()" class="w-full bg-black text-white px-6 py-3.5 rounded-xl font-medium text-sm hover:bg-gray-800 transition flex items-center justify-center space-x-2">
+                        <span>최적화 시작</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Upload Error -->
+            <div id="upload-error" class="hidden mt-4 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl p-4 text-left"></div>
+
+            <!-- Hidden source video for processing (visually hidden, not display:none — Safari needs layout) -->
+            <video id="source-video" style="position:absolute; width:1px; height:1px; opacity:0; pointer-events:none;" muted playsinline webkit-playsinline></video>
+
+            <!-- Processing Modal / Screen -->
+            <div id="processing-screen" class="hidden mt-6 bg-white border border-gray-200 rounded-2xl p-8 text-center shadow-sm">
+                <div class="w-12 h-12 border-4 border-gray-200 border-t-black rounded-full animate-spin mx-auto mb-4"></div>
+                <h3 id="progress-title" class="text-lg font-bold text-black mb-1">기기 안에서 재인코딩 중...</h3>
+                <p id="progress-desc" class="text-xs text-gray-500 mb-4">브라우저가 영상을 실제로 재생하면서 목표 해상도로 다시 기록합니다.</p>
+                <div class="w-full bg-gray-100 rounded-full h-2.5 max-w-md mx-auto overflow-hidden">
+                    <div id="progress-bar" class="bg-black h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+                <p id="progress-percent" class="text-xs font-semibold text-gray-600 mt-2">0%</p>
+            </div>
+
+            <!-- Result Screen (Hidden initially) -->
+            <div id="result-screen" class="hidden mt-6 text-left">
+                <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">RESULT</p>
+                <h2 class="text-2xl font-bold text-black mb-5">최적화 결과</h2>
+
+                <div class="grid grid-cols-2 gap-4 mb-5">
+                    <div class="border border-gray-200 rounded-2xl p-5 bg-white">
+                        <p class="text-xs text-gray-400 mb-2">BEFORE</p>
+                        <p id="before-size" class="text-2xl font-bold text-black">-</p>
+                        <p id="before-meta" class="text-xs text-gray-500 mt-1">-</p>
+                    </div>
+                    <div class="bg-black rounded-2xl p-5">
+                        <p class="text-xs text-gray-400 mb-2">AFTER</p>
+                        <p id="after-size" class="text-2xl font-bold text-white">-</p>
+                        <p id="after-meta" class="text-xs text-gray-400 mt-1">-</p>
+                    </div>
+                </div>
+
+                <div class="text-sm text-gray-600 mb-5" id="result-notes"></div>
+
+                <!-- Before/After compare slider -->
+                <div id="compare-slider" class="relative w-full aspect-video bg-black rounded-2xl overflow-hidden select-none cursor-ew-resize">
+                    <video id="before-video" class="absolute inset-0 w-full h-full object-contain" muted playsinline loop></video>
+                    <div id="after-layer" class="absolute inset-0 w-full h-full" style="clip-path: inset(0 0 0 50%);">
+                        <video id="after-video" class="absolute inset-0 w-full h-full object-contain" muted playsinline loop></video>
+                    </div>
+                    <span class="absolute top-3 left-3 text-[11px] tracking-wide text-white bg-black/50 px-2.5 py-1 rounded-full">BEFORE</span>
+                    <span class="absolute top-3 right-3 text-[11px] tracking-wide text-white bg-black/50 px-2.5 py-1 rounded-full">AFTER</span>
+                    <div id="slider-divider" class="slider-divider" style="left:50%;">
+                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-9 h-9 bg-white rounded-full flex items-center justify-center text-sm shadow-lg">↔</div>
+                    </div>
+                </div>
+                <p class="text-xs text-gray-400 mt-2 text-right">손가락이나 마우스로 가운데 선을 좌우로 끌어 보세요.</p>
+
+                <div class="flex gap-3 mt-5">
+                    <button onclick="downloadResult()" class="flex-1 bg-black text-white px-5 py-3.5 rounded-xl text-sm font-medium hover:bg-gray-800 transition flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        <span>결과 파일 다운로드</span>
+                    </button>
+                    <button onclick="resetApp()" class="bg-gray-100 text-gray-700 px-5 py-3.5 rounded-xl text-sm font-medium hover:bg-gray-200 transition flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                        <span>다른 영상 최적화</span>
+                    </button>
+                </div>
+                <p id="result-filename" class="text-xs text-gray-400 text-center mt-3"></p>
+            </div>
+        </section>
+
+        <section id="tools" class="py-16 bg-white border-t border-gray-200 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-6xl mx-auto">
+                <div class="mb-10">
+                    <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">TOOLS</p>
+                    <h2 class="text-2xl font-bold text-black">도구</h2>
+                    <p class="text-xs text-gray-500 mt-1">지금 바로 쓸 수 있는 건 아래 두 가지입니다. 나머지는 아직 동작하지 않습니다.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <!-- Tool 1 -->
+                    <div class="border border-gray-200 rounded-2xl p-6 bg-white hover:border-gray-300 transition">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center text-black">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                            </div>
+                            <span class="text-xs bg-black text-white px-2.5 py-1 rounded-full font-medium">사용 가능</span>
+                        </div>
+                        <h3 class="text-base font-bold text-black mb-1">Video Optimizer</h3>
+                        <p class="text-xs text-gray-500">프리셋에 맞춰 화질을 지키며 재인코딩</p>
+                    </div>
+                    <!-- Tool 2 -->
+                    <div class="border border-gray-200 rounded-2xl p-6 bg-white hover:border-gray-300 transition">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center text-black">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"/></svg>
+                            </div>
+                            <span class="text-xs bg-black text-white px-2.5 py-1 rounded-full font-medium">사용 가능</span>
+                        </div>
+                        <h3 class="text-base font-bold text-black mb-1">Video Compressor</h3>
+                        <p class="text-xs text-gray-500">해상도·품질을 낮춰 용량을 크게 절감</p>
+                    </div>
+                </div>
+
+                <!-- Coming Soon Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="border border-gray-200 rounded-2xl p-6 bg-gray-50/50 opacity-60">
+                        <span class="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full font-medium">COMING SOON</span>
+                        <h4 class="text-sm font-bold text-black mt-3">AI Upscaler</h4>
+                        <p class="text-xs text-gray-500 mt-1">서버 처리 연결 후 제공</p>
+                    </div>
+                    <div class="border border-gray-200 rounded-2xl p-6 bg-gray-50/50 opacity-60">
+                        <span class="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full font-medium">COMING SOON</span>
+                        <h4 class="text-sm font-bold text-black mt-3">TikTok Downloader</h4>
+                        <p class="text-xs text-gray-500 mt-1">서버 연결 필요</p>
+                    </div>
+                    <div class="border border-gray-200 rounded-2xl p-6 bg-gray-50/50 opacity-60">
+                        <span class="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full font-medium">COMING SOON</span>
+                        <h4 class="text-sm font-bold text-black mt-3">Trimmer</h4>
+                        <p class="text-xs text-gray-500 mt-1">구간 잘라내기</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="howitworks" class="py-16 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
+            <div class="mb-10">
+                <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">HOW IT WORKS</p>
+                <h2 class="text-2xl font-bold text-black">처리 방식</h2>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                <div class="border border-gray-200 rounded-2xl p-6 bg-white">
+                    <span class="text-xs font-bold text-gray-400">01</span>
+                    <h4 class="text-sm font-bold text-black mt-2 mb-1">영상 선택</h4>
+                    <p class="text-xs text-gray-500 leading-relaxed">기기에서 영상을 고르거나 끌어다 놓습니다. 파일은 이 기기를 벗어나지 않습니다.</p>
+                </div>
+                <div class="border border-gray-200 rounded-2xl p-6 bg-white">
+                    <span class="text-xs font-bold text-gray-400">02</span>
+                    <h4 class="text-sm font-bold text-black mt-2 mb-1">설정 확인</h4>
+                    <p class="text-xs text-gray-500 leading-relaxed">프리셋을 고르면 품질·해상도·프레임레이트·코덱·소리 설정이 함께 바뀝니다.</p>
+                </div>
+                <div class="border border-gray-200 rounded-2xl p-6 bg-white">
+                    <span class="text-xs font-bold text-gray-400">03</span>
+                    <h4 class="text-sm font-bold text-black mt-2 mb-1">기기 안에서 재인코딩</h4>
+                    <p class="text-xs text-gray-500 leading-relaxed">브라우저가 영상을 실제로 재생하면서 목표 해상도로 다시 기록합니다.</p>
+                </div>
+                <div class="border border-gray-200 rounded-2xl p-6 bg-white">
+                    <span class="text-xs font-bold text-gray-400">04</span>
+                    <h4 class="text-sm font-bold text-black mt-2 mb-1">비교하고 내려받기</h4>
+                    <p class="text-xs text-gray-500 leading-relaxed">Before/After를 나란히 확인하고, 실제로 만들어진 파일을 그대로 저장합니다.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section id="faq" class="py-16 bg-white border-t border-gray-200 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-2xl font-bold text-black mb-8">자주 묻는 질문</h2>
+                <div class="space-y-4">
+                    <div class="border border-gray-200 rounded-2xl p-6">
+                        <h4 class="text-sm font-bold text-black mb-1">영상이 서버로 올라가나요?</h4>
+                        <p class="text-xs text-gray-500 leading-relaxed">아니오. 모든 처리는 사용자의 기기(브라우저) 내부에서 이루어지므로 서버로 전송되지 않습니다.</p>
+                    </div>
+                    <div class="border border-gray-200 rounded-2xl p-6">
+                        <h4 class="text-sm font-bold text-black mb-1">아이폰이나 모바일에서도 잘 되나요?</h4>
+                        <p class="text-xs text-gray-500 leading-relaxed">브라우저 메모리 한계로 인해 대용량 파일은 아이폰 사파리에서 간혹 실패할 수 있습니다. 가급적 PC 크롬 브라우저를 권장합니다.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="border-t border-gray-200 py-8 bg-white text-center text-xs text-gray-400">
+        <p>© Hajun Optimizer. Client-side Video Processing Tool.</p>
+    </footer>
+
+    <script>
+        let selectedFile = null;
+        let resultBlob = null;
+        let currentPreset = 'tiktok';
+        let currentFileInfo = null;
+
+        const PRESETS = {
+            tiktok: { res: 1080, fps: 30, quality: 90 },
+            smooth: { res: 1080, fps: 60, quality: 85 },
+            max:    { res: 2160, fps: 30, quality: 100 },
+            compact:{ res: 720,  fps: 30, quality: 70 },
+        };
+
+        function scrollToUpload() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function fmtBytes(b) {
+            return (b / (1024*1024)).toFixed(1) + ' MB';
+        }
+        function fmtDur(s) {
+            if (!isFinite(s)) return '-';
+            const m = Math.floor(s/60), sec = Math.floor(s%60);
+            return m + ':' + String(sec).padStart(2,'0');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault(); e.stopPropagation();
+            document.getElementById('upload-card').classList.add('border-black');
+        }
+        function handleDragLeave(e) {
+            e.preventDefault(); e.stopPropagation();
+            document.getElementById('upload-card').classList.remove('border-black');
+        }
+        function handleDrop(e) {
+            e.preventDefault(); e.stopPropagation();
+            document.getElementById('upload-card').classList.remove('border-black');
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                processFile(e.dataTransfer.files[0]);
+            }
+        }
+        function handleFileSelect(e) {
+            if (e.target.files && e.target.files.length > 0) {
+                processFile(e.target.files[0]);
+            }
+        }
+
+        function showUploadError(msg) {
+            const box = document.getElementById('upload-error');
+            box.textContent = msg;
+            box.classList.remove('hidden');
+        }
+        function clearUploadError() {
+            document.getElementById('upload-error').classList.add('hidden');
+        }
+
+        function processFile(file) {
+            clearUploadError();
+
+            const nameExt = (file.name.split('.').pop() || '').toLowerCase();
+            const knownVideoExts = ['mp4','mov','webm','mkv','m4v','avi','3gp'];
+            const looksLikeVideo = file.type.startsWith('video/') || knownVideoExts.includes(nameExt);
+
+            if (!looksLikeVideo) {
+                showUploadError('영상 파일만 선택할 수 있습니다. (' + (file.type || '알 수 없는 형식') + ', .' + nameExt + ')');
+                return;
+            }
+
+            selectedFile = file;
+
+            const srcVideo = document.getElementById('source-video');
+            const previewVideo = document.getElementById('preview-video');
+            const url = URL.createObjectURL(file);
+
+            srcVideo.onerror = null;
+            srcVideo.onloadedmetadata = null;
+            srcVideo.src = url;
+            srcVideo.load();
+            previewVideo.src = url;
+
+            srcVideo.onerror = () => {
+                const err = srcVideo.error;
+                const codeMap = {1:'로드가 중단됨', 2:'네트워크 오류', 3:'디코딩 실패(코덱 미지원 가능성 높음)', 4:'지원하지 않는 형식/코덱'};
+                const detail = err ? `(에러 코드 ${err.code}: ${codeMap[err.code] || '알 수 없음'})` : '';
+                showUploadError('이 영상을 브라우저에서 열 수 없습니다. ' + detail + ' Safari는 일부 MOV/HEVC 코덱만 지원합니다 — MP4/H.264로 다시 시도해보세요.');
+                selectedFile = null;
+            };
+
+            srcVideo.onloadedmetadata = () => {
+                currentFileInfo = {
+                    name: file.name,
+                    size: file.size,
+                    width: srcVideo.videoWidth,
+                    height: srcVideo.videoHeight,
+                    duration: srcVideo.duration,
+                    ext: nameExt.toUpperCase(),
+                };
+
+                document.getElementById('file-name').innerText = file.name;
+                document.getElementById('file-size').innerText = fmtBytes(file.size);
+                document.getElementById('file-res').innerText = currentFileInfo.width + ' × ' + currentFileInfo.height;
+                document.getElementById('file-fps').innerText = '재생 중 추정됨';
+                document.getElementById('file-dur').innerText = fmtDur(srcVideo.duration);
+                document.getElementById('file-codec').innerText = currentFileInfo.ext + ' 컨테이너 (정확한 코덱은 브라우저에서 확인 불가)';
+                document.getElementById('file-audio').innerText = '확인 중...';
+
+                detectAudio(file).then(has => {
+                    document.getElementById('file-audio').innerText = has ? '있음' : '없음';
+                    currentFileInfo.hasAudio = has;
+                });
+
+                document.getElementById('upload-card').classList.add('hidden');
+                document.getElementById('action-bar').classList.remove('hidden');
+                updateEstimate();
+            };
+        }
+
+        function detectAudio(file) {
+            return new Promise(resolve => {
+                const v = document.createElement('video');
+                v.src = URL.createObjectURL(file);
+                v.muted = true;
+                v.addEventListener('loadeddata', async () => {
+                    try {
+                        await v.play();
+                        setTimeout(() => {
+                            const has = !!(v.mozHasAudio || v.webkitAudioDecodedByteCount > 0 || (v.audioTracks && v.audioTracks.length));
+                            v.pause();
+                            resolve(has);
+                        }, 150);
+                    } catch { resolve(false); }
+                }, { once: true });
+                v.addEventListener('error', () => resolve(false), { once: true });
+            });
+        }
+
+        function updateEstimate() {
+            if (!currentFileInfo) return;
+            const targetRes = parseInt(document.getElementById('res-select').value);
+            const fps = parseInt(document.getElementById('fps-select').value);
+            const quality = parseInt(document.getElementById('quality-slider').value);
+
+            const srcH = currentFileInfo.height;
+            const outH = Math.min(srcH, targetRes);
+            const outW = Math.round(currentFileInfo.width * (outH / srcH));
+
+            const pixels = outW * outH;
+            const bitrateMbps = Math.max(0.8, (pixels / (1920*1080)) * (fps/30) * (quality/90) * 8).toFixed(1);
+
+            document.getElementById('estimate-box').textContent =
+                `예상 결과: ${outW} × ${outH} · ${fps} fps · 약 ${bitrateMbps} Mbps (실제 값은 기기 성능에 따라 달라질 수 있습니다)`;
+        }
+
+        // Preset 버튼
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.preset-btn').forEach(b => {
+                    b.classList.remove('border-black', 'bg-black', 'text-white');
+                    b.classList.add('border-gray-200');
+                    b.querySelectorAll('p').forEach(p => { p.classList.remove('text-white'); });
+                    b.querySelector('p:first-child')?.classList.add('text-black');
+                    b.querySelector('p:last-child')?.classList.add('text-gray-500');
+                });
+                btn.classList.remove('border-gray-200');
+                btn.classList.add('border-black', 'bg-black', 'text-white');
+                btn.querySelectorAll('p').forEach(p => { p.classList.remove('text-black', 'text-gray-500'); p.classList.add('text-white'); });
+
+                currentPreset = btn.dataset.preset;
+                const p = PRESETS[currentPreset];
+                document.getElementById('res-select').value = p.res;
+                document.getElementById('fps-select').value = p.fps;
+                document.getElementById('quality-slider').value = p.quality;
+                document.getElementById('quality-val').textContent = p.quality + '%';
+                updateEstimate();
+            });
+        });
+
+        ['res-select','fps-select','codec-select','audio-select'].forEach(id => {
+            document.getElementById(id).addEventListener('change', updateEstimate);
+        });
+        document.getElementById('quality-slider').addEventListener('input', (e) => {
+            document.getElementById('quality-val').textContent = e.target.value + '%';
+            updateEstimate();
+        });
+
+        function pickMimeType() {
+            const candidates = [
+                'video/webm;codecs=vp9,opus',
+                'video/webm;codecs=vp9',
+                'video/webm;codecs=vp8,opus',
+                'video/webm;codecs=vp8',
+                'video/webm',
+            ];
+            for (const c of candidates) {
+                if (window.MediaRecorder && MediaRecorder.isTypeSupported(c)) return c;
+            }
+            return '';
+        }
+
+        async function startOptimization() {
+            document.getElementById('action-bar').classList.add('hidden');
+            document.getElementById('processing-screen').classList.remove('hidden');
+
+            const targetRes = parseInt(document.getElementById('res-select').value);
+            const fps = parseInt(document.getElementById('fps-select').value);
+            const quality = parseInt(document.getElementById('quality-slider').value);
+            const audioMode = document.getElementById('audio-select').value;
+
+            try {
+                const result = await reencodeVideo(selectedFile, {
+                    targetRes, fps, quality, audio: audioMode,
+                });
+                showResult(result);
+            } catch (err) {
+                console.error(err);
+                document.getElementById('processing-screen').classList.add('hidden');
+                showUploadError('처리 중 오류가 발생했습니다: ' + err.message + ' 다른 영상이나 설정으로 다시 시도해보세요.');
+                document.getElementById('upload-card').classList.remove('hidden');
+            }
+        }
+
+        async function reencodeVideo(file, opts) {
+            const video = document.getElementById('source-video');
+            if (!video.videoWidth) {
+                await new Promise(res => { video.onloadedmetadata = res; });
+            }
+
+            const srcW = video.videoWidth, srcH = video.videoHeight;
+            const outH = Math.min(srcH, opts.targetRes);
+            const outW = Math.round(srcW * (outH / srcH));
+
+            const canvas = document.createElement('canvas');
+            canvas.width = outW;
+            canvas.height = outH;
+            const ctx = canvas.getContext('2d');
+
+            const canvasStream = canvas.captureStream(opts.fps);
+
+            let audioIncluded = false;
+            if (opts.audio === 'keep' && video.captureStream) {
+                try {
+                    const vidStream = video.captureStream();
+                    vidStream.getAudioTracks().forEach(t => {
+                        canvasStream.addTrack(t);
+                        audioIncluded = true;
+                    });
+                } catch (e) { /* 오디오 캡처 실패 시 무음으로 계속 진행 */ }
+            }
+
+            const mimeType = pickMimeType();
+            if (!mimeType) {
+                throw new Error('이 브라우저는 영상 재인코딩(MediaRecorder)을 지원하지 않습니다.');
+            }
+
+            const q = opts.quality / 100;
+            const bitsPerSecond = Math.max(500000, Math.round(outW * outH * opts.fps * 0.07 * q));
+
+            const recorder = new MediaRecorder(canvasStream, {
+                mimeType,
+                videoBitsPerSecond: bitsPerSecond,
+            });
+
+            const chunks = [];
+            recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+            const recordingDone = new Promise(resolve => { recorder.onstop = resolve; });
+
+            const bar = document.getElementById('progress-bar');
+            const percent = document.getElementById('progress-percent');
+
+            let rafId;
+            const drawFrame = () => {
+                if (video.paused || video.ended) return;
+                ctx.drawImage(video, 0, 0, outW, outH);
+                const pct = Math.min(99, Math.round((video.currentTime / video.duration) * 100));
+                bar.style.width = pct + '%';
+                percent.innerText = pct + '%';
+                rafId = requestAnimationFrame(drawFrame);
+            };
+
+            recorder.start();
+            video.currentTime = 0;
+            await video.play();
+            drawFrame();
+
+            await new Promise(res => { video.onended = res; });
+            cancelAnimationFrame(rafId);
+            video.pause();
+            recorder.stop();
+            await recordingDone;
+
+            bar.style.width = '100%';
+            percent.innerText = '100%';
+
+            const blob = new Blob(chunks, { type: mimeType.split(';')[0] });
+            return {
+                blob, outW, outH,
+                fps: opts.fps,
+                audioIncluded,
+                originalUrl: video.src,
+                originalSize: file.size,
+                srcW, srcH,
+            };
+        }
+
+        function showResult(result) {
+            resultBlob = result.blob;
+            document.getElementById('processing-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+
+            const resultUrl = URL.createObjectURL(result.blob);
+            document.getElementById('before-video').src = result.originalUrl;
+            document.getElementById('after-video').src = resultUrl;
+            document.getElementById('before-video').play().catch(()=>{});
+            document.getElementById('after-video').play().catch(()=>{});
+
+            const baseName = selectedFile.name.substring(0, selectedFile.name.lastIndexOf('.')) || 'video';
+            document.getElementById('result-filename').innerText = `저장 이름: ${baseName}_hajun-optimized.webm`;
+
+            document.getElementById('before-size').innerText = fmtBytes(result.originalSize);
+            document.getElementById('before-meta').innerText = `${result.srcW} × ${result.srcH}`;
+            document.getElementById('after-size').innerText = fmtBytes(result.blob.size);
+            document.getElementById('after-meta').innerText = `${result.outW} × ${result.outH} · ${result.fps}fps`;
+
+            const notes = [];
+            notes.push('원본보다 큰 해상도로 늘리지 않았습니다. 원본 해상도를 그대로 유지합니다.');
+            notes.push('원본 프레임레이트보다 높게 만들 수 없어 그대로 처리했습니다.');
+            notes.push(result.audioIncluded
+                ? '이 브라우저에서 오디오 트랙을 가져와 결과물에 반영했습니다.'
+                : '이 브라우저에서 오디오 트랙을 가져오지 못해 결과물에 소리가 없습니다.');
+            if (result.blob.size >= result.originalSize) {
+                notes.push('결과 파일이 원본보다 작아지지 않았습니다. 품질을 낮추거나 해상도를 줄이면 용량이 줄어듭니다.');
+            }
+            document.getElementById('result-notes').innerHTML = notes.map(n => `<p>ⓘ ${n}</p>`).join('');
+        }
+
+        function downloadResult() {
+            if (!resultBlob) return;
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(resultBlob);
+            const baseName = selectedFile.name.substring(0, selectedFile.name.lastIndexOf('.')) || 'video';
+            a.download = `${baseName}_hajun-optimized.webm`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        function resetApp() {
+            selectedFile = null;
+            resultBlob = null;
+            currentFileInfo = null;
+            document.getElementById('file-input').value = '';
+            document.getElementById('source-video').src = '';
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('action-bar').classList.add('hidden');
+            clearUploadError();
+            document.getElementById('upload-card').classList.remove('hidden');
+        }
+
+        // Before/After 드래그 슬라이더
+        (function() {
+            const slider = document.getElementById('compare-slider');
+            const divider = document.getElementById('slider-divider');
+            const afterLayer = document.getElementById('after-layer');
+            let dragging = false;
+
+            function setSplit(clientX) {
+                const rect = slider.getBoundingClientRect();
+                let pct = ((clientX - rect.left) / rect.width) * 100;
+                pct = Math.max(0, Math.min(100, pct));
+                divider.style.left = pct + '%';
+                afterLayer.style.clipPath = `inset(0 0 0 ${pct}%)`;
+            }
+            divider.addEventListener('pointerdown', () => dragging = true);
+            window.addEventListener('pointerup', () => dragging = false);
+            window.addEventListener('pointermove', e => { if (dragging) setSplit(e.clientX); });
+            slider.addEventListener('click', e => setSplit(e.clientX));
+        })();
+    </script>
+</body>
+</html>
