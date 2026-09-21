@@ -1,4 +1,74 @@
 // =======================
+// 인증키 게이트
+// =======================
+const AUTH_API = ''; // Same-origin Worker route
+
+
+const authGate = document.getElementById('auth-gate');
+const siteContent = document.getElementById('site-content');
+const authForm = document.getElementById('auth-form');
+const authInput = document.getElementById('access-key');
+const authMessage = document.getElementById('auth-message');
+
+function showSite() {
+  document.body.classList.remove('auth-locked');
+  authGate.hidden = true;
+  siteContent.hidden = false;
+}
+
+function showAuthMessage(message, error = true) {
+  authMessage.textContent = message;
+  authMessage.dataset.state = error ? 'error' : 'success';
+}
+
+async function verifyKey(key) {
+  const response = await fetch(`${AUTH_API}/auth/verify`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ key })
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || !data.valid) {
+    throw new Error(data.message || '인증키가 유효하지 않습니다.');
+  }
+  return true;
+}
+
+async function restoreSession() {
+  try {
+    const response = await fetch(`${AUTH_API}/auth/session`, { credentials: 'include' });
+    const data = await response.json().catch(() => ({}));
+    if (response.ok && data.valid) {
+      showSite();
+      return true;
+    }
+  } catch (_) {}
+  return false;
+}
+
+authForm?.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const key = authInput.value.trim();
+  if (!key) return;
+  const submitButton = authForm.querySelector('button');
+  submitButton.disabled = true;
+  showAuthMessage('인증 중...', false);
+  try {
+    await verifyKey(key);
+    showSite();
+  } catch (error) {
+    showAuthMessage(error.message || '인증에 실패했습니다.');
+  } finally {
+    submitButton.disabled = false;
+  }
+});
+
+restoreSession().then((restored) => {
+  if (!restored) authGate.hidden = false;
+});
+
+// =======================
 // 테마 (시스템 감지 + 수동 토글)
 // =======================
 const root   = document.documentElement;
