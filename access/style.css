@@ -11,7 +11,7 @@
 --success-fg: #25843c;
 --danger-fg: #d33;
 }
-￼ {
+￼ *{
 box-sizing: border-box;
 }
 body {
