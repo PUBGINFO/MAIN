@@ -1,7 +1,7 @@
 // =======================
 // 인증키 게이트
 // =======================
-const AUTH_API = 'https://pubginfo-main-access.pubginfo-kr.workers.dev/'; // Same-origin Worker route
+const AUTH_API = 'https://pubginfo-main-access.pubginfo-kr.workers.dev'; // Same-origin Worker route
 
 
 const authGate = document.getElementById('auth-gate');
