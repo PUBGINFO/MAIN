@@ -14,6 +14,10 @@ let current = 'dashboard';
 let keysCache = [];
 
 
+/* =========================
+   API
+========================= */
+
 async function api(path, options = {}) {
 
   const response = await fetch(
@@ -53,7 +57,7 @@ async function checkSession() {
   try {
 
     const data =
-      await api('/admin/session');
+      await api('/access/session');
 
     if (data.valid) {
 
@@ -100,7 +104,7 @@ $('#loginForm').addEventListener(
 
       const data =
         await api(
-          '/admin/login',
+          '/access/login',
           {
             method: 'POST',
             body: JSON.stringify({
@@ -142,10 +146,14 @@ $('#logout').addEventListener(
   async () => {
 
     try {
+
       await api(
-        '/admin/logout',
-        { method: 'POST' }
+        '/access/logout',
+        {
+          method: 'POST'
+        }
       );
+
     } catch {}
 
     app.hidden = true;
@@ -178,10 +186,12 @@ function render() {
   document
     .querySelectorAll('nav button')
     .forEach(button => {
+
       button.classList.toggle(
         'active',
         button.dataset.page === current
       );
+
     });
 
   if (current === 'dashboard') {
@@ -294,7 +304,7 @@ async function loadKeyStats() {
   try {
 
     const data =
-      await api('/admin/keys');
+      await api('/access/keys');
 
     const keys =
       data.keys || [];
@@ -325,6 +335,7 @@ async function loadKeyStats() {
       revoked.length;
 
   } catch {}
+
 }
 
 
@@ -348,7 +359,7 @@ async function renderKeys() {
       <input
         class="field"
         id="keySearch"
-        placeholder="인증키 검색"
+        placeholder="라벨 또는 ID 검색"
       >
 
     </div>
@@ -365,7 +376,7 @@ async function renderKeys() {
 
         <thead>
           <tr>
-            <th>인증키</th>
+            <th>ID</th>
             <th>라벨</th>
             <th>상태</th>
             <th>만료일</th>
@@ -374,11 +385,13 @@ async function renderKeys() {
         </thead>
 
         <tbody id="keysBody">
+
           <tr>
             <td colspan="5">
               불러오는 중...
             </td>
           </tr>
+
         </tbody>
 
       </table>
@@ -407,7 +420,7 @@ async function loadKeys() {
   try {
 
     const data =
-      await api('/admin/keys');
+      await api('/access/keys');
 
     keysCache =
       data.keys || [];
@@ -423,6 +436,7 @@ async function loadKeys() {
         </td>
       </tr>
     `;
+
   }
 }
 
@@ -438,16 +452,21 @@ function renderKeyRows() {
     (
       $('#keySearch')?.value ||
       ''
-    ).toLowerCase();
+    )
+      .trim()
+      .toLowerCase();
 
   const filtered =
     keysCache.filter(k =>
-      String(k.label || '')
+
+      String(k.id)
         .toLowerCase()
         .includes(search) ||
-      String(k.key_hash || '')
+
+      String(k.label || '')
         .toLowerCase()
         .includes(search)
+
     );
 
   if (!filtered.length) {
@@ -491,10 +510,7 @@ function renderKeyRows() {
 
           <td>
             <code>
-              ${escapeHtml(
-                k.key_hash
-                  .slice(0, 16) + '...'
-              )}
+              #${escapeHtml(k.id)}
             </code>
           </td>
 
@@ -515,7 +531,7 @@ function renderKeyRows() {
           </td>
 
           <td>
-            ${date}
+            ${escapeHtml(date)}
           </td>
 
           <td>
@@ -525,7 +541,7 @@ function renderKeyRows() {
                 ? `
                   <button
                     class="danger-btn"
-                    onclick="revokeById(${k.id})"
+                    onclick="revokeById(${Number(k.id)})"
                   >
                     폐기
                   </button>
@@ -541,6 +557,10 @@ function renderKeyRows() {
     }).join('');
 }
 
+
+/* =========================
+   인증키 발급
+========================= */
 
 async function issueKey() {
 
@@ -560,9 +580,11 @@ async function issueKey() {
     number < 1 ||
     number > 3650
   ) {
+
     alert(
       '1~3650일 사이로 입력하세요.'
     );
+
     return;
   }
 
@@ -570,7 +592,7 @@ async function issueKey() {
 
     const data =
       await api(
-        '/admin/issue',
+        '/access/issue',
         {
           method: 'POST',
           body: JSON.stringify({
@@ -594,7 +616,7 @@ async function issueKey() {
       </div>
 
       <p>
-        이 인증키는 다시 표시되지 않을 수 있으므로
+        이 인증키는 다시 표시되지 않습니다.
         필요한 곳에 즉시 저장하세요.
       </p>
 
@@ -605,29 +627,27 @@ async function issueKey() {
   } catch (error) {
 
     alert(error.message);
+
   }
 }
 
+
+/* =========================
+   인증키 폐기
+========================= */
 
 async function revokeById(id) {
 
   const item =
     keysCache.find(
-      k => k.id === id
+      k => Number(k.id) === Number(id)
     );
 
   if (!item) return;
 
-  const rawKey =
-    prompt(
-      '폐기할 인증키를 입력하세요.'
-    );
-
-  if (!rawKey) return;
-
   if (
     !confirm(
-      '이 인증키를 폐기하시겠습니까?'
+      `인증키 #${id}를 폐기하시겠습니까?`
     )
   ) {
     return;
@@ -636,22 +656,25 @@ async function revokeById(id) {
   try {
 
     await api(
-      '/admin/revoke',
+      '/access/revoke',
       {
         method: 'POST',
         body: JSON.stringify({
-          key: rawKey
+          id: Number(id)
         })
       }
     );
 
-    alert('인증키가 폐기되었습니다.');
+    alert(
+      '인증키가 폐기되었습니다.'
+    );
 
     await loadKeys();
 
   } catch (error) {
 
     alert(error.message);
+
   }
 }
 
@@ -783,6 +806,7 @@ function escapeHtml(value) {
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#039;');
+
 }
 
 
@@ -802,6 +826,7 @@ document
           button.dataset.page;
 
         render();
+
       }
     );
 
