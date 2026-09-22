@@ -15,22 +15,31 @@ let keysCache = [];
 
 
 /* =========================
+   초기 상태
+========================= */
+
+login.hidden = true;
+app.hidden = true;
+
+
+/* =========================
    API
 ========================= */
 
 async function api(path, options = {}) {
 
-  const response = await fetch(
-    API + path,
-    {
-      credentials: 'include',
-      ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {})
+  const response =
+    await fetch(
+      API + path,
+      {
+        credentials: 'include',
+        ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          ...(options.headers || {})
+        }
       }
-    }
-  );
+    );
 
   let data = {};
 
@@ -40,7 +49,8 @@ async function api(path, options = {}) {
 
   if (!response.ok) {
     throw new Error(
-      data.message || '요청에 실패했습니다.'
+      data.message ||
+      '요청에 실패했습니다.'
     );
   }
 
@@ -49,10 +59,14 @@ async function api(path, options = {}) {
 
 
 /* =========================
-   로그인 상태
+   로그인 상태 확인
 ========================= */
 
 async function checkSession() {
+
+  // 세션 확인 전에는 무조건 숨김
+  login.hidden = true;
+  app.hidden = true;
 
   try {
 
@@ -74,6 +88,7 @@ async function checkSession() {
 
   } catch {}
 
+  // 로그인되지 않은 경우
   login.hidden = false;
   app.hidden = true;
 
@@ -100,6 +115,14 @@ $('#loginForm').addEventListener(
     const password =
       $('#password').value;
 
+    if (!username || !password) {
+
+      loginMsg.textContent =
+        '아이디와 비밀번호를 입력하세요.';
+
+      return;
+    }
+
     try {
 
       const data =
@@ -119,14 +142,19 @@ $('#loginForm').addEventListener(
 
       $('#password').value = '';
 
+      loginMsg.textContent = '';
+
       login.hidden = true;
       app.hidden = false;
 
-      loginMsg.textContent = '';
+      current = 'dashboard';
 
       render();
 
     } catch (error) {
+
+      login.hidden = false;
+      app.hidden = true;
 
       loginMsg.textContent =
         error.message;
@@ -156,10 +184,13 @@ $('#logout').addEventListener(
 
     } catch {}
 
+    // 로그아웃 즉시 화면 제거
     app.hidden = true;
     login.hidden = false;
 
     $('#password').value = '';
+
+    loginMsg.textContent = '';
 
     current = 'dashboard';
   }
@@ -181,7 +212,8 @@ function render() {
   };
 
   title.textContent =
-    titles[current];
+    titles[current] ||
+    '대시보드';
 
   document
     .querySelectorAll('nav button')
@@ -242,7 +274,7 @@ function renderDashboard() {
       </div>
 
       <div class="card">
-        <small>관리자 세션</small>
+        <small>현재 관리자 세션</small>
         <strong>1</strong>
       </div>
 
@@ -316,8 +348,10 @@ async function loadKeyStats() {
       keys.filter(
         k =>
           !k.revoked &&
-          (!k.expires_at ||
-            k.expires_at > now)
+          (
+            !k.expires_at ||
+            k.expires_at > now
+          )
       );
 
     const revoked =
@@ -334,13 +368,25 @@ async function loadKeyStats() {
     $('#revokedKeys').textContent =
       revoked.length;
 
-  } catch {}
+  } catch {
 
+    if ($('#totalKeys')) {
+      $('#totalKeys').textContent = '—';
+    }
+
+    if ($('#activeKeys')) {
+      $('#activeKeys').textContent = '—';
+    }
+
+    if ($('#revokedKeys')) {
+      $('#revokedKeys').textContent = '—';
+    }
+  }
 }
 
 
 /* =========================
-   인증키
+   인증키 관리
 ========================= */
 
 async function renderKeys() {
@@ -359,7 +405,7 @@ async function renderKeys() {
       <input
         class="field"
         id="keySearch"
-        placeholder="라벨 또는 ID 검색"
+        placeholder="ID 또는 라벨 검색"
       >
 
     </div>
@@ -429,14 +475,21 @@ async function loadKeys() {
 
   } catch (error) {
 
-    $('#keysBody').innerHTML = `
-      <tr>
-        <td colspan="5">
-          ${escapeHtml(error.message)}
-        </td>
-      </tr>
-    `;
+    const body =
+      $('#keysBody');
 
+    if (body) {
+
+      body.innerHTML = `
+        <tr>
+          <td colspan="5">
+            ${escapeHtml(
+              error.message
+            )}
+          </td>
+        </tr>
+      `;
+    }
   }
 }
 
@@ -457,17 +510,18 @@ function renderKeyRows() {
       .toLowerCase();
 
   const filtered =
-    keysCache.filter(k =>
+    keysCache.filter(k => {
 
-      String(k.id)
-        .toLowerCase()
-        .includes(search) ||
+      return (
+        String(k.id || '')
+          .toLowerCase()
+          .includes(search) ||
+        String(k.label || '')
+          .toLowerCase()
+          .includes(search)
+      );
 
-      String(k.label || '')
-        .toLowerCase()
-        .includes(search)
-
-    );
+    });
 
   if (!filtered.length) {
 
@@ -483,78 +537,84 @@ function renderKeyRows() {
   }
 
   body.innerHTML =
-    filtered.map(k => {
+    filtered
+      .map(k => {
 
-      const expired =
-        k.expires_at &&
-        k.expires_at <=
-        Math.floor(Date.now() / 1000);
+        const expired =
+          k.expires_at &&
+          k.expires_at <=
+            Math.floor(
+              Date.now() / 1000
+            );
 
-      let status = '활성';
+        let status = '활성';
 
-      if (k.revoked) {
-        status = '폐기';
-      } else if (expired) {
-        status = '만료';
-      }
+        if (k.revoked) {
+          status = '폐기';
+        } else if (expired) {
+          status = '만료';
+        }
 
-      const date =
-        k.expires_at
-          ? new Date(
-              k.expires_at * 1000
-            ).toLocaleString('ko-KR')
-          : '무제한';
+        const date =
+          k.expires_at
+            ? new Date(
+                k.expires_at * 1000
+              ).toLocaleString(
+                'ko-KR'
+              )
+            : '무제한';
 
-      return `
-        <tr>
+        return `
+          <tr>
 
-          <td>
-            <code>
-              #${escapeHtml(k.id)}
-            </code>
-          </td>
+            <td>
+              <code>
+                #${escapeHtml(k.id)}
+              </code>
+            </td>
 
-          <td>
-            ${escapeHtml(
-              k.label || '-'
-            )}
-          </td>
+            <td>
+              ${escapeHtml(
+                k.label || '-'
+              )}
+            </td>
 
-          <td>
-            <span class="badge ${
-              status === '활성'
-                ? ''
-                : 'inactive'
-            }">
-              ${status}
-            </span>
-          </td>
+            <td>
+              <span class="badge ${
+                status === '활성'
+                  ? ''
+                  : 'inactive'
+              }">
+                ${status}
+              </span>
+            </td>
 
-          <td>
-            ${escapeHtml(date)}
-          </td>
+            <td>
+              ${escapeHtml(date)}
+            </td>
 
-          <td>
+            <td>
 
-            ${
-              !k.revoked
-                ? `
-                  <button
-                    class="danger-btn"
-                    onclick="revokeById(${Number(k.id)})"
-                  >
-                    폐기
-                  </button>
-                `
-                : '—'
-            }
+              ${
+                !k.revoked
+                  ? `
+                    <button
+                      class="danger-btn"
+                      onclick="revokeById(${Number(k.id)})"
+                    >
+                      폐기
+                    </button>
+                  `
+                  : '—'
+              }
 
-          </td>
+            </td>
 
-        </tr>
-      `;
+          </tr>
+        `;
 
-    }).join('');
+      })
+      .join('');
 }
 
 
@@ -616,7 +676,7 @@ async function issueKey() {
       </div>
 
       <p>
-        이 인증키는 다시 표시되지 않습니다.
+        이 인증키는 다시 표시되지 않을 수 있으므로
         필요한 곳에 즉시 저장하세요.
       </p>
 
@@ -626,8 +686,9 @@ async function issueKey() {
 
   } catch (error) {
 
-    alert(error.message);
-
+    alert(
+      error.message
+    );
   }
 }
 
@@ -640,7 +701,7 @@ async function revokeById(id) {
 
   const item =
     keysCache.find(
-      k => Number(k.id) === Number(id)
+      k => k.id === id
     );
 
   if (!item) return;
@@ -660,7 +721,7 @@ async function revokeById(id) {
       {
         method: 'POST',
         body: JSON.stringify({
-          id: Number(id)
+          id
         })
       }
     );
@@ -673,8 +734,9 @@ async function revokeById(id) {
 
   } catch (error) {
 
-    alert(error.message);
-
+    alert(
+      error.message
+    );
   }
 }
 
@@ -706,7 +768,7 @@ function renderLogs() {
 
 
 /* =========================
-   관리자
+   관리자 관리
 ========================= */
 
 function renderAdmins() {
@@ -720,7 +782,9 @@ function renderAdmins() {
       <div class="row">
 
         <span id="currentAdmin">
-          관리자
+          ${escapeHtml(
+            adminUser.textContent || '관리자'
+          )}
         </span>
 
         <span class="badge">
@@ -806,7 +870,6 @@ function escapeHtml(value) {
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#039;');
-
 }
 
 
@@ -826,7 +889,6 @@ document
           button.dataset.page;
 
         render();
-
       }
     );
 
