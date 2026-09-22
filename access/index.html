@@ -3,50 +3,120 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PUBG INFO 관리자 페이지</title>
+<title>PUBG INFO ADMIN</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="./admins.css">
 </head>
+
 <body>
+
 <div id="login" class="login">
-<div class="login-card">
-<div class="brand">PUBG INFO</div>
-<div class="eyebrow">ADMIN CONSOLE</div>
-<h1>관리자 로그인</h1>
-<p>/admins 전용 보안 로그인</p>
-<form id="loginForm">
-<input id="username" value="admin" autocomplete="username" placeholder="관리자 아이디" required>
-<input id="password" type="password" autocomplete="current-password" placeholder="비밀번호" required>
-<button type="submit">로그인</button>
-<div id="loginMsg" class="loginMsg"></div>
-</form>
+  <div class="login-card">
+
+    <div class="brand">PUBG INFO</div>
+    <div class="eyebrow">ADMIN CONSOLE</div>
+
+    <h1>관리자 로그인</h1>
+    <p>관리자 계정으로 로그인하세요.</p>
+
+    <form id="loginForm">
+
+      <input
+        id="username"
+        autocomplete="username"
+        placeholder="관리자 아이디"
+        required
+      >
+
+      <input
+        id="password"
+        type="password"
+        autocomplete="current-password"
+        placeholder="비밀번호"
+        required
+      >
+
+      <button type="submit">로그인</button>
+
+      <div id="loginMsg"></div>
+
+    </form>
+  </div>
 </div>
-</div>
+
+
 <div id="app" hidden>
-<aside>
-<div class="brand">PUBG INFO</div>
-<div class="admin-label">ADMIN PANEL</div>
-<nav>
-<button data-page="dashboard" class="active">◈ <span>대시보드</span></button>
-<button data-page="keys">⌁ <span>인증키 관리</span></button>
-<button data-page="logs">◷ <span>접속 기록</span></button>
-<button data-page="admins">♙ <span>관리자 관리</span></button>
-<button data-page="settings">⚙ <span>설정</span></button>
-</nav>
-<button id="logout" class="logout">↪ 로그아웃</button>
-</aside>
-<main>
-<header>
-<div>
-<div class="eyebrow">PUBG INFO / ADMIN</div>
-<h1 id="pageTitle">대시보드</h1>
+
+  <aside>
+
+    <div class="brand">PUBG INFO</div>
+    <div class="admin-label">ADMIN PANEL</div>
+
+    <nav>
+
+      <button
+        data-page="dashboard"
+        class="active"
+      >
+        ◈ <span>대시보드</span>
+      </button>
+
+      <button data-page="keys">
+        ⌁ <span>인증키 관리</span>
+      </button>
+
+      <button data-page="logs">
+        ◷ <span>접속 기록</span>
+      </button>
+
+      <button data-page="admins">
+        ♙ <span>관리자 관리</span>
+      </button>
+
+      <button data-page="settings">
+        ⚙ <span>설정</span>
+      </button>
+
+    </nav>
+
+    <button id="logout" class="logout">
+      ↪ 로그아웃
+    </button>
+
+  </aside>
+
+
+  <main>
+
+    <header>
+
+      <div>
+        <div class="eyebrow">
+          PUBG INFO / ADMIN
+        </div>
+
+        <h1 id="pageTitle">
+          대시보드
+        </h1>
+      </div>
+
+      <div
+        class="user-pill"
+        id="adminUser"
+      >
+        admin
+      </div>
+
+    </header>
+
+    <section id="page"></section>
+
+  </main>
+
 </div>
-<div class="user-pill">admin</div>
-</header>
-<section id="page"></section>
-</main>
-</div>
+
 <script src="./admins.js"></script>
+
 </body>
 </html>
