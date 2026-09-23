@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PUBG INFO 로그인</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #111;
+      font-family: Arial, sans-serif;
+      color: white;
+    }
+
+    .login-box {
+      width: 90%;
+      max-width: 400px;
+      padding: 30px;
+      background: #1b1b1b;
+      border-radius: 12px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      margin-bottom: 12px;
+      border: 1px solid #444;
+      border-radius: 6px;
+      background: #111;
+      color: white;
+      font-size: 15px;
+    }
+
+    button {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 6px;
+      background: #ffcc00;
+      color: #111;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .register {
+      display: block;
+      margin-top: 18px;
+      text-align: center;
+      color: #aaa;
+      text-decoration: none;
+    }
+
+    .register:hover {
+      color: #ffcc00;
+    }
+
+    #message {
+      margin-top: 15px;
+      text-align: center;
+      color: #ff7777;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="login-box">
+
+    <h1>로그인</h1>
+
+    <form id="loginForm">
+
+      <input
+        type="text"
+        id="loginId"
+        placeholder="아이디 또는 이메일"
+        required
+      >
+
+      <input
+        type="password"
+        id="password"
+        placeholder="비밀번호"
+        required
+      >
+
+      <button type="submit">로그인</button>
+
+    </form>
+
+    <a href="/register.html" class="register">
+      회원가입
+    </a>
+
+    <div id="message"></div>
+
+  </div>
+
+  <script type="module">
+
+    import { auth, db } from "./firebase.js";
+
+    import {
+      signInWithEmailAndPassword
+    } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+
+    import {
+      collection,
+      query,
+      where,
+      getDocs
+    } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+
+    const loginForm = document.getElementById("loginForm");
+    const loginId = document.getElementById("loginId");
+    const password = document.getElementById("password");
+    const message = document.getElementById("message");
+
+
+    loginForm.addEventListener("submit", async (event) => {
+
+      event.preventDefault();
+
+      message.textContent = "로그인 중...";
+
+
+      try {
+
+        let email = loginId.value.trim();
+
+
+        // 이메일이 아니라 아이디를 입력한 경우
+        if (!email.includes("@")) {
+
+          const usersRef = collection(db, "users");
+
+          const q = query(
+            usersRef,
+            where("username", "==", email)
+          );
+
+          const snapshot = await getDocs(q);
+
+
+          if (snapshot.empty) {
+            throw new Error("존재하지 않는 아이디입니다.");
+          }
+
+
+          const userData = snapshot.docs[0].data();
+
+          email = userData.email;
+
+        }
+
+
+        // Firebase Authentication 로그인
+        await signInWithEmailAndPassword(
+          auth,
+          email,
+          password.value
+        );
+
+
+        // 로그인 성공
+        window.location.href = "/";
+
+
+      } catch (error) {
+
+        console.error(error);
+
+        if (error.message === "존재하지 않는 아이디입니다.") {
+
+          message.textContent = error.message;
+
+        } else {
+
+          message.textContent =
+            "아이디(또는 이메일) 또는 비밀번호가 올바르지 않습니다.";
+
+        }
+
+      }
+
+    });
+
+  </script>
+
+</body>
+</html>
