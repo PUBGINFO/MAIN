@@ -1,136 +1,69 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PUBG INFO 회원가입</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>회원가입 - PUBG INFO</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #111;
-      font-family: Arial, sans-serif;
-      color: white;
-    }
-
-    .register-box {
-      width: 90%;
-      max-width: 400px;
-      padding: 30px;
-      background: #1b1b1b;
-      border-radius: 12px;
-    }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 25px;
-    }
-
-    input {
-      width: 100%;
-      padding: 13px;
-      margin-bottom: 12px;
-      border: 1px solid #444;
-      border-radius: 6px;
-      background: #111;
-      color: white;
-      font-size: 15px;
-    }
-
-    button {
-      width: 100%;
-      padding: 13px;
-      border: none;
-      border-radius: 6px;
-      background: #ffcc00;
-      color: #111;
-      font-weight: bold;
-      font-size: 15px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      opacity: 0.9;
-    }
-
-    .login-link {
-      display: block;
-      margin-top: 18px;
-      text-align: center;
-      color: #aaa;
-      text-decoration: none;
-    }
-
-    .login-link:hover {
-      color: #ffcc00;
-    }
-
-    #message {
-      margin-top: 15px;
-      text-align: center;
-      font-size: 14px;
-    }
-  </style>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="stylesheet" as="style" crossorigin
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="./style.css">
 </head>
+<body class="auth-locked">
 
-<body>
+  <div class="auth-gate">
+    <div class="auth-card">
+      <div class="auth-brand">PUBG INFO</div>
 
-  <div class="register-box">
+      <h1>회원가입</h1>
+      <p>
+        PUBG INFO 계정을 만들고<br>
+        UC 계산기 · 확률 계산기 · 대회 일정을 이용해보세요.
+      </p>
 
-    <h1>회원가입</h1>
+      <form id="registerForm" class="auth-form">
+        <label for="username">아이디</label>
+        <input
+          type="text"
+          id="username"
+          placeholder="4~20자"
+          minlength="4"
+          maxlength="20"
+          required
+        >
 
-    <form id="registerForm">
+        <label for="email">이메일</label>
+        <input type="email" id="email" placeholder="이메일 주소" required>
 
-      <input
-        type="text"
-        id="username"
-        placeholder="아이디"
-        minlength="4"
-        maxlength="20"
-        required
-      >
+        <label for="password">비밀번호</label>
+        <input
+          type="password"
+          id="password"
+          placeholder="6자 이상"
+          minlength="6"
+          required
+        >
 
-      <input
-        type="email"
-        id="email"
-        placeholder="이메일"
-        required
-      >
+        <label for="passwordConfirm">비밀번호 확인</label>
+        <input
+          type="password"
+          id="passwordConfirm"
+          placeholder="비밀번호 재입력"
+          minlength="6"
+          required
+        >
 
-      <input
-        type="password"
-        id="password"
-        placeholder="비밀번호"
-        minlength="6"
-        required
-      >
+        <button type="submit">회원가입</button>
+      </form>
 
-      <input
-        type="password"
-        id="passwordConfirm"
-        placeholder="비밀번호 확인"
-        minlength="6"
-        required
-      >
+      <p class="auth-message" id="message"></p>
 
-      <button type="submit">회원가입</button>
-
-    </form>
-
-    <a href="/login.html" class="login-link">
-      이미 계정이 있으신가요? 로그인
-    </a>
-
-    <div id="message"></div>
-
+      <p style="margin-top:6px; font-size:13px; color:var(--text-sub); text-align:center;">
+        이미 계정이 있으신가요?
+        <a href="/login.html" style="color:var(--text); font-weight:600;">로그인</a>
+      </p>
+    </div>
   </div>
 
 
@@ -161,6 +94,17 @@
     const passwordConfirmInput = document.getElementById("passwordConfirm");
 
     const message = document.getElementById("message");
+    const submitBtn = registerForm.querySelector("button");
+
+
+    function setMessage(text, state) {
+      message.textContent = text;
+      if (state) {
+        message.setAttribute("data-state", state);
+      } else {
+        message.removeAttribute("data-state");
+      }
+    }
 
 
     registerForm.addEventListener("submit", async (event) => {
@@ -173,21 +117,24 @@
       const passwordConfirm = passwordConfirmInput.value;
 
 
-      message.textContent = "";
+      setMessage("", null);
 
 
       // 비밀번호 확인
       if (password !== passwordConfirm) {
 
-        message.textContent = "비밀번호가 일치하지 않습니다.";
+        setMessage("비밀번호가 일치하지 않습니다.", "error");
 
         return;
       }
 
 
+      submitBtn.disabled = true;
+
+
       try {
 
-        message.textContent = "가입 처리 중...";
+        setMessage("가입 처리 중...", null);
 
 
         // 아이디 중복 확인
@@ -203,7 +150,8 @@
 
         if (!usernameSnapshot.empty) {
 
-          message.textContent = "이미 사용 중인 아이디입니다.";
+          setMessage("이미 사용 중인 아이디입니다.", "error");
+          submitBtn.disabled = false;
 
           return;
         }
@@ -233,6 +181,8 @@
         );
 
 
+        setMessage("가입 완료! 이동 중...", "success");
+
         // 가입 즉시 로그인된 상태로 메인으로 이동
         window.location.href = "/";
 
@@ -241,26 +191,24 @@
 
         console.error(error);
 
+        submitBtn.disabled = false;
+
 
         if (error.code === "auth/email-already-in-use") {
 
-          message.textContent =
-            "이미 가입된 이메일입니다.";
+          setMessage("이미 가입된 이메일입니다.", "error");
 
         } else if (error.code === "auth/invalid-email") {
 
-          message.textContent =
-            "올바른 이메일 주소를 입력해주세요.";
+          setMessage("올바른 이메일 주소를 입력해주세요.", "error");
 
         } else if (error.code === "auth/weak-password") {
 
-          message.textContent =
-            "비밀번호는 6자 이상이어야 합니다.";
+          setMessage("비밀번호는 6자 이상이어야 합니다.", "error");
 
         } else {
 
-          message.textContent =
-            "회원가입 중 오류가 발생했습니다.";
+          setMessage("회원가입 중 오류가 발생했습니다.", "error");
 
         }
 
