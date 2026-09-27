@@ -1,119 +1,44 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PUBG INFO 로그인</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>로그인 - PUBG INFO</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #111;
-      font-family: Arial, sans-serif;
-      color: white;
-    }
-
-    .login-box {
-      width: 90%;
-      max-width: 400px;
-      padding: 30px;
-      background: #1b1b1b;
-      border-radius: 12px;
-    }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 25px;
-    }
-
-    input {
-      width: 100%;
-      padding: 13px;
-      margin-bottom: 12px;
-      border: 1px solid #444;
-      border-radius: 6px;
-      background: #111;
-      color: white;
-      font-size: 15px;
-    }
-
-    button {
-      width: 100%;
-      padding: 13px;
-      border: none;
-      border-radius: 6px;
-      background: #ffcc00;
-      color: #111;
-      font-weight: bold;
-      font-size: 15px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      opacity: 0.9;
-    }
-
-    .register {
-      display: block;
-      margin-top: 18px;
-      text-align: center;
-      color: #aaa;
-      text-decoration: none;
-    }
-
-    .register:hover {
-      color: #ffcc00;
-    }
-
-    #message {
-      margin-top: 15px;
-      text-align: center;
-      color: #ff7777;
-      font-size: 14px;
-    }
-  </style>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="stylesheet" as="style" crossorigin
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="./style.css">
 </head>
+<body class="auth-locked">
 
-<body>
+  <div class="auth-gate">
+    <div class="auth-card">
+      <div class="auth-brand">PUBG INFO</div>
 
-  <div class="login-box">
+      <h1>로그인</h1>
+      <p>
+        UC 계산기, 확률 계산기, 대회 일정 등<br>
+        PUBG 모바일 정보를 한곳에서 확인하세요.
+      </p>
 
-    <h1>로그인</h1>
+      <form id="loginForm" class="auth-form">
+        <label for="loginId">아이디 또는 이메일</label>
+        <input type="text" id="loginId" placeholder="아이디 또는 이메일" required>
 
-    <form id="loginForm">
+        <label for="password">비밀번호</label>
+        <input type="password" id="password" placeholder="비밀번호" required>
 
-      <input
-        type="text"
-        id="loginId"
-        placeholder="아이디 또는 이메일"
-        required
-      >
+        <button type="submit">로그인</button>
+      </form>
 
-      <input
-        type="password"
-        id="password"
-        placeholder="비밀번호"
-        required
-      >
+      <p class="auth-message" id="message"></p>
 
-      <button type="submit">로그인</button>
-
-    </form>
-
-    <a href="/register.html" class="register">
-      회원가입
-    </a>
-
-    <div id="message"></div>
-
+      <p style="margin-top:6px; font-size:13px; color:var(--text-sub); text-align:center;">
+        아직 계정이 없으신가요?
+        <a href="/register.html" style="color:var(--text); font-weight:600;">회원가입</a>
+      </p>
+    </div>
   </div>
 
   <script type="module">
@@ -136,13 +61,25 @@
     const loginId = document.getElementById("loginId");
     const password = document.getElementById("password");
     const message = document.getElementById("message");
+    const submitBtn = loginForm.querySelector("button");
+
+
+    function setMessage(text, state) {
+      message.textContent = text;
+      if (state) {
+        message.setAttribute("data-state", state);
+      } else {
+        message.removeAttribute("data-state");
+      }
+    }
 
 
     loginForm.addEventListener("submit", async (event) => {
 
       event.preventDefault();
 
-      message.textContent = "로그인 중...";
+      submitBtn.disabled = true;
+      setMessage("로그인 중...", null);
 
 
       try {
@@ -183,6 +120,8 @@
         );
 
 
+        setMessage("로그인 성공! 이동 중...", "success");
+
         // 로그인 성공
         window.location.href = "/";
 
@@ -191,14 +130,18 @@
 
         console.error(error);
 
+        submitBtn.disabled = false;
+
         if (error.message === "존재하지 않는 아이디입니다.") {
 
-          message.textContent = error.message;
+          setMessage(error.message, "error");
 
         } else {
 
-          message.textContent =
-            "아이디(또는 이메일) 또는 비밀번호가 올바르지 않습니다.";
+          setMessage(
+            "아이디(또는 이메일) 또는 비밀번호가 올바르지 않습니다.",
+            "error"
+          );
 
         }
 
