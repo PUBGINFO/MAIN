@@ -2,9 +2,13 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>PUBG INFO - Discord Role Manager</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>PUBG INFO - 역할 관리</title>
 
   <style>
     * {
@@ -13,397 +17,327 @@
 
     body {
       margin: 0;
-      background:
-        radial-gradient(circle at top, rgba(255, 120, 0, 0.08), transparent 35%),
-        #090b0f;
-      color: #f1f1f1;
-      font-family: Arial, sans-serif;
-    }
+      padding: 0;
 
-    button,
-    select {
-      font: inherit;
+      background:
+        radial-gradient(
+          circle at top,
+          #252525 0%,
+          #111 45%,
+          #080808 100%
+        );
+
+      color: #fff;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+      min-height: 100vh;
     }
 
     .container {
-      width: min(1100px, calc(100% - 30px));
-      margin: 30px auto 60px;
-    }
-
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 25px;
-    }
-
-    .title {
-      font-size: 27px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-    }
-
-    .subtitle {
-      color: #8e949d;
-      margin-top: 7px;
-      font-size: 14px;
-    }
-
-    .top-actions {
-      display: flex;
-      gap: 8px;
+      width: min(700px, calc(100% - 30px));
+      margin: 40px auto;
     }
 
     .card {
-      background: rgba(18, 21, 27, 0.95);
-      border: 1px solid #252a32;
+      background: rgba(20, 20, 20, 0.96);
+      border: 1px solid #333;
       border-radius: 14px;
-      padding: 20px;
-      margin-bottom: 18px;
+      padding: 24px;
+
+      box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.45);
     }
 
-    .card-title {
-      font-size: 17px;
-      font-weight: 700;
-      margin-bottom: 15px;
+    h1 {
+      margin: 0 0 8px;
+      font-size: 25px;
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
+    .subtitle {
+      color: #aaa;
+      font-size: 14px;
+      margin-bottom: 25px;
     }
 
-    .field {
+    .info-box {
+      background: #171717;
+      border: 1px solid #2f2f2f;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+
+    .info-row {
       display: flex;
-      flex-direction: column;
-      gap: 7px;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 7px 0;
     }
 
-    .field label {
-      color: #a9afb8;
-      font-size: 13px;
+    .info-label {
+      color: #999;
     }
 
-    select {
+    .info-value {
+      font-weight: 600;
+      text-align: right;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      color: #bbb;
+      margin-bottom: 8px;
+    }
+
+    input {
       width: 100%;
-      height: 44px;
-      border-radius: 8px;
-      border: 1px solid #303640;
-      background: #101318;
+      padding: 13px 14px;
+
+      border-radius: 9px;
+      border: 1px solid #3a3a3a;
+
+      background: #111;
       color: #fff;
-      padding: 0 12px;
+
       outline: none;
+      font-size: 14px;
     }
 
-    select:focus {
-      border-color: #ff7a00;
+    input:focus {
+      border-color: #ffcc00;
     }
 
     button {
       border: 0;
-      border-radius: 8px;
-      padding: 11px 16px;
+      border-radius: 9px;
+
+      padding: 12px 16px;
+
       cursor: pointer;
-      color: #fff;
-      background: #292e36;
+
+      font-size: 14px;
       font-weight: 700;
+
+      transition:
+        opacity .15s,
+        transform .1s;
     }
 
     button:hover {
-      filter: brightness(1.1);
+      opacity: .9;
     }
 
-    button.primary {
-      background: #ff7300;
-    }
-
-    button.primary:hover {
-      background: #ff8500;
-    }
-
-    button.danger {
-      background: #9f3030;
-    }
-
-    button.danger:hover {
-      background: #b43a3a;
+    button:active {
+      transform: scale(.98);
     }
 
     button:disabled {
-      opacity: 0.45;
       cursor: not-allowed;
+      opacity: .45;
     }
 
-    .sheet-button {
-      margin-bottom: 15px;
+    .yellow {
+      background: #ffcc00;
+      color: #111;
     }
 
-    .sheet-info {
-      color: #a9afb8;
-      font-size: 13px;
-      margin-bottom: 12px;
-    }
-
-    .table-wrap {
-      overflow-x: auto;
-      border: 1px solid #292e36;
-      border-radius: 9px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 500px;
-    }
-
-    th,
-    td {
-      padding: 11px 13px;
-      border-bottom: 1px solid #292e36;
-      text-align: left;
-      white-space: nowrap;
-    }
-
-    th {
-      background: #151920;
-      color: #ff8a2b;
-      font-size: 13px;
-    }
-
-    td {
-      color: #ddd;
-      font-size: 14px;
-    }
-
-    tr:last-child td {
-      border-bottom: 0;
-    }
-
-    .nickname-box {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: #0e1116;
-      border: 1px solid #292e36;
-      border-radius: 9px;
-      padding: 14px;
-      margin-bottom: 15px;
-    }
-
-    .nickname-label {
-      color: #8e949d;
-      font-size: 13px;
-    }
-
-    .nickname {
-      font-size: 18px;
-      font-weight: 800;
+    .dark {
+      background: #292929;
       color: #fff;
-      word-break: break-all;
+      border: 1px solid #444;
     }
 
-    .members {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+    .danger {
+      background: #b92c2c;
+      color: #fff;
     }
 
-    .member {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 13px;
-      border: 1px solid #292e36;
-      border-radius: 9px;
-      background: #101318;
-      cursor: pointer;
+    .section {
+      margin-top: 22px;
     }
 
-    .member:hover {
-      border-color: #ff7300;
-    }
-
-    .member input {
-      accent-color: #ff7300;
-    }
-
-    .member-main {
-      flex: 1;
-    }
-
-    .member-nick {
+    .section-title {
+      font-size: 16px;
       font-weight: 700;
+      margin-bottom: 9px;
+    }
+
+    .multi-select {
+      position: relative;
+    }
+
+    .multi-select-button {
+      width: 100%;
+      background: #111;
+      border: 1px solid #3a3a3a;
       color: #fff;
-    }
 
-    .member-user {
-      margin-top: 4px;
-      color: #858b94;
-      font-size: 12px;
-    }
-
-    .empty {
-      color: #777e88;
-      padding: 15px 0;
-      font-size: 14px;
-    }
-
-    .status {
-      padding: 12px 14px;
-      border-radius: 8px;
-      background: #11151b;
-      border: 1px solid #292e36;
-      color: #aeb4bc;
-      font-size: 13px;
-      white-space: pre-wrap;
-    }
-
-    .status.success {
-      border-color: #246b43;
-      color: #75d69d;
-    }
-
-    .status.error {
-      border-color: #7b3030;
-      color: #ff8585;
-    }
-
-    .status.warning {
-      border-color: #7c5b25;
-      color: #ffc96b;
-    }
-
-    .assign-area {
       display: flex;
-      justify-content: flex-end;
-      margin-top: 15px;
+      justify-content: space-between;
+      align-items: center;
+
+      text-align: left;
     }
 
-    .remove-all-area {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: 15px;
-    }
+    .multi-select-menu {
+      position: absolute;
+      z-index: 100;
 
-    .fixed-role {
-      background: #0e1116;
-      border: 1px solid #292e36;
-      border-radius: 9px;
-      padding: 14px;
-    }
+      top: calc(100% + 7px);
+      left: 0;
+      right: 0;
 
-    .fixed-role-label {
-      color: #8e949d;
-      font-size: 13px;
-      margin-bottom: 6px;
-    }
+      max-height: 360px;
+      overflow-y: auto;
 
-    .fixed-role-name {
-      font-size: 18px;
-      font-weight: 800;
-      color: #ff9a45;
-    }
+      background: #181818;
+      border: 1px solid #3a3a3a;
+      border-radius: 10px;
 
-    .remove-description {
-      color: #8e949d;
-      font-size: 13px;
-      line-height: 1.6;
-      margin-top: 10px;
-    }
+      padding: 8px;
 
-    .login-area {
-      text-align: center;
-      padding: 50px 20px;
-    }
-
-    .login-area h2 {
-      margin: 0 0 10px;
-    }
-
-    .login-area p {
-      color: #8e949d;
-      margin-bottom: 20px;
+      box-shadow:
+        0 15px 35px rgba(0, 0, 0, .5);
     }
 
     .hidden {
-      display: none !important;
+      display: none;
     }
 
-    .user-info {
-      color: #9299a3;
+    .menu-actions {
+      display: flex;
+      gap: 8px;
+      padding: 5px 4px 10px;
+
+      border-bottom: 1px solid #333;
+      margin-bottom: 6px;
+    }
+
+    .menu-actions button {
+      flex: 1;
+      padding: 9px;
+      font-size: 12px;
+    }
+
+    .team-option {
+      display: flex;
+      align-items: center;
+
+      gap: 10px;
+
+      padding: 10px 8px;
+      border-radius: 7px;
+
+      cursor: pointer;
+    }
+
+    .team-option:hover {
+      background: #252525;
+    }
+
+    .team-option input {
+      width: auto;
+      margin: 0;
+      accent-color: #ffcc00;
+    }
+
+    .team-text {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .team-seed {
+      color: #ffcc00;
+      font-weight: 700;
+      margin-right: 8px;
+    }
+
+    .team-name {
+      word-break: break-all;
+    }
+
+    .selected-info {
+      margin-top: 9px;
+      color: #aaa;
       font-size: 13px;
     }
 
-    /* 확인 모달 */
+    .buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
 
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.72);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      z-index: 9999;
+      gap: 10px;
+
+      margin-top: 18px;
     }
 
-    .modal {
-      width: min(430px, 100%);
-      background: #151920;
-      border: 1px solid #303640;
-      border-radius: 14px;
-      padding: 22px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    .buttons .full {
+      grid-column: 1 / -1;
     }
 
-    .modal-title {
-      font-size: 19px;
-      font-weight: 800;
-      margin-bottom: 12px;
-    }
+    .status {
+      margin-top: 18px;
 
-    .modal-message {
-      color: #aeb4bc;
-      font-size: 14px;
+      background: #101010;
+      border: 1px solid #303030;
+
+      border-radius: 9px;
+
+      padding: 14px;
+
+      font-size: 13px;
       line-height: 1.6;
+
       white-space: pre-line;
     }
 
-    .modal-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      margin-top: 20px;
+    .success {
+      color: #7dff9b;
     }
 
-    @media (max-width: 700px) {
-      .grid {
+    .error {
+      color: #ff7777;
+    }
+
+    .warning {
+      color: #ffd35c;
+    }
+
+    .empty {
+      color: #888;
+      text-align: center;
+      padding: 25px 10px;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        margin: 20px auto;
+      }
+
+      .card {
+        padding: 18px;
+      }
+
+      .buttons {
         grid-template-columns: 1fr;
       }
 
-      .header {
-        align-items: flex-start;
+      .buttons .full {
+        grid-column: auto;
+      }
+
+      .info-row {
         flex-direction: column;
+        gap: 3px;
       }
 
-      .top-actions {
-        width: 100%;
-      }
-
-      .top-actions button {
-        flex: 1;
-      }
-
-      .assign-area,
-      .remove-all-area {
-        justify-content: stretch;
-      }
-
-      .assign-area button,
-      .remove-all-area button {
-        width: 100%;
+      .info-value {
+        text-align: left;
       }
     }
   </style>
@@ -413,1894 +347,1120 @@
 
 <div class="container">
 
-  <div class="header">
-    <div>
-      <div class="title">Discord Role Manager</div>
-      <div class="subtitle">
-        PUBG INFO · Google Sheets 팀 정보 기반 Discord 역할 관리
-      </div>
+  <div class="card">
+
+    <h1>PUBG INFO 역할 관리</h1>
+
+    <div class="subtitle">
+      Google Sheets 정보를 기준으로 Discord 역할을 관리합니다.
     </div>
 
-    <div class="top-actions">
-      <button id="loginBtn">Discord 로그인</button>
-      <button id="logoutBtn" class="danger hidden">로그아웃</button>
-    </div>
-  </div>
+    <!-- 고정 정보 -->
 
-  <div id="loginArea" class="card login-area hidden">
-    <h2>Discord 로그인이 필요합니다.</h2>
-    <p>기존 PUBG INFO Discord 인증을 사용합니다.</p>
-    <button class="primary" id="loginBtn2">Discord 로그인</button>
-  </div>
+    <div class="info-box">
 
-  <main id="mainArea" class="hidden">
+      <div class="info-row">
+        <span class="info-label">
+          Discord 서버
+        </span>
 
-    <!-- 서버 선택 -->
-    <div class="card">
-      <div class="card-title">1. Discord 서버 선택</div>
-
-      <div class="grid">
-
-        <div class="field">
-          <label>Discord 서버</label>
-
-          <select id="guildSelect">
-            <option value="">서버를 선택하세요.</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label>현재 로그인 계정</label>
-
-          <div class="user-info" id="userInfo">
-            -
-          </div>
-        </div>
-
+        <span class="info-value">
+          PUBG INFO
+        </span>
       </div>
+
+      <div class="info-row">
+        <span class="info-label">
+          서버 ID
+        </span>
+
+        <span class="info-value">
+          1413099667667026063
+        </span>
+      </div>
+
+      <div class="info-row">
+        <span class="info-label">
+          관리 역할
+        </span>
+
+        <span class="info-value">
+          白夜
+        </span>
+      </div>
+
+      <div class="info-row">
+        <span class="info-label">
+          역할 ID
+        </span>
+
+        <span class="info-value">
+          1541955349735538698
+        </span>
+      </div>
+
     </div>
 
+    <!-- Google Sheet -->
 
-    <!-- Google Sheets -->
-    <div class="card">
+    <div class="section">
 
-      <div class="card-title">
-        2. Google Sheets 정보
+      <div class="section-title">
+        Google Sheets
       </div>
+
+      <label for="sheetUrl">
+        Google Sheets 주소
+      </label>
+
+      <input
+        id="sheetUrl"
+        type="url"
+        placeholder="https://docs.google.com/spreadsheets/d/..."
+      >
 
       <button
-        class="primary sheet-button"
-        id="loadSheetBtn"
+        id="loadSheetButton"
+        class="yellow"
+        style="width:100%; margin-top:10px;"
       >
         Google Sheets 정보 가져오기
       </button>
 
-      <div class="sheet-info">
-        B4:C21 범위를 가져옵니다.<br>
-        B열 = 시드 번호 · C열 = 팀명 및 Discord 별명
-      </div>
-
-      <div id="sheetTable" class="empty">
-        아직 Google Sheets 정보를 가져오지 않았습니다.
-      </div>
-
     </div>
-
 
     <!-- 팀 선택 -->
-    <div class="card">
 
-      <div class="card-title">
-        3. 팀 선택 및 Discord 멤버 검색
+    <div
+      class="section"
+      id="selectionSection"
+      style="display:none;"
+    >
+
+      <div class="section-title">
+        대상 선택
       </div>
 
-      <div class="field">
-
-        <label>
-          팀 선택
-        </label>
-
-        <select id="teamSelect">
-
-          <option value="">
-            Google Sheets 정보를 먼저 가져오세요.
-          </option>
-
-        </select>
-
-      </div>
-
-
-      <div style="margin-top:15px;">
-
-        <div class="nickname-box">
-
-          <div>
-
-            <div class="nickname-label">
-              Discord 검색 닉네임 · C열
-            </div>
-
-            <div
-              class="nickname"
-              id="nickname"
-            >
-              -
-            </div>
-
-          </div>
-
-        </div>
-
+      <div class="multi-select">
 
         <button
-          class="primary"
-          id="searchMemberBtn"
-          disabled
+          type="button"
+          id="multiSelectButton"
+          class="multi-select-button"
         >
-          Discord 멤버 검색
+          <span id="selectedCountText">
+            선택된 항목 없음
+          </span>
+
+          <span>
+            ▼
+          </span>
         </button>
-
-      </div>
-
-
-      <div style="margin-top:15px;">
 
         <div
-          class="members"
-          id="members"
+          id="multiSelectMenu"
+          class="multi-select-menu hidden"
         >
 
-          <div class="empty">
-            팀을 선택한 후 Discord 멤버를 검색하세요.
+          <div class="menu-actions">
+
+            <button
+              type="button"
+              id="selectAllButton"
+              class="dark"
+            >
+              전체 선택
+            </button>
+
+            <button
+              type="button"
+              id="unselectAllButton"
+              class="dark"
+            >
+              전체 해제
+            </button>
+
           </div>
 
+          <div id="teamList"></div>
+
         </div>
 
-      </div>
-
-    </div>
-
-
-    <!-- 역할 지급 -->
-    <div class="card">
-
-      <div class="card-title">
-        4. Discord 역할 지급
-      </div>
-
-
-      <div class="fixed-role">
-
-        <div class="fixed-role-label">
-          지급되는 역할
-        </div>
-
-        <div class="fixed-role-name">
-          白夜
-        </div>
-
-      </div>
-
-
-      <div class="remove-description">
-        역할은 항상 <strong>白夜</strong> 역할로 지급됩니다.
-      </div>
-
-
-      <div class="assign-area">
-
-        <button
-          class="primary"
-          id="assignBtn"
-          disabled
-        >
-          白夜 역할 지급
-        </button>
-
-      </div>
-
-    </div>
-
-
-    <!-- 전체 역할 제거 -->
-    <div class="card">
-
-      <div class="card-title">
-        5. 白夜 역할 전체 관리
-      </div>
-
-
-      <div class="remove-description">
-        현재 선택한 Discord 서버의 모든 멤버에게서
-        <strong>白夜</strong> 역할을 제거합니다.
-      </div>
-
-
-      <div class="remove-all-area">
-
-        <button
-          class="danger"
-          id="removeAllBaiyaBtn"
-        >
-          白夜 역할 모두 제거
-        </button>
-
-      </div>
-
-    </div>
-
-
-    <!-- 상태 -->
-    <div class="card">
-
-      <div class="card-title">
-        상태
       </div>
 
       <div
-        class="status"
-        id="status"
+        id="selectedInfo"
+        class="selected-info"
       >
-        준비되었습니다.
+        선택된 항목: 0개
       </div>
 
     </div>
 
-  </main>
+    <!-- 실행 버튼 -->
 
-</div>
-
-
-<!-- 白夜 역할 전체 제거 확인 모달 -->
-
-<div
-  id="removeAllModal"
-  class="modal-backdrop hidden"
->
-
-  <div class="modal">
-
-    <div class="modal-title">
-      白夜 역할 전체 제거
-    </div>
-
-    <div class="modal-message">
-      현재 선택한 Discord 서버의 모든 멤버에게서
-      白夜 역할을 제거하시겠습니까?
-
-      이 작업은 되돌릴 수 없습니다.
-    </div>
-
-    <div class="modal-actions">
+    <div
+      class="buttons"
+      id="actionButtons"
+      style="display:none;"
+    >
 
       <button
-        id="cancelRemoveAllBtn"
+        id="assignButton"
+        class="yellow"
       >
-        취소
+        선택된 대상에게 白夜 지급
       </button>
 
       <button
+        id="removeButton"
         class="danger"
-        id="confirmRemoveAllBtn"
       >
-        제거하기
+        선택된 대상에서 白夜 제거
       </button>
 
+      <button
+        id="removeAllButton"
+        class="dark full"
+      >
+        서버의 白夜 역할 전체 제거
+      </button>
+
+    </div>
+
+    <!-- 상태 -->
+
+    <div
+      id="status"
+      class="status"
+    >
+      준비되었습니다.
     </div>
 
   </div>
 
 </div>
 
-
 <script>
-
   const API_BASE =
     "https://discord-bot.pubgmk14-kr.workers.dev";
 
-
-  /*
-    Google Sheets
-
-    Worker에서 B4:C21을 읽습니다.
-  */
-
-  const SHEET_URL =
-    "https://docs.google.com/spreadsheets/d/11WaBONeC1UQMymXvlc277y9-Cv36YWddW_BMkX2F0dg/export?format=csv";
-
-
-  /*
-    고정 역할
-  */
+  const FIXED_GUILD_ID =
+    "1413099667667026063";
 
   const BAIYA_ROLE_ID =
     "1541955349735538698";
 
+  const SHEET_URL_DEFAULT =
+    "https://docs.google.com/spreadsheets/d/11WaBONeC1UQMymXvlc277y9-Cv36YWddW_BMkX2F0dg";
 
   let token =
-    initToken();
+    localStorage.getItem("session") || "";
 
+  let sheetRows = [];
 
-  let currentUser = null;
-
-  let guilds = [];
-
-  let teams = [];
-
-  let members = [];
-
-  let selectedTeam = null;
-
-  let selectedMember = null;
-
-
-  /*
-    로그인 세션 가져오기
-  */
-
-  function initToken() {
-
-    const params =
-      new URLSearchParams(
-        location.search
-      );
-
-    const session =
-      params.get("session");
-
-
-    if (session) {
-
-      localStorage.setItem(
-        "session",
-        session
-      );
-
-
-      window.history.replaceState(
-        {},
-        document.title,
-        location.pathname
-      );
-
-
-      return session;
-    }
-
-
-    return localStorage.getItem(
-      "session"
+  const sheetUrlInput =
+    document.getElementById(
+      "sheetUrl"
     );
-  }
+
+  const loadSheetButton =
+    document.getElementById(
+      "loadSheetButton"
+    );
+
+  const selectionSection =
+    document.getElementById(
+      "selectionSection"
+    );
+
+  const actionButtons =
+    document.getElementById(
+      "actionButtons"
+    );
+
+  const multiSelectButton =
+    document.getElementById(
+      "multiSelectButton"
+    );
+
+  const multiSelectMenu =
+    document.getElementById(
+      "multiSelectMenu"
+    );
+
+  const teamList =
+    document.getElementById(
+      "teamList"
+    );
+
+  const selectedCountText =
+    document.getElementById(
+      "selectedCountText"
+    );
+
+  const selectedInfo =
+    document.getElementById(
+      "selectedInfo"
+    );
+
+  const statusBox =
+    document.getElementById(
+      "status"
+    );
+
+  const assignButton =
+    document.getElementById(
+      "assignButton"
+    );
+
+  const removeButton =
+    document.getElementById(
+      "removeButton"
+    );
+
+  const removeAllButton =
+    document.getElementById(
+      "removeAllButton"
+    );
+
+  const selectAllButton =
+    document.getElementById(
+      "selectAllButton"
+    );
+
+  const unselectAllButton =
+    document.getElementById(
+      "unselectAllButton"
+    );
 
 
-  /*
-    Worker API
-  */
+  /* =====================================================
+     기본 Sheet 주소
+  ===================================================== */
+
+  sheetUrlInput.value =
+    SHEET_URL_DEFAULT;
+
+
+  /* =====================================================
+     API
+  ===================================================== */
 
   async function api(
     path,
     options = {}
   ) {
-
     if (!token) {
       throw new Error(
-        "로그인이 필요합니다."
+        "로그인 세션이 없습니다."
       );
     }
 
-
     const headers = {
+      "Content-Type":
+        "application/json",
 
-      ...(options.headers || {}),
-
-      Authorization:
+      "Authorization":
         `Bearer ${token}`,
 
-      "Content-Type":
-        "application/json"
-
+      ...(options.headers || {})
     };
-
 
     const response =
       await fetch(
-        `${API_BASE}${path}`,
+        API_BASE + path,
         {
           ...options,
           headers
         }
       );
 
+    let data = null;
 
-    const data =
-      await response
-        .json()
-        .catch(() => ({}));
-
+    try {
+      data =
+        await response.json();
+    } catch {
+      data = null;
+    }
 
     if (!response.ok) {
 
+      if (
+        response.status === 401
+      ) {
+        localStorage.removeItem(
+          "session"
+        );
+
+        token = "";
+
+        throw new Error(
+          "로그인 세션이 만료되었습니다. 다시 로그인해주세요."
+        );
+      }
+
       throw new Error(
-        data.error ||
+        data?.error ||
         `HTTP ${response.status}`
       );
     }
-
 
     return data;
   }
 
 
-  /*
-    상태 표시
-  */
+  /* =====================================================
+     로그인
+  ===================================================== */
+
+  function goLogin() {
+    location.href =
+      API_BASE + "/api/login";
+  }
+
+
+  /* =====================================================
+     상태 표시
+  ===================================================== */
 
   function setStatus(
     message,
     type = ""
   ) {
-
-    const element =
-      document.getElementById(
-        "status"
-      );
-
-
-    element.textContent =
+    statusBox.textContent =
       message;
 
+    statusBox.className =
+      "status";
 
-    element.className =
-      `status ${type}`.trim();
-  }
-
-
-  /*
-    로그인 화면
-  */
-
-  function showLogin() {
-
-    document
-      .getElementById("loginArea")
-      .classList.remove("hidden");
-
-
-    document
-      .getElementById("mainArea")
-      .classList.add("hidden");
-
-
-    document
-      .getElementById("logoutBtn")
-      .classList.add("hidden");
-
-
-    document
-      .getElementById("loginBtn")
-      .classList.remove("hidden");
-  }
-
-
-  /*
-    메인 화면
-  */
-
-  function showMain() {
-
-    document
-      .getElementById("loginArea")
-      .classList.add("hidden");
-
-
-    document
-      .getElementById("mainArea")
-      .classList.remove("hidden");
-
-
-    document
-      .getElementById("logoutBtn")
-      .classList.remove("hidden");
-
-
-    document
-      .getElementById("loginBtn")
-      .classList.add("hidden");
-  }
-
-
-  /*
-    내 정보
-  */
-
-  async function loadMe() {
-
-    const data =
-      await api("/api/me");
-
-
-    currentUser =
-      data;
-
-
-    document
-      .getElementById("userInfo")
-      .textContent =
-        data.username ||
-        data.global_name ||
-        data.id ||
-        "-";
-  }
-
-
-  /*
-    Discord 서버 목록
-  */
-
-  async function loadGuilds() {
-
-    const data =
-      await api("/api/guilds");
-
-
-    guilds =
-      data || [];
-
-
-    const select =
-      document.getElementById(
-        "guildSelect"
-      );
-
-
-    select.innerHTML =
-      `<option value="">
-        서버를 선택하세요.
-      </option>`;
-
-
-    for (
-      const guild of guilds
-    ) {
-
-      const option =
-        document.createElement(
-          "option"
-        );
-
-
-      option.value =
-        guild.id;
-
-
-      option.textContent =
-        guild.name;
-
-
-      select.appendChild(
-        option
+    if (type) {
+      statusBox.classList.add(
+        type
       );
     }
   }
 
 
-  /*
-    Google Sheets
-  */
+  /* =====================================================
+     선택된 Sheet 항목
+  ===================================================== */
 
-  async function loadSheet() {
+  function getSelectedRows() {
 
-    const guildId =
-      document
-        .getElementById(
-          "guildSelect"
-        )
-        .value;
+    return sheetRows.filter(
+      (_, index) => {
 
-
-    if (!guildId) {
-
-      setStatus(
-        "먼저 Discord 서버를 선택해주세요.",
-        "warning"
-      );
-
-      return;
-    }
-
-
-    const button =
-      document.getElementById(
-        "loadSheetBtn"
-      );
-
-
-    button.disabled =
-      true;
-
-
-    button.textContent =
-      "불러오는 중...";
-
-
-    try {
-
-      const data =
-        await api(
-          `/api/role/sheet?url=${encodeURIComponent(
-            SHEET_URL
-          )}`
-        );
-
-
-      if (
-        !Array.isArray(
-          data.rows
-        )
-      ) {
-
-        throw new Error(
-          "Google Sheets 데이터 형식이 올바르지 않습니다."
-        );
-      }
-
-
-      teams =
-        data.rows;
-
-
-      renderSheet();
-
-      renderTeamSelect();
-
-
-      setStatus(
-        `Google Sheets에서 ${teams.length}개 행을 불러왔습니다.`,
-        "success"
-      );
-
-
-    } catch (error) {
-
-      console.error(error);
-
-
-      setStatus(
-        `Google Sheets 불러오기 실패\n${error.message}`,
-        "error"
-      );
-
-
-    } finally {
-
-      button.disabled =
-        false;
-
-
-      button.textContent =
-        "Google Sheets 정보 가져오기";
-    }
-  }
-
-
-  /*
-    Sheet 테이블
-
-    Worker 반환:
-    {
-      seed,
-      nickname
-    }
-  */
-
-  function renderSheet() {
-
-    const target =
-      document.getElementById(
-        "sheetTable"
-      );
-
-
-    if (!teams.length) {
-
-      target.innerHTML =
-        `<div class="empty">
-          데이터가 없습니다.
-        </div>`;
-
-      return;
-    }
-
-
-    let html = `
-
-      <div class="table-wrap">
-
-        <table>
-
-          <thead>
-
-            <tr>
-              <th>B · 시드</th>
-              <th>C · 팀명 / Discord 별명</th>
-            </tr>
-
-          </thead>
-
-          <tbody>
-
-    `;
-
-
-    for (
-      const row of teams
-    ) {
-
-      html += `
-
-        <tr>
-
-          <td>
-            ${escapeHtml(row.seed)}
-          </td>
-
-          <td>
-            ${escapeHtml(row.nickname)}
-          </td>
-
-        </tr>
-
-      `;
-    }
-
-
-    html += `
-
-          </tbody>
-
-        </table>
-
-      </div>
-
-    `;
-
-
-    target.innerHTML =
-      html;
-  }
-
-
-  /*
-    팀 선택 목록
-  */
-
-  function renderTeamSelect() {
-
-    const select =
-      document.getElementById(
-        "teamSelect"
-      );
-
-
-    select.innerHTML =
-      `<option value="">
-        팀을 선택하세요.
-      </option>`;
-
-
-    teams.forEach(
-      (team, index) => {
-
-        const option =
-          document.createElement(
-            "option"
+        const checkbox =
+          document.querySelector(
+            `.team-checkbox[data-index="${index}"]`
           );
 
-
-        option.value =
-          index;
-
-
-        option.textContent =
-          `${team.nickname || "(팀명 없음)"}`;
-
-
-        select.appendChild(
-          option
+        return (
+          checkbox &&
+          checkbox.checked
         );
       }
     );
   }
 
 
-  /*
-    선택된 팀 처리
-  */
+  /* =====================================================
+     선택 개수 업데이트
+  ===================================================== */
 
-  function updateSelectedTeam() {
+  function updateSelectionInfo() {
 
-    const value =
-      document
-        .getElementById(
-          "teamSelect"
-        )
-        .value;
+    const selected =
+      getSelectedRows();
 
+    selectedCountText.textContent =
+      `${selected.length}개 선택됨`;
 
-    const searchButton =
-      document.getElementById(
-        "searchMemberBtn"
-      );
+    selectedInfo.textContent =
+      `전체 ${sheetRows.length}개 중 ${selected.length}개 선택됨`;
 
-
-    const nicknameElement =
-      document.getElementById(
-        "nickname"
-      );
-
-
-    members = [];
-
-    selectedMember =
-      null;
-
-
-    document
-      .getElementById(
-        "members"
-      )
-      .innerHTML =
-        `<div class="empty">
-          팀을 선택한 후 Discord 멤버를 검색하세요.
-        </div>`;
-
-
-    if (value === "") {
-
-      selectedTeam =
-        null;
-
-
-      nicknameElement.textContent =
-        "-";
-
-
-      searchButton.disabled =
-        true;
-
-
-      updateAssignButton();
-
-      return;
+    if (
+      selected.length === 0
+    ) {
+      selectedCountText.textContent =
+        "선택된 항목 없음";
     }
-
-
-    selectedTeam =
-      teams[
-        Number(value)
-      ];
-
-
-    const nickname =
-      String(
-        selectedTeam.nickname || ""
-      ).trim();
-
-
-    nicknameElement.textContent =
-      nickname ||
-      "(Discord 별명 없음)";
-
-
-    searchButton.disabled =
-      !nickname;
-
-
-    updateAssignButton();
   }
 
 
-  /*
-    Discord 멤버 검색
-  */
+  /* =====================================================
+     Sheet 목록 표시
+  ===================================================== */
 
-  async function searchMember() {
+  function renderSheetRows() {
 
-    const guildId =
-      document
-        .getElementById(
-          "guildSelect"
-        )
-        .value;
+    teamList.innerHTML = "";
 
+    if (
+      sheetRows.length === 0
+    ) {
 
-    if (!guildId) {
+      teamList.innerHTML = `
+        <div class="empty">
+          가져온 항목이 없습니다.
+        </div>
+      `;
 
-      setStatus(
-        "Discord 서버를 선택해주세요.",
-        "warning"
-      );
+      selectionSection.style.display =
+        "block";
 
-      return;
-    }
-
-
-    if (!selectedTeam) {
-
-      setStatus(
-        "팀을 먼저 선택해주세요.",
-        "warning"
-      );
+      actionButtons.style.display =
+        "none";
 
       return;
     }
 
+    sheetRows.forEach(
+      (row, index) => {
 
-    const nickname =
-      String(
-        selectedTeam.nickname || ""
-      ).trim();
+        const wrapper =
+          document.createElement(
+            "label"
+          );
+
+        wrapper.className =
+          "team-option";
+
+        wrapper.innerHTML = `
+          <input
+            type="checkbox"
+            class="team-checkbox"
+            data-index="${index}"
+            checked
+          >
+
+          <div class="team-text">
+
+            <span class="team-seed">
+              ${escapeHtml(
+                row.seed || "-"
+              )}
+            </span>
+
+            <span class="team-name">
+              ${escapeHtml(
+                row.nickname
+              )}
+            </span>
+
+          </div>
+        `;
+
+        const checkbox =
+          wrapper.querySelector(
+            ".team-checkbox"
+          );
+
+        checkbox.addEventListener(
+          "change",
+          updateSelectionInfo
+        );
+
+        teamList.appendChild(
+          wrapper
+        );
+      }
+    );
+
+    selectionSection.style.display =
+      "block";
+
+    actionButtons.style.display =
+      "grid";
+
+    updateSelectionInfo();
+  }
 
 
-    if (!nickname) {
+  /* =====================================================
+     HTML Escape
+  ===================================================== */
 
+  function escapeHtml(value) {
+
+    return String(value)
+      .replace(
+        /&/g,
+        "&amp;"
+      )
+      .replace(
+        /</g,
+        "&lt;"
+      )
+      .replace(
+        />/g,
+        "&gt;"
+      )
+      .replace(
+        /"/g,
+        "&quot;"
+      )
+      .replace(
+        /'/g,
+        "&#039;"
+      );
+  }
+
+
+  /* =====================================================
+     Sheet 가져오기
+  ===================================================== */
+
+  async function loadSheet() {
+
+    const sheetUrl =
+      sheetUrlInput.value.trim();
+
+    if (!sheetUrl) {
       setStatus(
-        "C열에 Discord 별명이 없습니다.",
+        "Google Sheets 주소를 입력해주세요.",
         "error"
       );
 
       return;
     }
 
-
-    const button =
-      document.getElementById(
-        "searchMemberBtn"
-      );
-
-
-    button.disabled =
+    loadSheetButton.disabled =
       true;
 
-
-    button.textContent =
-      "검색 중...";
-
-
-    document
-      .getElementById(
-        "members"
-      )
-      .innerHTML =
-        `<div class="empty">
-          Discord 서버 멤버를 검색하고 있습니다...
-        </div>`;
-
+    setStatus(
+      "Google Sheets 정보를 가져오는 중..."
+    );
 
     try {
 
-      const data =
-        await api(
-          `/api/role/members?guildId=${encodeURIComponent(
-            guildId
-          )}&nickname=${encodeURIComponent(
-            nickname
-          )}`
+      const encoded =
+        encodeURIComponent(
+          sheetUrl
         );
 
+      const data =
+        await api(
+          `/api/role/sheet?url=${encoded}`
+        );
 
-      members =
+      sheetRows =
+        Array.isArray(data.rows)
+          ? data.rows.filter(
+              row =>
+                String(
+                  row.nickname || ""
+                ).trim() !== ""
+            )
+          : [];
+
+      renderSheetRows();
+
+      setStatus(
+        `Google Sheets 정보를 가져왔습니다.\n` +
+        `사용 가능한 항목: ${sheetRows.length}개\n` +
+        `모든 항목이 기본적으로 선택되었습니다.`,
+        "success"
+      );
+
+    } catch (error) {
+
+      setStatus(
+        `❌ ${error.message}`,
+        "error"
+      );
+
+    } finally {
+
+      loadSheetButton.disabled =
+        false;
+    }
+  }
+
+
+  /* =====================================================
+     선택된 닉네임 → Discord 멤버 찾기
+  ===================================================== */
+
+  async function resolveSelectedMembers() {
+
+    const selected =
+      getSelectedRows();
+
+    if (
+      selected.length === 0
+    ) {
+      throw new Error(
+        "선택된 항목이 없습니다."
+      );
+    }
+
+    const memberIds =
+      new Set();
+
+    const matchedInfo = [];
+
+    for (
+      let i = 0;
+      i < selected.length;
+      i++
+    ) {
+
+      const row =
+        selected[i];
+
+      setStatus(
+        `Discord 멤버 확인 중...\n` +
+        `${i + 1}/${selected.length}\n` +
+        `닉네임: ${row.nickname}`
+      );
+
+      const encoded =
+        encodeURIComponent(
+          row.nickname
+        );
+
+      const data =
+        await api(
+          `/api/role/members?nickname=${encoded}`
+        );
+
+      const members =
         Array.isArray(
           data.members
         )
           ? data.members
           : [];
 
+      matchedInfo.push({
+        row,
+        members
+      });
 
-      renderMembers();
-
-
-      if (
-        members.length === 0
+      for (
+        const member of members
       ) {
-
-        setStatus(
-          `Discord 서버에서 서버 별명 "${nickname}"과 정확히 일치하는 멤버를 찾지 못했습니다.`,
-          "warning"
-        );
-
-
-      } else if (
-        members.length === 1
-      ) {
-
-        selectedMember =
-          members[0];
-
-
-        const radio =
-          document.querySelector(
-            'input[name="member"]'
-          );
-
-
-        if (radio) {
-          radio.checked = true;
-        }
-
-
-        setStatus(
-          `"${nickname}"과 일치하는 Discord 멤버 1명을 찾았습니다.`,
-          "success"
-        );
-
-
-      } else {
-
-        selectedMember =
-          null;
-
-
-        setStatus(
-          `"${nickname}"과 일치하는 Discord 멤버가 ${members.length}명입니다.\n실제 지급 대상 멤버를 직접 선택해주세요.`,
-          "warning"
-        );
-      }
-
-
-      updateAssignButton();
-
-
-    } catch (error) {
-
-      console.error(error);
-
-
-      setStatus(
-        `Discord 멤버 검색 실패\n${error.message}`,
-        "error"
-      );
-
-
-    } finally {
-
-      button.disabled =
-        false;
-
-
-      button.textContent =
-        "Discord 멤버 검색";
-    }
-  }
-
-
-  /*
-    멤버 표시
-  */
-
-  function renderMembers() {
-
-    const target =
-      document.getElementById(
-        "members"
-      );
-
-
-    if (!members.length) {
-
-      target.innerHTML =
-        `<div class="empty">
-          일치하는 Discord 멤버가 없습니다.
-        </div>`;
-
-      return;
-    }
-
-
-    target.innerHTML =
-      "";
-
-
-    for (
-      const member of members
-    ) {
-
-      const label =
-        document.createElement(
-          "label"
-        );
-
-
-      label.className =
-        "member";
-
-
-      label.innerHTML = `
-
-        <input
-          type="radio"
-          name="member"
-          value="${escapeHtml(
+        if (member.id) {
+          memberIds.add(
             member.id
-          )}"
-        >
-
-        <div class="member-main">
-
-          <div class="member-nick">
-            ${escapeHtml(
-              member.nick || "-"
-            )}
-          </div>
-
-          <div class="member-user">
-            ${escapeHtml(
-              member.username || "-"
-            )}
-
-            ${
-              member.globalName
-                ? ` · ${escapeHtml(
-                    member.globalName
-                  )}`
-                : ""
-            }
-
-          </div>
-
-        </div>
-
-      `;
-
-
-      label
-        .querySelector("input")
-        .addEventListener(
-          "change",
-          () => {
-
-            selectedMember =
-              members.find(
-                member =>
-                  member.id ===
-                  label
-                    .querySelector(
-                      "input"
-                    )
-                    .value
-              ) || null;
-
-
-            updateAssignButton();
-          }
-        );
-
-
-      target.appendChild(
-        label
-      );
+          );
+        }
+      }
     }
+
+    return {
+      memberIds:
+        [...memberIds],
+
+      matchedInfo
+    };
   }
 
 
-  /*
-    白夜 역할 지급
-  */
+  /* =====================================================
+     선택 대상 역할 지급
+  ===================================================== */
 
-  async function assignRole() {
+  async function assignSelected() {
 
-    const guildId =
-      document
-        .getElementById(
-          "guildSelect"
-        )
-        .value;
+    const selected =
+      getSelectedRows();
 
-
-    if (!guildId) {
-
+    if (
+      selected.length === 0
+    ) {
       setStatus(
-        "Discord 서버를 선택해주세요.",
+        "선택된 항목이 없습니다.",
         "warning"
       );
 
       return;
     }
 
-
-    if (!selectedMember) {
-
-      setStatus(
-        "역할을 지급할 Discord 멤버를 선택해주세요.",
-        "warning"
-      );
-
+    if (
+      !confirm(
+        `선택된 ${selected.length}개 항목의 Discord 멤버에게\n` +
+        `「白夜」 역할을 지급하시겠습니까?`
+      )
+    ) {
       return;
     }
 
-
-    const confirmed =
-      confirm(
-
-        `白夜 역할을 지급하시겠습니까?\n\n` +
-
-        `팀명 / Discord 별명: ${
-          selectedTeam
-            ? selectedTeam.nickname
-            : "-"
-        }\n` +
-
-        `Discord 별명: ${
-          selectedMember.nick
-        }\n\n` +
-
-        `지급 역할: 白夜`
-
-      );
-
-
-    if (!confirmed) {
-      return;
-    }
-
-
-    const button =
-      document.getElementById(
-        "assignBtn"
-      );
-
-
-    button.disabled =
+    assignButton.disabled =
       true;
 
+    removeButton.disabled =
+      true;
 
-    button.textContent =
-      "지급 중...";
-
+    removeAllButton.disabled =
+      true;
 
     try {
 
-      const data =
+      const resolved =
+        await resolveSelectedMembers();
+
+      if (
+        resolved.memberIds.length === 0
+      ) {
+        setStatus(
+          "선택된 닉네임과 정확히 일치하는 Discord 서버 닉네임을 가진 멤버가 없습니다.",
+          "warning"
+        );
+
+        return;
+      }
+
+      setStatus(
+        `역할 지급 중...\n` +
+        `대상 Discord 멤버: ${resolved.memberIds.length}명`
+      );
+
+      const result =
         await api(
-          "/api/role/assign",
+          "/api/role/assign-selected",
           {
             method: "POST",
 
             body:
               JSON.stringify({
-
-                guildId,
-
-                userId:
-                  selectedMember.id
-
+                userIds:
+                  resolved.memberIds
               })
           }
         );
 
-
-      if (
-        data.alreadyHadRole
-      ) {
-
-        setStatus(
-
-          `"${selectedMember.nick}"님은 이미 白夜 역할을 가지고 있습니다.`,
-
-          "warning"
-
-        );
-
-
-      } else {
-
-        setStatus(
-
-          `白夜 역할 지급 완료\n\n` +
-
-          `Discord 별명: ${
-            selectedMember.nick
-          }\n` +
-
-          `역할: 白夜`,
-
-          "success"
-
-        );
-      }
-
+      setStatus(
+        `✅ 역할 지급 완료\n\n` +
+        `대상 멤버: ${result.total}명\n` +
+        `새로 지급: ${result.success}명\n` +
+        `이미 보유: ${result.already}명\n` +
+        `실패: ${result.failed}명`,
+        result.failed > 0
+          ? "warning"
+          : "success"
+      );
 
     } catch (error) {
 
-      console.error(error);
-
-
       setStatus(
-        `白夜 역할 지급 실패\n${error.message}`,
+        `❌ ${error.message}`,
         "error"
       );
 
-
     } finally {
 
-      button.disabled =
+      assignButton.disabled =
         false;
 
+      removeButton.disabled =
+        false;
 
-      button.textContent =
-        "白夜 역할 지급";
-
-
-      updateAssignButton();
+      removeAllButton.disabled =
+        false;
     }
   }
 
 
-  /*
-    白夜 역할 전체 제거
-  */
+  /* =====================================================
+     선택 대상 역할 제거
+  ===================================================== */
 
-  async function removeAllBaiyaRoles() {
+  async function removeSelected() {
 
-    const guildId =
-      document
-        .getElementById(
-          "guildSelect"
-        )
-        .value;
+    const selected =
+      getSelectedRows();
 
-
-    if (!guildId) {
-
+    if (
+      selected.length === 0
+    ) {
       setStatus(
-        "먼저 Discord 서버를 선택해주세요.",
+        "선택된 항목이 없습니다.",
         "warning"
       );
 
       return;
     }
 
+    if (
+      !confirm(
+        `선택된 ${selected.length}개 항목에서\n` +
+        `「白夜」 역할을 제거하시겠습니까?`
+      )
+    ) {
+      return;
+    }
 
-    const removeButton =
-      document.getElementById(
-        "removeAllBaiyaBtn"
-      );
-
-
-    const confirmButton =
-      document.getElementById(
-        "confirmRemoveAllBtn"
-      );
-
-
-    /*
-      사이트에서 확인을 끝낸 뒤
-      여기서부터 Worker API 호출
-    */
+    assignButton.disabled =
+      true;
 
     removeButton.disabled =
       true;
 
-
-    confirmButton.disabled =
+    removeAllButton.disabled =
       true;
-
-
-    confirmButton.textContent =
-      "제거 중...";
-
-
-    closeRemoveAllModal();
-
-
-    setStatus(
-      "현재 서버의 모든 멤버를 확인하고 있습니다.\n잠시만 기다려주세요.",
-      "warning"
-    );
-
 
     try {
 
-      const data =
+      const resolved =
+        await resolveSelectedMembers();
+
+      if (
+        resolved.memberIds.length === 0
+      ) {
+        setStatus(
+          "선택된 닉네임과 정확히 일치하는 Discord 서버 닉네임을 가진 멤버가 없습니다.",
+          "warning"
+        );
+
+        return;
+      }
+
+      setStatus(
+        `역할 제거 중...\n` +
+        `대상 Discord 멤버: ${resolved.memberIds.length}명`
+      );
+
+      const result =
+        await api(
+          "/api/role/remove-selected",
+          {
+            method: "POST",
+
+            body:
+              JSON.stringify({
+                userIds:
+                  resolved.memberIds
+              })
+          }
+        );
+
+      setStatus(
+        `✅ 역할 제거 완료\n\n` +
+        `대상 멤버: ${result.total}명\n` +
+        `제거: ${result.success}명\n` +
+        `역할 없음: ${result.already}명\n` +
+        `실패: ${result.failed}명`,
+        result.failed > 0
+          ? "warning"
+          : "success"
+      );
+
+    } catch (error) {
+
+      setStatus(
+        `❌ ${error.message}`,
+        "error"
+      );
+
+    } finally {
+
+      assignButton.disabled =
+        false;
+
+      removeButton.disabled =
+        false;
+
+      removeAllButton.disabled =
+        false;
+    }
+  }
+
+
+  /* =====================================================
+     서버 전체 白夜 제거
+  ===================================================== */
+
+  async function removeAll() {
+
+    if (
+      !confirm(
+        "정말로 이 서버의 모든 白夜 역할을 제거하시겠습니까?"
+      )
+    ) {
+      return;
+    }
+
+    assignButton.disabled =
+      true;
+
+    removeButton.disabled =
+      true;
+
+    removeAllButton.disabled =
+      true;
+
+    try {
+
+      setStatus(
+        "서버 전체 白夜 역할을 확인하는 중..."
+      );
+
+      const result =
         await api(
           "/api/role/remove-all",
           {
             method: "POST",
 
             body:
-              JSON.stringify({
-                guildId
-              })
+              JSON.stringify({})
           }
         );
 
-
-      if (!data.ok) {
-
-        throw new Error(
-          data.error ||
-          "白夜 역할 전체 제거에 실패했습니다."
-        );
-      }
-
-
-      const totalFound =
-        Number(
-          data.totalFound || 0
-        );
-
-
-      const success =
-        Number(
-          data.success || 0
-        );
-
-
-      const failed =
-        Number(
-          data.failed || 0
-        );
-
-
-      if (failed > 0) {
-
-        setStatus(
-
-          `白夜 역할 전체 제거가 완료되었습니다.\n\n` +
-
-          `역할 보유자: ${totalFound}명\n` +
-
-          `제거 완료: ${success}명\n` +
-
-          `제거 실패: ${failed}명`,
-
-          "warning"
-
-        );
-
-      } else {
-
-        setStatus(
-
-          `白夜 역할 전체 제거가 완료되었습니다.\n\n` +
-
-          `총 ${success}명에게서 白夜 역할을 제거했습니다.`,
-
-          "success"
-
-        );
-      }
-
+      setStatus(
+        `✅ 서버 전체 역할 제거 완료\n\n` +
+        `확인된 대상: ${result.totalFound}명\n` +
+        `제거 성공: ${result.success}명\n` +
+        `실패: ${result.failed}명`,
+        result.failed > 0
+          ? "warning"
+          : "success"
+      );
 
     } catch (error) {
 
-      console.error(error);
-
-
       setStatus(
-
-        `白夜 역할 전체 제거 실패\n${error.message}`,
-
+        `❌ ${error.message}`,
         "error"
-
       );
 
-
     } finally {
+
+      assignButton.disabled =
+        false;
 
       removeButton.disabled =
         false;
 
-
-      confirmButton.disabled =
+      removeAllButton.disabled =
         false;
-
-
-      confirmButton.textContent =
-        "제거하기";
     }
   }
 
 
-  /*
-    확인 모달 열기
-  */
+  /* =====================================================
+     드롭다운
+  ===================================================== */
 
-  function openRemoveAllModal() {
+  multiSelectButton.addEventListener(
+    "click",
+    event => {
 
-    const guildId =
+      event.stopPropagation();
+
+      multiSelectMenu.classList.toggle(
+        "hidden"
+      );
+    }
+  );
+
+
+  document.addEventListener(
+    "click",
+    event => {
+
+      if (
+        !multiSelectMenu.contains(
+          event.target
+        ) &&
+        event.target !==
+          multiSelectButton
+      ) {
+        multiSelectMenu.classList.add(
+          "hidden"
+        );
+      }
+    }
+  );
+
+
+  /* =====================================================
+     전체 선택
+  ===================================================== */
+
+  selectAllButton.addEventListener(
+    "click",
+    () => {
+
       document
-        .getElementById(
-          "guildSelect"
+        .querySelectorAll(
+          ".team-checkbox"
         )
-        .value;
-
-
-    if (!guildId) {
-
-      setStatus(
-        "먼저 Discord 서버를 선택해주세요.",
-        "warning"
-      );
-
-      return;
-    }
-
-
-    document
-      .getElementById(
-        "removeAllModal"
-      )
-      .classList.remove(
-        "hidden"
-      );
-  }
-
-
-  /*
-    확인 모달 닫기
-  */
-
-  function closeRemoveAllModal() {
-
-    document
-      .getElementById(
-        "removeAllModal"
-      )
-      .classList.add(
-        "hidden"
-      );
-  }
-
-
-  /*
-    지급 버튼 활성화
-  */
-
-  function updateAssignButton() {
-
-    document
-      .getElementById(
-        "assignBtn"
-      )
-      .disabled =
-        !selectedMember;
-  }
-
-
-  /*
-    HTML escape
-  */
-
-  function escapeHtml(
-    value
-  ) {
-
-    return String(
-      value ?? ""
-    )
-
-      .replaceAll(
-        "&",
-        "&amp;"
-      )
-
-      .replaceAll(
-        "<",
-        "&lt;"
-      )
-
-      .replaceAll(
-        ">",
-        "&gt;"
-      )
-
-      .replaceAll(
-        '"',
-        "&quot;"
-      )
-
-      .replaceAll(
-        "'",
-        "&#039;"
-      );
-  }
-
-
-  /*
-    서버 선택
-  */
-
-  document
-    .getElementById(
-      "guildSelect"
-    )
-    .addEventListener(
-      "change",
-      event => {
-
-        const guildId =
-          event.target.value;
-
-
-        selectedMember =
-          null;
-
-
-        members = [];
-
-
-        document
-          .getElementById(
-            "members"
-          )
-          .innerHTML =
-            `<div class="empty">
-              팀을 선택한 후 Discord 멤버를 검색하세요.
-            </div>`;
-
-
-        document
-          .getElementById(
-            "nickname"
-          )
-          .textContent =
-            "-";
-
-
-        document
-          .getElementById(
-            "teamSelect"
-          )
-          .value =
-            "";
-
-
-        selectedTeam =
-          null;
-
-
-        updateAssignButton();
-
-
-        if (!guildId) {
-          return;
-        }
-
-
-        setStatus(
-          "Discord 서버를 선택했습니다.",
-          "success"
-        );
-      }
-    );
-
-
-  /*
-    팀 선택
-  */
-
-  document
-    .getElementById(
-      "teamSelect"
-    )
-    .addEventListener(
-      "change",
-      updateSelectedTeam
-    );
-
-
-  /*
-    Sheets 불러오기
-  */
-
-  document
-    .getElementById(
-      "loadSheetBtn"
-    )
-    .addEventListener(
-      "click",
-      loadSheet
-    );
-
-
-  /*
-    Discord 멤버 검색
-  */
-
-  document
-    .getElementById(
-      "searchMemberBtn"
-    )
-    .addEventListener(
-      "click",
-      searchMember
-    );
-
-
-  /*
-    白夜 역할 지급
-  */
-
-  document
-    .getElementById(
-      "assignBtn"
-    )
-    .addEventListener(
-      "click",
-      assignRole
-    );
-
-
-  /*
-    白夜 전체 제거 버튼
-  */
-
-  document
-    .getElementById(
-      "removeAllBaiyaBtn"
-    )
-    .addEventListener(
-      "click",
-      openRemoveAllModal
-    );
-
-
-  /*
-    전체 제거 취소
-  */
-
-  document
-    .getElementById(
-      "cancelRemoveAllBtn"
-    )
-    .addEventListener(
-      "click",
-      closeRemoveAllModal
-    );
-
-
-  /*
-    전체 제거 확인
-  */
-
-  document
-    .getElementById(
-      "confirmRemoveAllBtn"
-    )
-    .addEventListener(
-      "click",
-      removeAllBaiyaRoles
-    );
-
-
-  /*
-    모달 바깥 클릭 시 닫기
-  */
-
-  document
-    .getElementById(
-      "removeAllModal"
-    )
-    .addEventListener(
-      "click",
-      event => {
-
-        if (
-          event.target.id ===
-          "removeAllModal"
-        ) {
-
-          closeRemoveAllModal();
-        }
-      }
-    );
-
-
-  /*
-    Discord 로그인
-  */
-
-  function login() {
-
-    location.href =
-      "/SCRIM/DISCORD/";
-  }
-
-
-  document
-    .getElementById(
-      "loginBtn"
-    )
-    .addEventListener(
-      "click",
-      login
-    );
-
-
-  document
-    .getElementById(
-      "loginBtn2"
-    )
-    .addEventListener(
-      "click",
-      login
-    );
-
-
-  /*
-    로그아웃
-  */
-
-  document
-    .getElementById(
-      "logoutBtn"
-    )
-    .addEventListener(
-      "click",
-      () => {
-
-        localStorage.removeItem(
-          "session"
+        .forEach(
+          checkbox => {
+            checkbox.checked =
+              true;
+          }
         );
 
+      updateSelectionInfo();
+    }
+  );
 
-        token =
-          null;
+
+  /* =====================================================
+     전체 해제
+  ===================================================== */
+
+  unselectAllButton.addEventListener(
+    "click",
+    () => {
+
+      document
+        .querySelectorAll(
+          ".team-checkbox"
+        )
+        .forEach(
+          checkbox => {
+            checkbox.checked =
+              false;
+          }
+        );
+
+      updateSelectionInfo();
+    }
+  );
 
 
-        location.reload();
-      }
+  /* =====================================================
+     이벤트
+  ===================================================== */
+
+  loadSheetButton.addEventListener(
+    "click",
+    loadSheet
+  );
+
+  assignButton.addEventListener(
+    "click",
+    assignSelected
+  );
+
+  removeButton.addEventListener(
+    "click",
+    removeSelected
+  );
+
+  removeAllButton.addEventListener(
+    "click",
+    removeAll
+  );
+
+
+  /* =====================================================
+     로그인 확인
+  ===================================================== */
+
+  if (!token) {
+
+    setStatus(
+      "로그인이 필요합니다. 페이지를 새로고침한 뒤 Discord 로그인을 진행해주세요.",
+      "warning"
     );
 
-
-  /*
-    초기화
-  */
-
-  async function init() {
-
-    if (!token) {
-
-      showLogin();
-
-      return;
-    }
-
-
-    try {
-
-      showMain();
-
-
-      await loadMe();
-
-
-      await loadGuilds();
-
-
-    } catch (error) {
-
-      console.error(error);
-
-
-      localStorage.removeItem(
-        "session"
-      );
-
-
-      token =
-        null;
-
-
-      showLogin();
-    }
   }
-
-
-  init();
 
 </script>
 
