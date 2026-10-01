@@ -404,7 +404,7 @@ body.auth-locked { overflow:hidden; }
   $("assign").addEventListener("click", () => runSelected("assign"));
   $("remove").addEventListener("click", () => runSelected("remove"));
   $("removeAll").addEventListener("click", removeAll);
-  $("loginButton").addEventListener("click", () => { location.href = API_BASE + "/api/login"; });
+  $("loginButton").addEventListener("click", () => { location.href = API_BASE + "/api/login?return=role"; });
 
   /* 시작 */
   if (token) {
