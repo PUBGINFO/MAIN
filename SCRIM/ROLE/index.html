@@ -52,28 +52,39 @@ button { font:inherit; color:inherit; }
 
 /* ===== Header ===== */
 .header { position:sticky; top:0; z-index:100; background:var(--bg); border-bottom:1px solid var(--line); }
-.header-wrap { max-width:640px; margin:0 auto; padding:0 20px; height:52px; display:flex; align-items:center; justify-content:space-between; }
+.header-wrap {
+  max-width:640px; margin:0 auto; padding:0 20px; height:52px;
+  display:flex; align-items:center; justify-content:space-between;
+}
 .logo { font-size:17px; font-weight:700; letter-spacing:-.3px; }
 .logo small { font-size:12px; font-weight:500; color:var(--text-sub); margin-left:8px; }
 .toggle {
   width:36px; height:36px; display:flex; align-items:center; justify-content:center;
-  border:1px solid var(--line); border-radius:50%; background:transparent; color:var(--text-sub); cursor:pointer;
+  border:1px solid var(--line); border-radius:50%; background:transparent;
+  color:var(--text-sub); cursor:pointer;
 }
 .toggle:hover { background:var(--bg-item-hover); color:var(--text); }
 
 /* ===== Main ===== */
 .main { max-width:640px; margin:0 auto; padding:0 0 60px; }
 .section { padding:32px 0 0; }
-.section-head { display:flex; align-items:center; justify-content:space-between; padding:0 20px; margin-bottom:8px; }
+.section-head {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 20px; margin-bottom:8px;
+}
 .section-title { font-size:12px; font-weight:600; color:var(--text-sub); letter-spacing:.5px; }
-.link-btn { border:0; background:none; font-size:12px; font-weight:600; color:var(--text-sub); cursor:pointer; padding:2px 0 2px 12px; }
+.link-btn {
+  border:0; background:none; font-size:12px; font-weight:600;
+  color:var(--text-sub); cursor:pointer; padding:2px 0 2px 12px;
+}
 .link-btn:hover { color:var(--text); }
 .link-btn:disabled { opacity:.4; cursor:not-allowed; }
 
 .search { padding:0 20px 12px; }
 .search input {
-  width:100%; border:1px solid var(--line); border-radius:10px; padding:12px 14px;
-  background:var(--bg); color:var(--text); font-size:14px; outline:none;
+  width:100%; border:1px solid var(--line); border-radius:10px;
+  padding:12px 14px; background:var(--bg); color:var(--text);
+  font-size:14px; outline:none;
 }
 .search input:focus { border-color:var(--text); }
 
@@ -82,46 +93,88 @@ button { font:inherit; color:inherit; }
 .list li + li { border-top:1px solid var(--line); }
 .scroll { max-height:56vh; overflow-y:auto; }
 .list-item {
-  display:flex; align-items:center; gap:14px; padding:15px 20px; background:var(--bg-item);
-  transition:background .12s; cursor:pointer; width:100%; text-align:left; border:0;
-  -webkit-tap-highlight-color:transparent;
+  display:flex; align-items:center; gap:14px; padding:15px 20px;
+  background:var(--bg-item); transition:background .12s; cursor:pointer;
+  width:100%; text-align:left; border:0; -webkit-tap-highlight-color:transparent;
 }
 .list-item:hover,.list-item:active { background:var(--bg-item-hover); }
 .list-item[disabled] { opacity:.4; cursor:not-allowed; }
-.list-item input[type=checkbox] { width:18px; height:18px; accent-color:var(--primary); flex-shrink:0; }
+.list-item input[type=checkbox] {
+  width:18px; height:18px; accent-color:var(--primary); flex-shrink:0;
+}
 .list-body { display:flex; flex-direction:column; gap:2px; flex:1; min-width:0; }
 .list-name { font-size:15px; font-weight:500; line-height:1.3; word-break:break-all; }
 .list-desc { font-size:12px; color:var(--text-sub); line-height:1.3; }
-.list-arrow { width:16px; height:16px; color:var(--text-muted); flex-shrink:0; transition:transform .15s; }
+.list-arrow {
+  width:16px; height:16px; color:var(--text-muted);
+  flex-shrink:0; transition:transform .15s;
+}
 .list-item:hover .list-arrow { transform:translateX(2px); }
 .list-item.danger .list-name { color:var(--danger); }
 .empty { padding:32px 20px; text-align:center; font-size:13px; color:var(--text-sub); }
 
-.tag { flex-shrink:0; font-size:10px; font-weight:600; padding:3px 7px; border-radius:4px; letter-spacing:.2px; background:var(--tag-info-bg); color:var(--tag-info-text); }
+.tag {
+  flex-shrink:0; font-size:10px; font-weight:600; padding:3px 7px;
+  border-radius:4px; letter-spacing:.2px;
+  background:var(--tag-info-bg); color:var(--tag-info-text);
+}
 .tag-update { background:var(--tag-update-bg); color:var(--tag-update-text); }
 
 /* ===== Status ===== */
-.status { margin:0 20px; padding:14px 16px; border:1px solid var(--line); border-radius:10px; font-size:13px; line-height:1.6; white-space:pre-line; color:var(--text-sub); }
+.status {
+  margin:0 20px; padding:14px 16px; border:1px solid var(--line);
+  border-radius:10px; font-size:13px; line-height:1.6;
+  white-space:pre-line; color:var(--text-sub);
+}
 .status.success { color:var(--ok); }
 .status.error { color:var(--danger); }
 .status.warning { color:var(--tag-event-text); }
 
 /* ===== Footer ===== */
-.footer { max-width:640px; margin:0 auto; padding:32px 20px 48px; border-top:1px solid var(--line); }
-.meta { font-size:11px; color:var(--text-muted); line-height:1.7; word-break:break-all; }
+.footer {
+  max-width:640px; margin:0 auto; padding:32px 20px 48px;
+  border-top:1px solid var(--line);
+}
+.meta {
+  font-size:11px; color:var(--text-muted);
+  line-height:1.7; word-break:break-all;
+}
 .clock { display:flex; align-items:baseline; gap:10px; margin-bottom:14px; }
-.clock-label { font-size:11px; font-weight:600; color:var(--text-muted); letter-spacing:1px; width:28px; }
-.clock-val { font-size:15px; font-weight:600; font-variant-numeric:tabular-nums; }
+.clock-label {
+  font-size:11px; font-weight:600; color:var(--text-muted);
+  letter-spacing:1px; width:28px;
+}
+.clock-val {
+  font-size:15px; font-weight:600;
+  font-variant-numeric:tabular-nums;
+}
 
 /* ===== Auth gate ===== */
 body.auth-locked { overflow:hidden; }
-.auth-gate { position:fixed; inset:0; z-index:1000; display:grid; place-items:center; padding:20px; background:var(--bg); }
+.auth-gate {
+  position:fixed; inset:0; z-index:1000; display:grid;
+  place-items:center; padding:20px; background:var(--bg);
+}
 .auth-gate[hidden] { display:none; }
-.auth-card { width:min(100%,420px); border:1px solid var(--line); border-radius:18px; padding:32px; background:var(--bg-item); }
-.auth-brand { font-size:13px; font-weight:800; letter-spacing:1.4px; margin-bottom:28px; color:var(--text-sub); }
+.auth-card {
+  width:min(100%,420px); border:1px solid var(--line);
+  border-radius:18px; padding:32px; background:var(--bg-item);
+}
+.auth-brand {
+  font-size:13px; font-weight:800; letter-spacing:1.4px;
+  margin-bottom:28px; color:var(--text-sub);
+}
 .auth-card h1 { font-size:25px; margin-bottom:10px; }
-.auth-card p { font-size:13px; line-height:1.6; color:var(--text-sub); margin-bottom:24px; }
-.auth-card button { width:100%; border:1px solid var(--primary); border-radius:10px; padding:13px 14px; background:var(--primary); color:var(--primary-fg); font-weight:700; cursor:pointer; }
+.auth-card p {
+  font-size:13px; line-height:1.6; color:var(--text-sub);
+  margin-bottom:24px;
+}
+.auth-card button {
+  width:100%; border:1px solid var(--primary);
+  border-radius:10px; padding:13px 14px;
+  background:var(--primary); color:var(--primary-fg);
+  font-weight:700; cursor:pointer;
+}
 
 .hidden { display:none !important; }
 
@@ -130,13 +183,20 @@ body.auth-locked { overflow:hidden; }
   .header-wrap,.main,.footer { max-width:720px; }
   .section-head,.search { padding-left:24px; padding-right:24px; }
   .status { margin:0 24px; }
-  .list { border:1px solid var(--line); border-radius:12px; overflow:hidden; margin:0 24px; }
+  .list {
+    border:1px solid var(--line); border-radius:12px;
+    overflow:hidden; margin:0 24px;
+  }
   .list-item { padding:16px 24px; }
   .footer { padding-left:24px; padding-right:24px; }
 }
+
 @media (min-width:1024px) {
   .header-wrap,.main,.footer { max-width:880px; }
-  .main { display:grid; grid-template-columns:1.15fr 1fr; column-gap:24px; align-items:start; }
+  .main {
+    display:grid; grid-template-columns:1.15fr 1fr;
+    column-gap:24px; align-items:start;
+  }
   .main > .section:first-child { grid-row:1 / 4; }
   .main > .section:nth-child(2) { grid-column:2; grid-row:1; }
   .main > .section:nth-child(3) { grid-column:2; grid-row:2; }
@@ -144,6 +204,7 @@ body.auth-locked { overflow:hidden; }
 }
 </style>
 </head>
+
 <body class="auth-locked">
 
 <!-- 로그인 -->
@@ -160,12 +221,17 @@ body.auth-locked { overflow:hidden; }
   <div class="header-wrap">
     <span class="logo">PUBG INFO<small>역할 관리</small></span>
     <button class="toggle" id="themeToggle" aria-label="테마 전환">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round">
+        <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
+      </svg>
     </button>
   </div>
 </header>
 
 <main class="main">
+
   <!-- 대상 선택 -->
   <section class="section">
     <div class="section-head">
@@ -176,31 +242,65 @@ body.auth-locked { overflow:hidden; }
         <button class="link-btn" id="reload">새로고침</button>
       </span>
     </div>
-    <div class="search"><input id="search" type="search" placeholder="닉네임 검색"></div>
-    <div class="list scroll"><ul id="teamList"><li class="empty">시트 정보를 불러오는 중...</li></ul></div>
+
+    <div class="search">
+      <input id="search" type="search" placeholder="닉네임 검색">
+    </div>
+
+    <div class="list scroll">
+      <ul id="teamList">
+        <li class="empty">시트 정보를 불러오는 중...</li>
+      </ul>
+    </div>
   </section>
 
   <!-- 작업 -->
   <section class="section">
-    <div class="section-head"><span class="section-title">작업</span></div>
+    <div class="section-head">
+      <span class="section-title">작업</span>
+    </div>
+
     <div class="list">
       <ul>
         <li>
           <button class="list-item" id="assign">
-            <div class="list-body"><span class="list-name">白夜 지급</span><span class="list-desc" id="assignDesc">선택된 대상에게 역할을 지급해요</span></div>
-            <svg class="list-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+            <div class="list-body">
+              <span class="list-name">白夜 지급</span>
+              <span class="list-desc" id="assignDesc">선택된 대상에게 역할을 지급해요</span>
+            </div>
+            <svg class="list-arrow" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
           </button>
         </li>
+
         <li>
           <button class="list-item" id="remove">
-            <div class="list-body"><span class="list-name">白夜 제거</span><span class="list-desc">선택된 대상에게서 역할을 제거해요</span></div>
-            <svg class="list-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+            <div class="list-body">
+              <span class="list-name">白夜 제거</span>
+              <span class="list-desc">선택된 대상에게서 역할을 제거해요</span>
+            </div>
+            <svg class="list-arrow" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
           </button>
         </li>
+
         <li>
           <button class="list-item danger" id="removeAll">
-            <div class="list-body"><span class="list-name">서버 전체 제거</span><span class="list-desc">선택과 관계없이 서버의 모든 白夜 역할을 제거해요</span></div>
-            <svg class="list-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+            <div class="list-body">
+              <span class="list-name">서버 전체 제거</span>
+              <span class="list-desc">선택과 관계없이 서버의 모든 白夜 역할을 제거해요</span>
+            </div>
+            <svg class="list-arrow" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
           </button>
         </li>
       </ul>
@@ -209,211 +309,563 @@ body.auth-locked { overflow:hidden; }
 
   <!-- 상태 -->
   <section class="section">
-    <div class="section-head"><span class="section-title">상태</span></div>
+    <div class="section-head">
+      <span class="section-title">상태</span>
+    </div>
     <div id="status" class="status">준비되었습니다.</div>
   </section>
+
 </main>
 
 <footer class="footer">
-  <div class="clock"><span class="clock-label">KST</span><span class="clock-val" id="kst">--:--:--</span></div>
-  <p class="meta">서버 PUBG INFO · 1413099667667026063<br>역할 白夜 · 1541955349735538698</p>
+  <div class="clock">
+    <span class="clock-label">KST</span>
+    <span class="clock-val" id="kst">--:--:--</span>
+  </div>
+
+  <p class="meta">
+    서버 PUBG INFO · 1413099667667026063<br>
+    역할 白夜 · 1541955349735538698
+  </p>
 </footer>
 
 <script>
   const API_BASE = "https://discord-bot.pubgmk14-kr.workers.dev";
   const SHEET_URL = "https://docs.google.com/spreadsheets/d/11WaBONeC1UQMymXvlc277y9-Cv36YWddW_BMkX2F0dg";
 
+  /* =========================================================
+     OAuth 세션 처리
+     Discord 로그인 후 Worker가
+     /SCRIM/ROLE/?session=xxxxx 로 돌려보내므로
+     여기서 session을 localStorage에 저장한다.
+     ========================================================= */
+
+  const params = new URLSearchParams(location.search);
+  const sessionFromUrl = params.get("session");
+
+  if (sessionFromUrl) {
+    try {
+      localStorage.setItem("session", sessionFromUrl);
+    } catch {}
+
+    // 주소창에서 session 토큰 제거
+    history.replaceState({}, "", location.pathname);
+  }
+
   let token = "";
-  try { token = localStorage.getItem("session") || ""; } catch {}
+
+  try {
+    token = localStorage.getItem("session") || "";
+  } catch {}
+
   let rows = [];
   const selected = new Set();
 
   const $ = id => document.getElementById(id);
-  const actionBtns = () => [$("assign"), $("remove"), $("removeAll")];
 
-  /* 테마 */
+  const actionBtns = () => [
+    $("assign"),
+    $("remove"),
+    $("removeAll")
+  ];
+
+  /* =========================================================
+     테마
+     ========================================================= */
+
   (function () {
-    try { const t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch {}
+    try {
+      const t = localStorage.getItem("theme");
+      if (t) document.documentElement.dataset.theme = t;
+    } catch {}
   })();
+
   $("themeToggle").addEventListener("click", () => {
-    const cur = document.documentElement.dataset.theme ||
+    const cur =
+      document.documentElement.dataset.theme ||
       (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+
     const next = cur === "dark" ? "light" : "dark";
+
     document.documentElement.dataset.theme = next;
-    try { localStorage.setItem("theme", next); } catch {}
+
+    try {
+      localStorage.setItem("theme", next);
+    } catch {}
   });
 
-  /* KST 시계 */
-  function tick() {
-    $("kst").textContent = new Date().toLocaleTimeString("ko-KR", { timeZone: "Asia/Seoul", hour12: false });
-  }
-  tick(); setInterval(tick, 1000);
+  /* =========================================================
+     KST 시계
+     ========================================================= */
 
-  /* 공통 */
+  function tick() {
+    $("kst").textContent =
+      new Date().toLocaleTimeString("ko-KR", {
+        timeZone: "Asia/Seoul",
+        hour12: false
+      });
+  }
+
+  tick();
+  setInterval(tick, 1000);
+
+  /* =========================================================
+     공통 API
+     ========================================================= */
+
   async function api(path, options = {}) {
-    if (!token) throw new Error("로그인 세션이 없습니다.");
+    if (!token) {
+      throw new Error("로그인 세션이 없습니다.");
+    }
+
     const res = await fetch(API_BASE + path, {
       ...options,
-      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}`, ...(options.headers || {}) }
-    });
-    let data = null;
-    try { data = await res.json(); } catch {}
-    if (!res.ok) {
-      if (res.status === 401) {
-        try { localStorage.removeItem("session"); } catch {}
-        token = "";
-        showLogin();
-        throw new Error("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+        ...(options.headers || {})
       }
+    });
+
+    let data = null;
+
+    try {
+      data = await res.json();
+    } catch {}
+
+    if (!res.ok) {
+
+      if (res.status === 401) {
+        try {
+          localStorage.removeItem("session");
+        } catch {}
+
+        token = "";
+
+        showLogin();
+
+        throw new Error(
+          "로그인 세션이 만료되었습니다. 다시 로그인해주세요."
+        );
+      }
+
       throw new Error(data?.error || `HTTP ${res.status}`);
     }
+
     return data;
   }
 
+  /* =========================================================
+     상태
+     ========================================================= */
+
   function setStatus(msg, type = "") {
     $("status").textContent = msg;
-    $("status").className = "status" + (type ? " " + type : "");
+    $("status").className =
+      "status" + (type ? " " + type : "");
   }
 
+  /* =========================================================
+     HTML Escape
+     ========================================================= */
+
   function esc(v) {
-    return String(v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    return String(v)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
   }
+
+  /* =========================================================
+     로그인 화면
+     ========================================================= */
 
   function showLogin() {
     $("authGate").hidden = false;
     document.body.classList.add("auth-locked");
   }
 
+  /* =========================================================
+     카운트
+     ========================================================= */
+
   function updateCount() {
-    $("countText").textContent = rows.length ? `대상 선택 · ${selected.size}/${rows.length}` : "대상 선택";
-    $("assign").disabled = $("remove").disabled = selected.size === 0;
+    $("countText").textContent =
+      rows.length
+        ? `대상 선택 · ${selected.size}/${rows.length}`
+        : "대상 선택";
+
+    $("assign").disabled = $("remove").disabled =
+      selected.size === 0;
+
     $("assignDesc").textContent = selected.size
       ? `선택된 ${selected.size}개 항목에 역할을 지급해요`
       : "선택된 대상에게 역할을 지급해요";
   }
 
+  /* =========================================================
+     목록 렌더링
+     ========================================================= */
+
   function renderList() {
     const q = $("search").value.trim().toLowerCase();
     const ul = $("teamList");
+
     ul.innerHTML = "";
-    const visible = rows.map((row, index) => ({ row, index }))
-      .filter(({ row }) => !q || row.nickname.toLowerCase().includes(q));
+
+    const visible = rows
+      .map((row, index) => ({ row, index }))
+      .filter(({ row }) =>
+        !q || row.nickname.toLowerCase().includes(q)
+      );
 
     if (!visible.length) {
-      ul.innerHTML = `<li class="empty">${rows.length ? "검색 결과가 없어요." : "시트에서 가져온 닉네임이 없어요."}</li>`;
+      ul.innerHTML = `
+        <li class="empty">
+          ${rows.length
+            ? "검색 결과가 없어요."
+            : "시트에서 가져온 닉네임이 없어요."}
+        </li>`;
       return;
     }
+
     for (const { row, index } of visible) {
+
       const li = document.createElement("li");
+
       li.innerHTML = `
         <label class="list-item">
-          <input type="checkbox" ${selected.has(index) ? "checked" : ""}>
-          <div class="list-body"><span class="list-name">${esc(row.nickname)}</span></div>
-          ${row.seed ? `<span class="tag tag-update">${esc(row.seed)}</span>` : ""}
-        </label>`;
-      li.querySelector("input").addEventListener("change", e => {
-        e.target.checked ? selected.add(index) : selected.delete(index);
-        updateCount();
-      });
+          <input
+            type="checkbox"
+            ${selected.has(index) ? "checked" : ""}
+          >
+
+          <div class="list-body">
+            <span class="list-name">
+              ${esc(row.nickname)}
+            </span>
+          </div>
+
+          ${
+            row.seed
+              ? `<span class="tag tag-update">${esc(row.seed)}</span>`
+              : ""
+          }
+        </label>
+      `;
+
+      li.querySelector("input").addEventListener(
+        "change",
+        e => {
+          e.target.checked
+            ? selected.add(index)
+            : selected.delete(index);
+
+          updateCount();
+        }
+      );
+
       ul.appendChild(li);
     }
   }
 
+  /* =========================================================
+     Google Sheet
+     ========================================================= */
+
   async function loadSheet() {
+
     $("reload").disabled = true;
+
     setStatus("시트 정보를 가져오는 중...");
+
     try {
-      const data = await api(`/api/role/sheet?url=${encodeURIComponent(SHEET_URL)}`);
-      rows = Array.isArray(data.rows) ? data.rows.filter(r => String(r.nickname || "").trim() !== "") : [];
+
+      const data = await api(
+        `/api/role/sheet?url=${encodeURIComponent(SHEET_URL)}`
+      );
+
+      rows = Array.isArray(data.rows)
+        ? data.rows.filter(
+            r => String(r.nickname || "").trim() !== ""
+          )
+        : [];
+
       selected.clear();
+
       rows.forEach((_, i) => selected.add(i));
+
       renderList();
       updateCount();
-      setStatus(`시트에서 ${rows.length}개 항목을 가져왔어요.\n모든 항목이 선택된 상태예요.`, "success");
+
+      setStatus(
+        `시트에서 ${rows.length}개 항목을 가져왔어요.\n모든 항목이 선택된 상태예요.`,
+        "success"
+      );
+
     } catch (e) {
+
       setStatus(`❌ ${e.message}`, "error");
+
     } finally {
+
       $("reload").disabled = false;
     }
   }
 
+  /* =========================================================
+     Discord 멤버 확인
+     ========================================================= */
+
   async function resolveMembers(targets) {
+
     const ids = new Set();
+
     for (let i = 0; i < targets.length; i++) {
-      setStatus(`Discord 멤버 확인 중... (${i + 1}/${targets.length})\n${targets[i].nickname}`);
-      const data = await api(`/api/role/members?nickname=${encodeURIComponent(targets[i].nickname)}`);
-      for (const m of (Array.isArray(data.members) ? data.members : [])) if (m.id) ids.add(m.id);
+
+      setStatus(
+        `Discord 멤버 확인 중... (${i + 1}/${targets.length})\n${targets[i].nickname}`
+      );
+
+      const data = await api(
+        `/api/role/members?nickname=${encodeURIComponent(
+          targets[i].nickname
+        )}`
+      );
+
+      for (
+        const m of (
+          Array.isArray(data.members)
+            ? data.members
+            : []
+        )
+      ) {
+        if (m.id) ids.add(m.id);
+      }
     }
+
     return [...ids];
   }
 
+  /* =========================================================
+     선택된 대상 역할 처리
+     ========================================================= */
+
   async function runSelected(kind) {
-    const targets = [...selected].sort((a, b) => a - b).map(i => rows[i]);
-    if (!targets.length) return setStatus("선택된 항목이 없어요.", "warning");
+
+    const targets = [...selected]
+      .sort((a, b) => a - b)
+      .map(i => rows[i]);
+
+    if (!targets.length) {
+      return setStatus(
+        "선택된 항목이 없어요.",
+        "warning"
+      );
+    }
+
     const isAssign = kind === "assign";
+
     const msg = isAssign
       ? `선택된 ${targets.length}개 항목의 Discord 멤버에게\n「白夜」 역할을 지급하시겠습니까?`
       : `선택된 ${targets.length}개 항목에서\n「白夜」 역할을 제거하시겠습니까?`;
+
     if (!confirm(msg)) return;
 
-    actionBtns().forEach(b => b.disabled = true);
+    actionBtns().forEach(
+      b => b.disabled = true
+    );
+
     try {
+
       const userIds = await resolveMembers(targets);
-      if (!userIds.length) return setStatus("선택된 닉네임과 정확히 일치하는 Discord 서버 닉네임을 가진 멤버가 없어요.", "warning");
-      setStatus(`역할 ${isAssign ? "지급" : "제거"} 중... (${userIds.length}명)`);
-      const r = await api(`/api/role/${isAssign ? "assign" : "remove"}-selected`, {
-        method: "POST", body: JSON.stringify({ userIds })
-      });
+
+      if (!userIds.length) {
+        return setStatus(
+          "선택된 닉네임과 정확히 일치하는 Discord 서버 닉네임을 가진 멤버가 없어요.",
+          "warning"
+        );
+      }
+
+      setStatus(
+        `역할 ${isAssign ? "지급" : "제거"} 중... (${userIds.length}명)`
+      );
+
+      const r = await api(
+        `/api/role/${isAssign ? "assign" : "remove"}-selected`,
+        {
+          method: "POST",
+          body: JSON.stringify({ userIds })
+        }
+      );
+
       setStatus(
         `✅ 역할 ${isAssign ? "지급" : "제거"} 완료\n\n` +
-        `대상 멤버: ${r.total}명\n${isAssign ? "새로 지급" : "제거"}: ${r.success}명\n` +
-        `${isAssign ? "이미 보유" : "역할 없음"}: ${r.already}명\n실패: ${r.failed}명`,
+        `대상 멤버: ${r.total}명\n` +
+        `${isAssign ? "새로 지급" : "제거"}: ${r.success}명\n` +
+        `${isAssign ? "이미 보유" : "역할 없음"}: ${r.already}명\n` +
+        `실패: ${r.failed}명`,
         r.failed > 0 ? "warning" : "success"
       );
+
     } catch (e) {
+
       setStatus(`❌ ${e.message}`, "error");
+
     } finally {
-      actionBtns().forEach(b => b.disabled = false);
+
+      actionBtns().forEach(
+        b => b.disabled = false
+      );
+
       updateCount();
     }
   }
+
+  /* =========================================================
+     서버 전체 역할 제거
+     ========================================================= */
 
   async function removeAll() {
-    if (!confirm("정말로 이 서버의 모든 白夜 역할을 제거하시겠습니까?")) return;
-    actionBtns().forEach(b => b.disabled = true);
+
+    if (
+      !confirm(
+        "정말로 이 서버의 모든 白夜 역할을 제거하시겠습니까?"
+      )
+    ) return;
+
+    actionBtns().forEach(
+      b => b.disabled = true
+    );
+
     try {
-      setStatus("서버 전체 白夜 역할을 확인하는 중...");
-      const r = await api("/api/role/remove-all", { method: "POST", body: JSON.stringify({}) });
+
       setStatus(
-        `✅ 서버 전체 역할 제거 완료\n\n확인된 대상: ${r.totalFound}명\n제거 성공: ${r.success}명\n실패: ${r.failed}명`,
+        "서버 전체 白夜 역할을 확인하는 중..."
+      );
+
+      const r = await api(
+        "/api/role/remove-all",
+        {
+          method: "POST",
+          body: JSON.stringify({})
+        }
+      );
+
+      setStatus(
+        `✅ 서버 전체 역할 제거 완료\n\n` +
+        `확인된 대상: ${r.totalFound}명\n` +
+        `제거 성공: ${r.success}명\n` +
+        `실패: ${r.failed}명`,
         r.failed > 0 ? "warning" : "success"
       );
+
     } catch (e) {
-      setStatus(`❌ ${e.message}`, "error");
+
+      setStatus(
+        `❌ ${e.message}`,
+        "error"
+      );
+
     } finally {
-      actionBtns().forEach(b => b.disabled = false);
+
+      actionBtns().forEach(
+        b => b.disabled = false
+      );
+
       updateCount();
     }
   }
 
-  $("search").addEventListener("input", renderList);
-  $("selectAll").addEventListener("click", () => { rows.forEach((_, i) => selected.add(i)); renderList(); updateCount(); });
-  $("unselectAll").addEventListener("click", () => { selected.clear(); renderList(); updateCount(); });
-  $("reload").addEventListener("click", loadSheet);
-  $("assign").addEventListener("click", () => runSelected("assign"));
-  $("remove").addEventListener("click", () => runSelected("remove"));
-  $("removeAll").addEventListener("click", removeAll);
-  $("loginButton").addEventListener("click", () => { location.href = API_BASE + "/api/login?return=role"; });
+  /* =========================================================
+     이벤트
+     ========================================================= */
 
-  /* 시작 */
+  $("search").addEventListener(
+    "input",
+    renderList
+  );
+
+  $("selectAll").addEventListener(
+    "click",
+    () => {
+      rows.forEach((_, i) =>
+        selected.add(i)
+      );
+
+      renderList();
+      updateCount();
+    }
+  );
+
+  $("unselectAll").addEventListener(
+    "click",
+    () => {
+      selected.clear();
+
+      renderList();
+      updateCount();
+    }
+  );
+
+  $("reload").addEventListener(
+    "click",
+    loadSheet
+  );
+
+  $("assign").addEventListener(
+    "click",
+    () => runSelected("assign")
+  );
+
+  $("remove").addEventListener(
+    "click",
+    () => runSelected("remove")
+  );
+
+  $("removeAll").addEventListener(
+    "click",
+    removeAll
+  );
+
+  /* =========================================================
+     Discord 로그인
+     ========================================================= */
+
+  $("loginButton").addEventListener(
+    "click",
+    () => {
+      location.href =
+        API_BASE + "/api/login?return=role";
+    }
+  );
+
+  /* =========================================================
+     시작
+     ========================================================= */
+
   if (token) {
-    document.body.classList.remove("auth-locked");
+
+    document.body.classList.remove(
+      "auth-locked"
+    );
+
+    $("authGate").hidden = true;
+
     loadSheet();
+
   } else {
+
     showLogin();
-    setStatus("로그인이 필요해요.", "warning");
+
+    setStatus(
+      "로그인이 필요해요.",
+      "warning"
+    );
   }
+
 </script>
 </body>
 </html>
