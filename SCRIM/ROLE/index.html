@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>PUBG INFO - Discord Role Manager</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top, rgba(255, 120, 0, 0.08), transparent 35%),
+        #090b0f;
+      color: #f1f1f1;
+      font-family: Arial, sans-serif;
+    }
+
+    button,
+    select {
+      font: inherit;
+    }
+
+    .container {
+      width: min(1100px, calc(100% - 30px));
+      margin: 30px auto 60px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .title {
+      font-size: 27px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .subtitle {
+      color: #8e949d;
+      margin-top: 7px;
+      font-size: 14px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .card {
+      background: rgba(18, 21, 27, 0.95);
+      border: 1px solid #252a32;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+
+    .card-title {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .field label {
+      color: #a9afb8;
+      font-size: 13px;
+    }
+
+    select {
+      width: 100%;
+      height: 44px;
+      border-radius: 8px;
+      border: 1px solid #303640;
+      background: #101318;
+      color: #fff;
+      padding: 0 12px;
+      outline: none;
+    }
+
+    select:focus {
+      border-color: #ff7a00;
+    }
+
+    button {
+      border: 0;
+      border-radius: 8px;
+      padding: 11px 16px;
+      cursor: pointer;
+      color: #fff;
+      background: #292e36;
+      font-weight: 700;
+    }
+
+    button:hover {
+      filter: brightness(1.1);
+    }
+
+    button.primary {
+      background: #ff7300;
+    }
+
+    button.primary:hover {
+      background: #ff8500;
+    }
+
+    button.danger {
+      background: #9f3030;
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .sheet-button {
+      margin-bottom: 15px;
+    }
+
+    .sheet-info {
+      color: #a9afb8;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid #292e36;
+      border-radius: 9px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 650px;
+    }
+
+    th,
+    td {
+      padding: 11px 13px;
+      border-bottom: 1px solid #292e36;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    th {
+      background: #151920;
+      color: #ff8a2b;
+      font-size: 13px;
+    }
+
+    td {
+      color: #ddd;
+      font-size: 14px;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .nickname-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #0e1116;
+      border: 1px solid #292e36;
+      border-radius: 9px;
+      padding: 14px;
+      margin-bottom: 15px;
+    }
+
+    .nickname-label {
+      color: #8e949d;
+      font-size: 13px;
+    }
+
+    .nickname {
+      font-size: 18px;
+      font-weight: 800;
+      color: #fff;
+      word-break: break-all;
+    }
+
+    .members {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .member {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px;
+      border: 1px solid #292e36;
+      border-radius: 9px;
+      background: #101318;
+      cursor: pointer;
+    }
+
+    .member:hover {
+      border-color: #ff7300;
+    }
+
+    .member input {
+      accent-color: #ff7300;
+    }
+
+    .member-main {
+      flex: 1;
+    }
+
+    .member-nick {
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .member-user {
+      margin-top: 4px;
+      color: #858b94;
+      font-size: 12px;
+    }
+
+    .empty {
+      color: #777e88;
+      padding: 15px 0;
+      font-size: 14px;
+    }
+
+    .status {
+      padding: 12px 14px;
+      border-radius: 8px;
+      background: #11151b;
+      border: 1px solid #292e36;
+      color: #aeb4bc;
+      font-size: 13px;
+      white-space: pre-wrap;
+    }
+
+    .status.success {
+      border-color: #246b43;
+      color: #75d69d;
+    }
+
+    .status.error {
+      border-color: #7b3030;
+      color: #ff8585;
+    }
+
+    .status.warning {
+      border-color: #7c5b25;
+      color: #ffc96b;
+    }
+
+    .assign-area {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 15px;
+    }
+
+    .login-area {
+      text-align: center;
+      padding: 50px 20px;
+    }
+
+    .login-area h2 {
+      margin: 0 0 10px;
+    }
+
+    .login-area p {
+      color: #8e949d;
+      margin-bottom: 20px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .user-info {
+      color: #9299a3;
+      font-size: 13px;
+    }
+
+    @media (max-width: 700px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .top-actions {
+        width: 100%;
+      }
+
+      .top-actions button {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <div>
+      <div class="title">Discord Role Manager</div>
+      <div class="subtitle">
+        PUBG INFO · Google Sheets 팀 정보 기반 Discord 역할 관리
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <button id="loginBtn">Discord 로그인</button>
+      <button id="logoutBtn" class="danger hidden">로그아웃</button>
+    </div>
+  </div>
+
+  <div id="loginArea" class="card login-area hidden">
+    <h2>Discord 로그인이 필요합니다.</h2>
+    <p>기존 PUBG INFO Discord 인증을 사용합니다.</p>
+    <button class="primary" id="loginBtn2">Discord 로그인</button>
+  </div>
+
+  <main id="mainArea" class="hidden">
+
+    <!-- 서버 선택 -->
+    <div class="card">
+      <div class="card-title">1. Discord 서버 선택</div>
+
+      <div class="grid">
+        <div class="field">
+          <label>Discord 서버</label>
+          <select id="guildSelect">
+            <option value="">서버를 선택하세요.</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>현재 로그인 계정</label>
+          <div class="user-info" id="userInfo">-</div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Google Sheets -->
+    <div class="card">
+      <div class="card-title">2. Google Sheets 정보</div>
+
+      <button class="primary sheet-button" id="loadSheetBtn">
+        Google Sheets 정보 가져오기
+      </button>
+
+      <div class="sheet-info">
+        B4:E12 범위를 가져옵니다.
+        B/D = 시드 번호, C/E = 팀명
+      </div>
+
+      <div id="sheetTable" class="empty">
+        아직 Google Sheets 정보를 가져오지 않았습니다.
+      </div>
+    </div>
+
+
+    <!-- 팀 선택 -->
+    <div class="card">
+      <div class="card-title">3. 팀 선택 및 Discord 멤버 검색</div>
+
+      <div class="field">
+        <label>팀 선택</label>
+        <select id="teamSelect">
+          <option value="">Google Sheets 정보를 먼저 가져오세요.</option>
+        </select>
+      </div>
+
+      <div style="margin-top:15px;">
+        <div class="nickname-box">
+          <div>
+            <div class="nickname-label">Discord 검색 닉네임 · E열</div>
+            <div class="nickname" id="nickname">-</div>
+          </div>
+        </div>
+
+        <button class="primary" id="searchMemberBtn" disabled>
+          Discord 멤버 검색
+        </button>
+      </div>
+
+      <div style="margin-top:15px;">
+        <div class="members" id="members">
+          <div class="empty">
+            팀을 선택한 후 Discord 멤버를 검색하세요.
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- 역할 -->
+    <div class="card">
+      <div class="card-title">4. Discord 역할 선택</div>
+
+      <div class="field">
+        <label>지급할 역할</label>
+        <select id="roleSelect" disabled>
+          <option value="">서버를 먼저 선택하세요.</option>
+        </select>
+      </div>
+
+      <div class="assign-area">
+        <button class="primary" id="assignBtn" disabled>
+          권한 지급
+        </button>
+      </div>
+    </div>
+
+
+    <!-- 상태 -->
+    <div class="card">
+      <div class="card-title">상태</div>
+      <div class="status" id="status">
+        준비되었습니다.
+      </div>
+    </div>
+
+  </main>
+</div>
+
+
+<script>
+  const API_BASE = "https://discord-bot.pubgmk14-kr.workers.dev";
+
+  /*
+    Google Sheets 주소
+
+    현재 제공한 주소:
+    https://docs.google.com/spreadsheets/d/11WaBONeC1UQMymXvlc277y9-Cv36YWddW_BMkX2F0dg/export?format=csv
+
+    Worker가 이 주소를 받아서 B4:E12를 가져옵니다.
+  */
+  const SHEET_URL =
+    "https://docs.google.com/spreadsheets/d/11WaBONeC1UQMymXvlc277y9-Cv36YWddW_BMkX2F0dg/export?format=csv";
+
+
+  let token = initToken();
+
+  let currentUser = null;
+  let guilds = [];
+  let teams = [];
+  let members = [];
+  let roles = [];
+
+  let selectedTeam = null;
+  let selectedMember = null;
+
+
+  function initToken() {
+    const params = new URLSearchParams(location.search);
+
+    const session = params.get("session");
+
+    if (session) {
+      localStorage.setItem("session", session);
+
+      window.history.replaceState(
+        {},
+        document.title,
+        location.pathname
+      );
+
+      return session;
+    }
+
+    return localStorage.getItem("session");
+  }
+
+
+  async function api(path, options = {}) {
+
+    if (!token) {
+      throw new Error("로그인이 필요합니다.");
+    }
+
+    const headers = {
+      ...(options.headers || {}),
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json"
+    };
+
+    const response = await fetch(
+      `${API_BASE}${path}`,
+      {
+        ...options,
+        headers
+      }
+    );
+
+    const data =
+      await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(
+        data.error || `HTTP ${response.status}`
+      );
+    }
+
+    return data;
+  }
+
+
+  function setStatus(message, type = "") {
+
+    const element =
+      document.getElementById("status");
+
+    element.textContent = message;
+
+    element.className =
+      `status ${type}`.trim();
+  }
+
+
+  function showLogin() {
+
+    document
+      .getElementById("loginArea")
+      .classList.remove("hidden");
+
+    document
+      .getElementById("mainArea")
+      .classList.add("hidden");
+
+    document
+      .getElementById("logoutBtn")
+      .classList.add("hidden");
+
+    document
+      .getElementById("loginBtn")
+      .classList.remove("hidden");
+  }
+
+
+  function showMain() {
+
+    document
+      .getElementById("loginArea")
+      .classList.add("hidden");
+
+    document
+      .getElementById("mainArea")
+      .classList.remove("hidden");
+
+    document
+      .getElementById("logoutBtn")
+      .classList.remove("hidden");
+
+    document
+      .getElementById("loginBtn")
+      .classList.add("hidden");
+  }
+
+
+  async function loadMe() {
+
+    const data = await api("/api/me");
+
+    currentUser = data;
+
+    document.getElementById("userInfo").textContent =
+      data.username ||
+      data.global_name ||
+      data.id ||
+      "-";
+  }
+
+
+  async function loadGuilds() {
+
+    const data = await api("/api/guilds");
+
+    guilds = data || [];
+
+    const select =
+      document.getElementById("guildSelect");
+
+    select.innerHTML =
+      `<option value="">서버를 선택하세요.</option>`;
+
+    for (const guild of guilds) {
+
+      const option =
+        document.createElement("option");
+
+      option.value = guild.id;
+      option.textContent = guild.name;
+
+      select.appendChild(option);
+    }
+  }
+
+
+  async function loadRoles(guildId) {
+
+    const select =
+      document.getElementById("roleSelect");
+
+    select.disabled = true;
+
+    select.innerHTML =
+      `<option value="">역할을 불러오는 중...</option>`;
+
+    const data =
+      await api(`/api/guilds/${guildId}/roles`);
+
+    roles = data || [];
+
+    select.innerHTML =
+      `<option value="">역할을 선택하세요.</option>`;
+
+    for (const role of roles) {
+
+      const option =
+        document.createElement("option");
+
+      option.value = role.id;
+      option.textContent = role.name;
+
+      select.appendChild(option);
+    }
+
+    select.disabled = false;
+  }
+
+
+  async function loadSheet() {
+
+    const guildId =
+      document.getElementById("guildSelect").value;
+
+    if (!guildId) {
+      setStatus(
+        "먼저 Discord 서버를 선택해주세요.",
+        "warning"
+      );
+      return;
+    }
+
+    const button =
+      document.getElementById("loadSheetBtn");
+
+    button.disabled = true;
+    button.textContent = "불러오는 중...";
+
+    try {
+
+      const data =
+        await api(
+          `/api/role/sheet?url=${encodeURIComponent(SHEET_URL)}`
+        );
+
+      if (!Array.isArray(data.rows)) {
+        throw new Error(
+          "Google Sheets 데이터 형식이 올바르지 않습니다."
+        );
+      }
+
+      teams = data.rows;
+
+      renderSheet();
+
+      renderTeamSelect();
+
+      setStatus(
+        `Google Sheets에서 ${teams.length}개 행을 불러왔습니다.`,
+        "success"
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+      setStatus(
+        `Google Sheets 불러오기 실패\n${error.message}`,
+        "error"
+      );
+
+    } finally {
+
+      button.disabled = false;
+      button.textContent = "Google Sheets 정보 가져오기";
+    }
+  }
+
+
+  function renderSheet() {
+
+    const target =
+      document.getElementById("sheetTable");
+
+    if (!teams.length) {
+
+      target.innerHTML =
+        `<div class="empty">데이터가 없습니다.</div>`;
+
+      return;
+    }
+
+    let html = `
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>B · 시드</th>
+              <th>C · 팀명</th>
+              <th>D · 시드</th>
+              <th>E · Discord 별명</th>
+            </tr>
+          </thead>
+          <tbody>
+    `;
+
+    for (const row of teams) {
+
+      html += `
+        <tr>
+          <td>${escapeHtml(row.B)}</td>
+          <td>${escapeHtml(row.C)}</td>
+          <td>${escapeHtml(row.D)}</td>
+          <td>${escapeHtml(row.E)}</td>
+        </tr>
+      `;
+    }
+
+    html += `
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    target.innerHTML = html;
+  }
+
+
+  function renderTeamSelect() {
+
+    const select =
+      document.getElementById("teamSelect");
+
+    select.innerHTML =
+      `<option value="">팀을 선택하세요.</option>`;
+
+    teams.forEach((team, index) => {
+
+      const option =
+        document.createElement("option");
+
+      option.value = index;
+
+      option.textContent =
+        `${team.E || "(팀명 없음)"} · ${team.C || ""}`;
+
+      select.appendChild(option);
+    });
+  }
+
+
+  function updateSelectedTeam() {
+
+    const value =
+      document.getElementById("teamSelect").value;
+
+    const searchButton =
+      document.getElementById("searchMemberBtn");
+
+    const nicknameElement =
+      document.getElementById("nickname");
+
+    members = [];
+    selectedMember = null;
+
+    document.getElementById("members").innerHTML =
+      `<div class="empty">팀을 선택한 후 Discord 멤버를 검색하세요.</div>`;
+
+    if (value === "") {
+
+      selectedTeam = null;
+
+      nicknameElement.textContent = "-";
+
+      searchButton.disabled = true;
+
+      updateAssignButton();
+
+      return;
+    }
+
+    selectedTeam =
+      teams[Number(value)];
+
+    const nickname =
+      String(selectedTeam.E || "").trim();
+
+    nicknameElement.textContent =
+      nickname || "(E열 팀명 없음)";
+
+    searchButton.disabled =
+      !nickname;
+
+    updateAssignButton();
+  }
+
+
+  async function searchMember() {
+
+    const guildId =
+      document.getElementById("guildSelect").value;
+
+    if (!guildId) {
+      setStatus(
+        "Discord 서버를 선택해주세요.",
+        "warning"
+      );
+      return;
+    }
+
+    if (!selectedTeam) {
+      setStatus(
+        "팀을 먼저 선택해주세요.",
+        "warning"
+      );
+      return;
+    }
+
+    const nickname =
+      String(selectedTeam.E || "").trim();
+
+    if (!nickname) {
+      setStatus(
+        "E열에 Discord 별명이 없습니다.",
+        "error"
+      );
+      return;
+    }
+
+    const button =
+      document.getElementById("searchMemberBtn");
+
+    button.disabled = true;
+    button.textContent = "검색 중...";
+
+    document.getElementById("members").innerHTML =
+      `<div class="empty">Discord 서버 멤버를 검색하고 있습니다...</div>`;
+
+    try {
+
+      const data =
+        await api(
+          `/api/role/members?guildId=${encodeURIComponent(guildId)}&nickname=${encodeURIComponent(nickname)}`
+        );
+
+      members =
+        Array.isArray(data.members)
+          ? data.members
+          : [];
+
+      renderMembers();
+
+      if (members.length === 0) {
+
+        setStatus(
+          `Discord 서버에서 서버 별명 "${nickname}"과 정확히 일치하는 멤버를 찾지 못했습니다.`,
+          "warning"
+        );
+
+      } else if (members.length === 1) {
+
+        selectedMember = members[0];
+
+        const radio =
+          document.querySelector(
+            'input[name="member"]'
+          );
+
+        if (radio) {
+          radio.checked = true;
+        }
+
+        setStatus(
+          `"${nickname}"과 일치하는 Discord 멤버 1명을 찾았습니다.`,
+          "success"
+        );
+
+      } else {
+
+        selectedMember = null;
+
+        setStatus(
+          `"${nickname}"과 일치하는 Discord 멤버가 ${members.length}명입니다.\n실제 지급 대상 멤버를 직접 선택해주세요.`,
+          "warning"
+        );
+      }
+
+      updateAssignButton();
+
+    } catch (error) {
+
+      console.error(error);
+
+      setStatus(
+        `Discord 멤버 검색 실패\n${error.message}`,
+        "error"
+      );
+
+    } finally {
+
+      button.disabled = false;
+      button.textContent = "Discord 멤버 검색";
+    }
+  }
+
+
+  function renderMembers() {
+
+    const target =
+      document.getElementById("members");
+
+    if (!members.length) {
+
+      target.innerHTML =
+        `<div class="empty">일치하는 Discord 멤버가 없습니다.</div>`;
+
+      return;
+    }
+
+    target.innerHTML = "";
+
+    for (const member of members) {
+
+      const label =
+        document.createElement("label");
+
+      label.className = "member";
+
+      label.innerHTML = `
+        <input
+          type="radio"
+          name="member"
+          value="${escapeHtml(member.id)}"
+        >
+
+        <div class="member-main">
+          <div class="member-nick">
+            ${escapeHtml(member.nick || "-")}
+          </div>
+
+          <div class="member-user">
+            ${escapeHtml(member.username || "-")}
+            ${member.globalName
+              ? ` · ${escapeHtml(member.globalName)}`
+              : ""}
+          </div>
+        </div>
+      `;
+
+      label
+        .querySelector("input")
+        .addEventListener("change", () => {
+
+          selectedMember =
+            members.find(
+              member =>
+                member.id ===
+                label.querySelector("input").value
+            ) || null;
+
+          updateAssignButton();
+        });
+
+      target.appendChild(label);
+    }
+  }
+
+
+  async function assignRole() {
+
+    const guildId =
+      document.getElementById("guildSelect").value;
+
+    const roleId =
+      document.getElementById("roleSelect").value;
+
+    if (!guildId) {
+      setStatus(
+        "Discord 서버를 선택해주세요.",
+        "warning"
+      );
+      return;
+    }
+
+    if (!selectedMember) {
+      setStatus(
+        "역할을 지급할 Discord 멤버를 선택해주세요.",
+        "warning"
+      );
+      return;
+    }
+
+    if (!roleId) {
+      setStatus(
+        "지급할 역할을 선택해주세요.",
+        "warning"
+      );
+      return;
+    }
+
+    const role =
+      roles.find(
+        role => role.id === roleId
+      );
+
+    const confirmed =
+      confirm(
+        `역할을 지급하시겠습니까?\n\n` +
+        `팀명: ${selectedTeam.E}\n` +
+        `Discord 별명: ${selectedMember.nick}\n` +
+        `역할: ${role ? role.name : roleId}`
+      );
+
+    if (!confirmed) {
+      return;
+    }
+
+    const button =
+      document.getElementById("assignBtn");
+
+    button.disabled = true;
+    button.textContent = "지급 중...";
+
+    try {
+
+      const data =
+        await api(
+          "/api/role/assign",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              guildId,
+              userId: selectedMember.id,
+              roleId
+            })
+          }
+        );
+
+      if (data.alreadyHadRole) {
+
+        setStatus(
+          `"${selectedMember.nick}"님은 이미 해당 역할을 가지고 있습니다.`,
+          "warning"
+        );
+
+      } else {
+
+        setStatus(
+          `역할 지급 완료\n\n` +
+          `팀명: ${selectedTeam.E}\n` +
+          `Discord 별명: ${selectedMember.nick}\n` +
+          `역할: ${role ? role.name : roleId}`,
+          "success"
+        );
+      }
+
+    } catch (error) {
+
+      console.error(error);
+
+      setStatus(
+        `역할 지급 실패\n${error.message}`,
+        "error"
+      );
+
+    } finally {
+
+      button.disabled = false;
+      button.textContent = "권한 지급";
+
+      updateAssignButton();
+    }
+  }
+
+
+  function updateAssignButton() {
+
+    const roleId =
+      document.getElementById("roleSelect").value;
+
+    document.getElementById("assignBtn").disabled =
+      !selectedMember ||
+      !roleId;
+  }
+
+
+  function escapeHtml(value) {
+
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+
+  document
+    .getElementById("guildSelect")
+    .addEventListener("change", async event => {
+
+      const guildId =
+        event.target.value;
+
+      selectedMember = null;
+      members = [];
+      roles = [];
+
+      document.getElementById("members").innerHTML =
+        `<div class="empty">팀을 선택한 후 Discord 멤버를 검색하세요.</div>`;
+
+      document.getElementById("roleSelect").innerHTML =
+        `<option value="">역할을 선택하세요.</option>`;
+
+      document.getElementById("roleSelect").disabled =
+        !guildId;
+
+      updateAssignButton();
+
+      if (!guildId) {
+        return;
+      }
+
+      try {
+
+        await loadRoles(guildId);
+
+        setStatus(
+          "Discord 서버와 역할 정보를 불러왔습니다.",
+          "success"
+        );
+
+      } catch (error) {
+
+        setStatus(
+          `역할 목록을 불러오지 못했습니다.\n${error.message}`,
+          "error"
+        );
+      }
+    });
+
+
+  document
+    .getElementById("teamSelect")
+    .addEventListener(
+      "change",
+      updateSelectedTeam
+    );
+
+
+  document
+    .getElementById("loadSheetBtn")
+    .addEventListener(
+      "click",
+      loadSheet
+    );
+
+
+  document
+    .getElementById("searchMemberBtn")
+    .addEventListener(
+      "click",
+      searchMember
+    );
+
+
+  document
+    .getElementById("roleSelect")
+    .addEventListener(
+      "change",
+      updateAssignButton
+    );
+
+
+  document
+    .getElementById("assignBtn")
+    .addEventListener(
+      "click",
+      assignRole
+    );
+
+
+  function login() {
+
+    /*
+      기존 Discord 로그인 페이지를 사용합니다.
+      기존 DISCORD 페이지와 localStorage를 공유하기 때문에
+      로그인 후 session을 그대로 사용할 수 있습니다.
+    */
+
+    location.href =
+      "/SCRIM/DISCORD/";
+  }
+
+
+  document
+    .getElementById("loginBtn")
+    .addEventListener(
+      "click",
+      login
+    );
+
+
+  document
+    .getElementById("loginBtn2")
+    .addEventListener(
+      "click",
+      login
+    );
+
+
+  document
+    .getElementById("logoutBtn")
+    .addEventListener(
+      "click",
+      () => {
+
+        localStorage.removeItem("session");
+
+        token = null;
+
+        location.reload();
+      }
+    );
+
+
+  async function init() {
+
+    if (!token) {
+
+      showLogin();
+
+      return;
+    }
+
+    try {
+
+      showMain();
+
+      await loadMe();
+
+      await loadGuilds();
+
+    } catch (error) {
+
+      console.error(error);
+
+      localStorage.removeItem("session");
+
+      token = null;
+
+      showLogin();
+    }
+  }
+
+
+  init();
+</script>
+
+</body>
+</html>
