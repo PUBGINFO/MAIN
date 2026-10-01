@@ -1,1468 +1,419 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>PUBG INFO - 역할 관리</title>
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      padding: 0;
-
-      background:
-        radial-gradient(
-          circle at top,
-          #252525 0%,
-          #111 45%,
-          #080808 100%
-        );
-
-      color: #fff;
-      font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
-
-      min-height: 100vh;
-    }
-
-    .container {
-      width: min(700px, calc(100% - 30px));
-      margin: 40px auto;
-    }
-
-    .card {
-      background: rgba(20, 20, 20, 0.96);
-      border: 1px solid #333;
-      border-radius: 14px;
-      padding: 24px;
-
-      box-shadow:
-        0 15px 40px rgba(0, 0, 0, 0.45);
-    }
-
-    h1 {
-      margin: 0 0 8px;
-      font-size: 25px;
-    }
-
-    .subtitle {
-      color: #aaa;
-      font-size: 14px;
-      margin-bottom: 25px;
-    }
-
-    .info-box {
-      background: #171717;
-      border: 1px solid #2f2f2f;
-      border-radius: 10px;
-      padding: 15px;
-      margin-bottom: 20px;
-    }
-
-    .info-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 15px;
-      padding: 7px 0;
-    }
-
-    .info-label {
-      color: #999;
-    }
-
-    .info-value {
-      font-weight: 600;
-      text-align: right;
-    }
-
-    label {
-      display: block;
-      font-size: 14px;
-      color: #bbb;
-      margin-bottom: 8px;
-    }
-
-    input {
-      width: 100%;
-      padding: 13px 14px;
-
-      border-radius: 9px;
-      border: 1px solid #3a3a3a;
-
-      background: #111;
-      color: #fff;
-
-      outline: none;
-      font-size: 14px;
-    }
-
-    input:focus {
-      border-color: #ffcc00;
-    }
-
-    button {
-      border: 0;
-      border-radius: 9px;
-
-      padding: 12px 16px;
-
-      cursor: pointer;
-
-      font-size: 14px;
-      font-weight: 700;
-
-      transition:
-        opacity .15s,
-        transform .1s;
-    }
-
-    button:hover {
-      opacity: .9;
-    }
-
-    button:active {
-      transform: scale(.98);
-    }
-
-    button:disabled {
-      cursor: not-allowed;
-      opacity: .45;
-    }
-
-    .yellow {
-      background: #ffcc00;
-      color: #111;
-    }
-
-    .dark {
-      background: #292929;
-      color: #fff;
-      border: 1px solid #444;
-    }
-
-    .danger {
-      background: #b92c2c;
-      color: #fff;
-    }
-
-    .section {
-      margin-top: 22px;
-    }
-
-    .section-title {
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 9px;
-    }
-
-    .multi-select {
-      position: relative;
-    }
-
-    .multi-select-button {
-      width: 100%;
-      background: #111;
-      border: 1px solid #3a3a3a;
-      color: #fff;
-
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-
-      text-align: left;
-    }
-
-    .multi-select-menu {
-      position: absolute;
-      z-index: 100;
-
-      top: calc(100% + 7px);
-      left: 0;
-      right: 0;
-
-      max-height: 360px;
-      overflow-y: auto;
-
-      background: #181818;
-      border: 1px solid #3a3a3a;
-      border-radius: 10px;
-
-      padding: 8px;
-
-      box-shadow:
-        0 15px 35px rgba(0, 0, 0, .5);
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .menu-actions {
-      display: flex;
-      gap: 8px;
-      padding: 5px 4px 10px;
-
-      border-bottom: 1px solid #333;
-      margin-bottom: 6px;
-    }
-
-    .menu-actions button {
-      flex: 1;
-      padding: 9px;
-      font-size: 12px;
-    }
-
-    .team-option {
-      display: flex;
-      align-items: center;
-
-      gap: 10px;
-
-      padding: 10px 8px;
-      border-radius: 7px;
-
-      cursor: pointer;
-    }
-
-    .team-option:hover {
-      background: #252525;
-    }
-
-    .team-option input {
-      width: auto;
-      margin: 0;
-      accent-color: #ffcc00;
-    }
-
-    .team-text {
-      min-width: 0;
-      flex: 1;
-    }
-
-    .team-seed {
-      color: #ffcc00;
-      font-weight: 700;
-      margin-right: 8px;
-    }
-
-    .team-name {
-      word-break: break-all;
-    }
-
-    .selected-info {
-      margin-top: 9px;
-      color: #aaa;
-      font-size: 13px;
-    }
-
-    .buttons {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-
-      gap: 10px;
-
-      margin-top: 18px;
-    }
-
-    .buttons .full {
-      grid-column: 1 / -1;
-    }
-
-    .status {
-      margin-top: 18px;
-
-      background: #101010;
-      border: 1px solid #303030;
-
-      border-radius: 9px;
-
-      padding: 14px;
-
-      font-size: 13px;
-      line-height: 1.6;
-
-      white-space: pre-line;
-    }
-
-    .success {
-      color: #7dff9b;
-    }
-
-    .error {
-      color: #ff7777;
-    }
-
-    .warning {
-      color: #ffd35c;
-    }
-
-    .empty {
-      color: #888;
-      text-align: center;
-      padding: 25px 10px;
-    }
-
-    @media (max-width: 600px) {
-      .container {
-        margin: 20px auto;
-      }
-
-      .card {
-        padding: 18px;
-      }
-
-      .buttons {
-        grid-template-columns: 1fr;
-      }
-
-      .buttons .full {
-        grid-column: auto;
-      }
-
-      .info-row {
-        flex-direction: column;
-        gap: 3px;
-      }
-
-      .info-value {
-        text-align: left;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PUBG INFO - 역할 관리</title>
+<style>
+/* ===== Variables ===== */
+:root {
+  --bg:#ffffff; --bg-item:#ffffff; --bg-item-hover:#f7f7f7; --line:#cccccc;
+  --text:#111111; --text-sub:#888888; --text-muted:#bbbbbb;
+  --primary:#111111; --primary-fg:#ffffff;
+  --tag-event-bg:#fff4e0; --tag-event-text:#b36000;
+  --tag-notice-bg:#ffeaea; --tag-notice-text:#c02020;
+  --tag-update-bg:#e8f1ff; --tag-update-text:#1a5abf;
+  --tag-info-bg:#f2f2f2; --tag-info-text:#666666;
+  --danger:#c02020; --ok:#2b9960;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:#111111; --bg-item:#111111; --bg-item-hover:#1c1c1c; --line:#3d3d3d;
+    --text:#f0f0f0; --text-sub:#777777; --text-muted:#444444;
+    --primary:#f0f0f0; --primary-fg:#111111;
+    --tag-event-bg:#2a1a00; --tag-event-text:#e09030;
+    --tag-notice-bg:#2a0a0a; --tag-notice-text:#e05050;
+    --tag-update-bg:#001228; --tag-update-text:#5090e0;
+    --tag-info-bg:#1e1e1e; --tag-info-text:#777777;
+    --danger:#e05050; --ok:#4cc58a;
+  }
+}
+[data-theme="dark"] {
+  --bg:#111111; --bg-item:#111111; --bg-item-hover:#1c1c1c; --line:#3d3d3d;
+  --text:#f0f0f0; --text-sub:#777777; --text-muted:#444444;
+  --primary:#f0f0f0; --primary-fg:#111111;
+  --tag-event-bg:#2a1a00; --tag-event-text:#e09030;
+  --tag-notice-bg:#2a0a0a; --tag-notice-text:#e05050;
+  --tag-update-bg:#001228; --tag-update-text:#5090e0;
+  --tag-info-bg:#1e1e1e; --tag-info-text:#777777;
+  --danger:#e05050; --ok:#4cc58a;
+}
+[data-theme="light"] { --line:#222222; }
+
+/* ===== Reset ===== */
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+html {
+  font-family:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo',sans-serif;
+  font-size:16px; -webkit-font-smoothing:antialiased;
+}
+body { background:var(--bg); color:var(--text); min-height:100vh; transition:background .2s,color .2s; }
+ul { list-style:none; }
+button { font:inherit; color:inherit; }
+
+/* ===== Header ===== */
+.header { position:sticky; top:0; z-index:100; background:var(--bg); border-bottom:1px solid var(--line); }
+.header-wrap { max-width:640px; margin:0 auto; padding:0 20px; height:52px; display:flex; align-items:center; justify-content:space-between; }
+.logo { font-size:17px; font-weight:700; letter-spacing:-.3px; }
+.logo small { font-size:12px; font-weight:500; color:var(--text-sub); margin-left:8px; }
+.toggle {
+  width:36px; height:36px; display:flex; align-items:center; justify-content:center;
+  border:1px solid var(--line); border-radius:50%; background:transparent; color:var(--text-sub); cursor:pointer;
+}
+.toggle:hover { background:var(--bg-item-hover); color:var(--text); }
+
+/* ===== Main ===== */
+.main { max-width:640px; margin:0 auto; padding:0 0 60px; }
+.section { padding:32px 0 0; }
+.section-head { display:flex; align-items:center; justify-content:space-between; padding:0 20px; margin-bottom:8px; }
+.section-title { font-size:12px; font-weight:600; color:var(--text-sub); letter-spacing:.5px; }
+.link-btn { border:0; background:none; font-size:12px; font-weight:600; color:var(--text-sub); cursor:pointer; padding:2px 0 2px 12px; }
+.link-btn:hover { color:var(--text); }
+.link-btn:disabled { opacity:.4; cursor:not-allowed; }
+
+.search { padding:0 20px 12px; }
+.search input {
+  width:100%; border:1px solid var(--line); border-radius:10px; padding:12px 14px;
+  background:var(--bg); color:var(--text); font-size:14px; outline:none;
+}
+.search input:focus { border-color:var(--text); }
+
+/* ===== List ===== */
+.list { border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+.list li + li { border-top:1px solid var(--line); }
+.scroll { max-height:56vh; overflow-y:auto; }
+.list-item {
+  display:flex; align-items:center; gap:14px; padding:15px 20px; background:var(--bg-item);
+  transition:background .12s; cursor:pointer; width:100%; text-align:left; border:0;
+  -webkit-tap-highlight-color:transparent;
+}
+.list-item:hover,.list-item:active { background:var(--bg-item-hover); }
+.list-item[disabled] { opacity:.4; cursor:not-allowed; }
+.list-item input[type=checkbox] { width:18px; height:18px; accent-color:var(--primary); flex-shrink:0; }
+.list-body { display:flex; flex-direction:column; gap:2px; flex:1; min-width:0; }
+.list-name { font-size:15px; font-weight:500; line-height:1.3; word-break:break-all; }
+.list-desc { font-size:12px; color:var(--text-sub); line-height:1.3; }
+.list-arrow { width:16px; height:16px; color:var(--text-muted); flex-shrink:0; transition:transform .15s; }
+.list-item:hover .list-arrow { transform:translateX(2px); }
+.list-item.danger .list-name { color:var(--danger); }
+.empty { padding:32px 20px; text-align:center; font-size:13px; color:var(--text-sub); }
+
+.tag { flex-shrink:0; font-size:10px; font-weight:600; padding:3px 7px; border-radius:4px; letter-spacing:.2px; background:var(--tag-info-bg); color:var(--tag-info-text); }
+.tag-update { background:var(--tag-update-bg); color:var(--tag-update-text); }
+
+/* ===== Status ===== */
+.status { margin:0 20px; padding:14px 16px; border:1px solid var(--line); border-radius:10px; font-size:13px; line-height:1.6; white-space:pre-line; color:var(--text-sub); }
+.status.success { color:var(--ok); }
+.status.error { color:var(--danger); }
+.status.warning { color:var(--tag-event-text); }
+
+/* ===== Footer ===== */
+.footer { max-width:640px; margin:0 auto; padding:32px 20px 48px; border-top:1px solid var(--line); }
+.meta { font-size:11px; color:var(--text-muted); line-height:1.7; word-break:break-all; }
+.clock { display:flex; align-items:baseline; gap:10px; margin-bottom:14px; }
+.clock-label { font-size:11px; font-weight:600; color:var(--text-muted); letter-spacing:1px; width:28px; }
+.clock-val { font-size:15px; font-weight:600; font-variant-numeric:tabular-nums; }
+
+/* ===== Auth gate ===== */
+body.auth-locked { overflow:hidden; }
+.auth-gate { position:fixed; inset:0; z-index:1000; display:grid; place-items:center; padding:20px; background:var(--bg); }
+.auth-gate[hidden] { display:none; }
+.auth-card { width:min(100%,420px); border:1px solid var(--line); border-radius:18px; padding:32px; background:var(--bg-item); }
+.auth-brand { font-size:13px; font-weight:800; letter-spacing:1.4px; margin-bottom:28px; color:var(--text-sub); }
+.auth-card h1 { font-size:25px; margin-bottom:10px; }
+.auth-card p { font-size:13px; line-height:1.6; color:var(--text-sub); margin-bottom:24px; }
+.auth-card button { width:100%; border:1px solid var(--primary); border-radius:10px; padding:13px 14px; background:var(--primary); color:var(--primary-fg); font-weight:700; cursor:pointer; }
+
+.hidden { display:none !important; }
+
+/* ===== Tablet / Desktop ===== */
+@media (min-width:641px) {
+  .header-wrap,.main,.footer { max-width:720px; }
+  .section-head,.search { padding-left:24px; padding-right:24px; }
+  .status { margin:0 24px; }
+  .list { border:1px solid var(--line); border-radius:12px; overflow:hidden; margin:0 24px; }
+  .list-item { padding:16px 24px; }
+  .footer { padding-left:24px; padding-right:24px; }
+}
+@media (min-width:1024px) {
+  .header-wrap,.main,.footer { max-width:880px; }
+  .main { display:grid; grid-template-columns:1.15fr 1fr; column-gap:24px; align-items:start; }
+  .main > .section:first-child { grid-row:1 / 4; }
+  .main > .section:nth-child(2) { grid-column:2; grid-row:1; }
+  .main > .section:nth-child(3) { grid-column:2; grid-row:2; }
+  .main > .section:nth-child(4) { grid-column:2; grid-row:3; }
+}
+</style>
 </head>
+<body class="auth-locked">
 
-<body>
-
-<div class="container">
-
-  <div class="card">
-
-    <h1>PUBG INFO 역할 관리</h1>
-
-    <div class="subtitle">
-      Google Sheets 정보를 기준으로 Discord 역할을 관리합니다.
-    </div>
-
-    <!-- 고정 정보 -->
-
-    <div class="info-box">
-
-      <div class="info-row">
-        <span class="info-label">
-          Discord 서버
-        </span>
-
-        <span class="info-value">
-          PUBG INFO
-        </span>
-      </div>
-
-      <div class="info-row">
-        <span class="info-label">
-          서버 ID
-        </span>
-
-        <span class="info-value">
-          1413099667667026063
-        </span>
-      </div>
-
-      <div class="info-row">
-        <span class="info-label">
-          관리 역할
-        </span>
-
-        <span class="info-value">
-          白夜
-        </span>
-      </div>
-
-      <div class="info-row">
-        <span class="info-label">
-          역할 ID
-        </span>
-
-        <span class="info-value">
-          1541955349735538698
-        </span>
-      </div>
-
-    </div>
-
-    <!-- Google Sheet -->
-
-    <div class="section">
-
-      <div class="section-title">
-        Google Sheets
-      </div>
-
-      <label for="sheetUrl">
-        Google Sheets 주소
-      </label>
-
-      <input
-        id="sheetUrl"
-        type="url"
-        placeholder="https://docs.google.com/spreadsheets/d/..."
-      >
-
-      <button
-        id="loadSheetButton"
-        class="yellow"
-        style="width:100%; margin-top:10px;"
-      >
-        Google Sheets 정보 가져오기
-      </button>
-
-    </div>
-
-    <!-- 팀 선택 -->
-
-    <div
-      class="section"
-      id="selectionSection"
-      style="display:none;"
-    >
-
-      <div class="section-title">
-        대상 선택
-      </div>
-
-      <div class="multi-select">
-
-        <button
-          type="button"
-          id="multiSelectButton"
-          class="multi-select-button"
-        >
-          <span id="selectedCountText">
-            선택된 항목 없음
-          </span>
-
-          <span>
-            ▼
-          </span>
-        </button>
-
-        <div
-          id="multiSelectMenu"
-          class="multi-select-menu hidden"
-        >
-
-          <div class="menu-actions">
-
-            <button
-              type="button"
-              id="selectAllButton"
-              class="dark"
-            >
-              전체 선택
-            </button>
-
-            <button
-              type="button"
-              id="unselectAllButton"
-              class="dark"
-            >
-              전체 해제
-            </button>
-
-          </div>
-
-          <div id="teamList"></div>
-
-        </div>
-
-      </div>
-
-      <div
-        id="selectedInfo"
-        class="selected-info"
-      >
-        선택된 항목: 0개
-      </div>
-
-    </div>
-
-    <!-- 실행 버튼 -->
-
-    <div
-      class="buttons"
-      id="actionButtons"
-      style="display:none;"
-    >
-
-      <button
-        id="assignButton"
-        class="yellow"
-      >
-        선택된 대상에게 白夜 지급
-      </button>
-
-      <button
-        id="removeButton"
-        class="danger"
-      >
-        선택된 대상에서 白夜 제거
-      </button>
-
-      <button
-        id="removeAllButton"
-        class="dark full"
-      >
-        서버의 白夜 역할 전체 제거
-      </button>
-
-    </div>
-
-    <!-- 상태 -->
-
-    <div
-      id="status"
-      class="status"
-    >
-      준비되었습니다.
-    </div>
-
+<!-- 로그인 -->
+<div id="authGate" class="auth-gate" hidden>
+  <div class="auth-card">
+    <div class="auth-brand">PUBG INFO</div>
+    <h1>로그인이 필요해요</h1>
+    <p>역할 관리는 Discord 계정으로 로그인한 뒤 사용할 수 있어요.</p>
+    <button id="loginButton">Discord로 로그인</button>
   </div>
-
 </div>
 
+<header class="header">
+  <div class="header-wrap">
+    <span class="logo">PUBG INFO<small>역할 관리</small></span>
+    <button class="toggle" id="themeToggle" aria-label="테마 전환">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+</header>
+
+<main class="main">
+  <!-- 대상 선택 -->
+  <section class="section">
+    <div class="section-head">
+      <span class="section-title" id="countText">대상 선택</span>
+      <span>
+        <button class="link-btn" id="selectAll">전체 선택</button>
+        <button class="link-btn" id="unselectAll">전체 해제</button>
+        <button class="link-btn" id="reload">새로고침</button>
+      </span>
+    </div>
+    <div class="search"><input id="search" type="search" placeholder="닉네임 검색"></div>
+    <div class="list scroll"><ul id="teamList"><li class="empty">시트 정보를 불러오는 중...</li></ul></div>
+  </section>
+
+  <!-- 작업 -->
+  <section class="section">
+    <div class="section-head"><span class="section-title">작업</span></div>
+    <div class="list">
+      <ul>
+        <li>
+          <button class="list-item" id="assign">
+            <div class="list-body"><span class="list-name">白夜 지급</span><span class="list-desc" id="assignDesc">선택된 대상에게 역할을 지급해요</span></div>
+            <svg class="list-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+        </li>
+        <li>
+          <button class="list-item" id="remove">
+            <div class="list-body"><span class="list-name">白夜 제거</span><span class="list-desc">선택된 대상에게서 역할을 제거해요</span></div>
+            <svg class="list-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+        </li>
+        <li>
+          <button class="list-item danger" id="removeAll">
+            <div class="list-body"><span class="list-name">서버 전체 제거</span><span class="list-desc">선택과 관계없이 서버의 모든 白夜 역할을 제거해요</span></div>
+            <svg class="list-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 상태 -->
+  <section class="section">
+    <div class="section-head"><span class="section-title">상태</span></div>
+    <div id="status" class="status">준비되었습니다.</div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="clock"><span class="clock-label">KST</span><span class="clock-val" id="kst">--:--:--</span></div>
+  <p class="meta">서버 PUBG INFO · 1413099667667026063<br>역할 白夜 · 1541955349735538698</p>
+</footer>
+
 <script>
-  const API_BASE =
-    "https://discord-bot.pubgmk14-kr.workers.dev";
+  const API_BASE = "https://discord-bot.pubgmk14-kr.workers.dev";
+  const SHEET_URL = "https://docs.google.com/spreadsheets/d/11WaBONeC1UQMymXvlc277y9-Cv36YWddW_BMkX2F0dg";
 
-  const FIXED_GUILD_ID =
-    "1413099667667026063";
+  let token = "";
+  try { token = localStorage.getItem("session") || ""; } catch {}
+  let rows = [];
+  const selected = new Set();
 
-  const BAIYA_ROLE_ID =
-    "1541955349735538698";
+  const $ = id => document.getElementById(id);
+  const actionBtns = () => [$("assign"), $("remove"), $("removeAll")];
 
-  const SHEET_URL_DEFAULT =
-    "https://docs.google.com/spreadsheets/d/11WaBONeC1UQMymXvlc277y9-Cv36YWddW_BMkX2F0dg";
+  /* 테마 */
+  (function () {
+    try { const t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch {}
+  })();
+  $("themeToggle").addEventListener("click", () => {
+    const cur = document.documentElement.dataset.theme ||
+      (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    const next = cur === "dark" ? "light" : "dark";
+    document.documentElement.dataset.theme = next;
+    try { localStorage.setItem("theme", next); } catch {}
+  });
 
-  let token =
-    localStorage.getItem("session") || "";
+  /* KST 시계 */
+  function tick() {
+    $("kst").textContent = new Date().toLocaleTimeString("ko-KR", { timeZone: "Asia/Seoul", hour12: false });
+  }
+  tick(); setInterval(tick, 1000);
 
-  let sheetRows = [];
-
-  const sheetUrlInput =
-    document.getElementById(
-      "sheetUrl"
-    );
-
-  const loadSheetButton =
-    document.getElementById(
-      "loadSheetButton"
-    );
-
-  const selectionSection =
-    document.getElementById(
-      "selectionSection"
-    );
-
-  const actionButtons =
-    document.getElementById(
-      "actionButtons"
-    );
-
-  const multiSelectButton =
-    document.getElementById(
-      "multiSelectButton"
-    );
-
-  const multiSelectMenu =
-    document.getElementById(
-      "multiSelectMenu"
-    );
-
-  const teamList =
-    document.getElementById(
-      "teamList"
-    );
-
-  const selectedCountText =
-    document.getElementById(
-      "selectedCountText"
-    );
-
-  const selectedInfo =
-    document.getElementById(
-      "selectedInfo"
-    );
-
-  const statusBox =
-    document.getElementById(
-      "status"
-    );
-
-  const assignButton =
-    document.getElementById(
-      "assignButton"
-    );
-
-  const removeButton =
-    document.getElementById(
-      "removeButton"
-    );
-
-  const removeAllButton =
-    document.getElementById(
-      "removeAllButton"
-    );
-
-  const selectAllButton =
-    document.getElementById(
-      "selectAllButton"
-    );
-
-  const unselectAllButton =
-    document.getElementById(
-      "unselectAllButton"
-    );
-
-
-  /* =====================================================
-     기본 Sheet 주소
-  ===================================================== */
-
-  sheetUrlInput.value =
-    SHEET_URL_DEFAULT;
-
-
-  /* =====================================================
-     API
-  ===================================================== */
-
-  async function api(
-    path,
-    options = {}
-  ) {
-    if (!token) {
-      throw new Error(
-        "로그인 세션이 없습니다."
-      );
-    }
-
-    const headers = {
-      "Content-Type":
-        "application/json",
-
-      "Authorization":
-        `Bearer ${token}`,
-
-      ...(options.headers || {})
-    };
-
-    const response =
-      await fetch(
-        API_BASE + path,
-        {
-          ...options,
-          headers
-        }
-      );
-
+  /* 공통 */
+  async function api(path, options = {}) {
+    if (!token) throw new Error("로그인 세션이 없습니다.");
+    const res = await fetch(API_BASE + path, {
+      ...options,
+      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}`, ...(options.headers || {}) }
+    });
     let data = null;
-
-    try {
-      data =
-        await response.json();
-    } catch {
-      data = null;
-    }
-
-    if (!response.ok) {
-
-      if (
-        response.status === 401
-      ) {
-        localStorage.removeItem(
-          "session"
-        );
-
+    try { data = await res.json(); } catch {}
+    if (!res.ok) {
+      if (res.status === 401) {
+        try { localStorage.removeItem("session"); } catch {}
         token = "";
-
-        throw new Error(
-          "로그인 세션이 만료되었습니다. 다시 로그인해주세요."
-        );
+        showLogin();
+        throw new Error("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
       }
-
-      throw new Error(
-        data?.error ||
-        `HTTP ${response.status}`
-      );
+      throw new Error(data?.error || `HTTP ${res.status}`);
     }
-
     return data;
   }
 
-
-  /* =====================================================
-     로그인
-  ===================================================== */
-
-  function goLogin() {
-    location.href =
-      API_BASE + "/api/login";
+  function setStatus(msg, type = "") {
+    $("status").textContent = msg;
+    $("status").className = "status" + (type ? " " + type : "");
   }
 
-
-  /* =====================================================
-     상태 표시
-  ===================================================== */
-
-  function setStatus(
-    message,
-    type = ""
-  ) {
-    statusBox.textContent =
-      message;
-
-    statusBox.className =
-      "status";
-
-    if (type) {
-      statusBox.classList.add(
-        type
-      );
-    }
+  function esc(v) {
+    return String(v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;").replace(/'/g, "&#039;");
   }
 
-
-  /* =====================================================
-     선택된 Sheet 항목
-  ===================================================== */
-
-  function getSelectedRows() {
-
-    return sheetRows.filter(
-      (_, index) => {
-
-        const checkbox =
-          document.querySelector(
-            `.team-checkbox[data-index="${index}"]`
-          );
-
-        return (
-          checkbox &&
-          checkbox.checked
-        );
-      }
-    );
+  function showLogin() {
+    $("authGate").hidden = false;
+    document.body.classList.add("auth-locked");
   }
 
-
-  /* =====================================================
-     선택 개수 업데이트
-  ===================================================== */
-
-  function updateSelectionInfo() {
-
-    const selected =
-      getSelectedRows();
-
-    selectedCountText.textContent =
-      `${selected.length}개 선택됨`;
-
-    selectedInfo.textContent =
-      `전체 ${sheetRows.length}개 중 ${selected.length}개 선택됨`;
-
-    if (
-      selected.length === 0
-    ) {
-      selectedCountText.textContent =
-        "선택된 항목 없음";
-    }
+  function updateCount() {
+    $("countText").textContent = rows.length ? `대상 선택 · ${selected.size}/${rows.length}` : "대상 선택";
+    $("assign").disabled = $("remove").disabled = selected.size === 0;
+    $("assignDesc").textContent = selected.size
+      ? `선택된 ${selected.size}개 항목에 역할을 지급해요`
+      : "선택된 대상에게 역할을 지급해요";
   }
 
+  function renderList() {
+    const q = $("search").value.trim().toLowerCase();
+    const ul = $("teamList");
+    ul.innerHTML = "";
+    const visible = rows.map((row, index) => ({ row, index }))
+      .filter(({ row }) => !q || row.nickname.toLowerCase().includes(q));
 
-  /* =====================================================
-     Sheet 목록 표시
-  ===================================================== */
-
-  function renderSheetRows() {
-
-    teamList.innerHTML = "";
-
-    if (
-      sheetRows.length === 0
-    ) {
-
-      teamList.innerHTML = `
-        <div class="empty">
-          가져온 항목이 없습니다.
-        </div>
-      `;
-
-      selectionSection.style.display =
-        "block";
-
-      actionButtons.style.display =
-        "none";
-
+    if (!visible.length) {
+      ul.innerHTML = `<li class="empty">${rows.length ? "검색 결과가 없어요." : "시트에서 가져온 닉네임이 없어요."}</li>`;
       return;
     }
-
-    sheetRows.forEach(
-      (row, index) => {
-
-        const wrapper =
-          document.createElement(
-            "label"
-          );
-
-        wrapper.className =
-          "team-option";
-
-        wrapper.innerHTML = `
-          <input
-            type="checkbox"
-            class="team-checkbox"
-            data-index="${index}"
-            checked
-          >
-
-          <div class="team-text">
-
-            <span class="team-seed">
-              ${escapeHtml(
-                row.seed || "-"
-              )}
-            </span>
-
-            <span class="team-name">
-              ${escapeHtml(
-                row.nickname
-              )}
-            </span>
-
-          </div>
-        `;
-
-        const checkbox =
-          wrapper.querySelector(
-            ".team-checkbox"
-          );
-
-        checkbox.addEventListener(
-          "change",
-          updateSelectionInfo
-        );
-
-        teamList.appendChild(
-          wrapper
-        );
-      }
-    );
-
-    selectionSection.style.display =
-      "block";
-
-    actionButtons.style.display =
-      "grid";
-
-    updateSelectionInfo();
+    for (const { row, index } of visible) {
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <label class="list-item">
+          <input type="checkbox" ${selected.has(index) ? "checked" : ""}>
+          <div class="list-body"><span class="list-name">${esc(row.nickname)}</span></div>
+          ${row.seed ? `<span class="tag tag-update">${esc(row.seed)}</span>` : ""}
+        </label>`;
+      li.querySelector("input").addEventListener("change", e => {
+        e.target.checked ? selected.add(index) : selected.delete(index);
+        updateCount();
+      });
+      ul.appendChild(li);
+    }
   }
-
-
-  /* =====================================================
-     HTML Escape
-  ===================================================== */
-
-  function escapeHtml(value) {
-
-    return String(value)
-      .replace(
-        /&/g,
-        "&amp;"
-      )
-      .replace(
-        /</g,
-        "&lt;"
-      )
-      .replace(
-        />/g,
-        "&gt;"
-      )
-      .replace(
-        /"/g,
-        "&quot;"
-      )
-      .replace(
-        /'/g,
-        "&#039;"
-      );
-  }
-
-
-  /* =====================================================
-     Sheet 가져오기
-  ===================================================== */
 
   async function loadSheet() {
-
-    const sheetUrl =
-      sheetUrlInput.value.trim();
-
-    if (!sheetUrl) {
-      setStatus(
-        "Google Sheets 주소를 입력해주세요.",
-        "error"
-      );
-
-      return;
-    }
-
-    loadSheetButton.disabled =
-      true;
-
-    setStatus(
-      "Google Sheets 정보를 가져오는 중..."
-    );
-
+    $("reload").disabled = true;
+    setStatus("시트 정보를 가져오는 중...");
     try {
-
-      const encoded =
-        encodeURIComponent(
-          sheetUrl
-        );
-
-      const data =
-        await api(
-          `/api/role/sheet?url=${encoded}`
-        );
-
-      sheetRows =
-        Array.isArray(data.rows)
-          ? data.rows.filter(
-              row =>
-                String(
-                  row.nickname || ""
-                ).trim() !== ""
-            )
-          : [];
-
-      renderSheetRows();
-
-      setStatus(
-        `Google Sheets 정보를 가져왔습니다.\n` +
-        `사용 가능한 항목: ${sheetRows.length}개\n` +
-        `모든 항목이 기본적으로 선택되었습니다.`,
-        "success"
-      );
-
-    } catch (error) {
-
-      setStatus(
-        `❌ ${error.message}`,
-        "error"
-      );
-
+      const data = await api(`/api/role/sheet?url=${encodeURIComponent(SHEET_URL)}`);
+      rows = Array.isArray(data.rows) ? data.rows.filter(r => String(r.nickname || "").trim() !== "") : [];
+      selected.clear();
+      rows.forEach((_, i) => selected.add(i));
+      renderList();
+      updateCount();
+      setStatus(`시트에서 ${rows.length}개 항목을 가져왔어요.\n모든 항목이 선택된 상태예요.`, "success");
+    } catch (e) {
+      setStatus(`❌ ${e.message}`, "error");
     } finally {
-
-      loadSheetButton.disabled =
-        false;
+      $("reload").disabled = false;
     }
   }
 
-
-  /* =====================================================
-     선택된 닉네임 → Discord 멤버 찾기
-  ===================================================== */
-
-  async function resolveSelectedMembers() {
-
-    const selected =
-      getSelectedRows();
-
-    if (
-      selected.length === 0
-    ) {
-      throw new Error(
-        "선택된 항목이 없습니다."
-      );
+  async function resolveMembers(targets) {
+    const ids = new Set();
+    for (let i = 0; i < targets.length; i++) {
+      setStatus(`Discord 멤버 확인 중... (${i + 1}/${targets.length})\n${targets[i].nickname}`);
+      const data = await api(`/api/role/members?nickname=${encodeURIComponent(targets[i].nickname)}`);
+      for (const m of (Array.isArray(data.members) ? data.members : [])) if (m.id) ids.add(m.id);
     }
+    return [...ids];
+  }
 
-    const memberIds =
-      new Set();
+  async function runSelected(kind) {
+    const targets = [...selected].sort((a, b) => a - b).map(i => rows[i]);
+    if (!targets.length) return setStatus("선택된 항목이 없어요.", "warning");
+    const isAssign = kind === "assign";
+    const msg = isAssign
+      ? `선택된 ${targets.length}개 항목의 Discord 멤버에게\n「白夜」 역할을 지급하시겠습니까?`
+      : `선택된 ${targets.length}개 항목에서\n「白夜」 역할을 제거하시겠습니까?`;
+    if (!confirm(msg)) return;
 
-    const matchedInfo = [];
-
-    for (
-      let i = 0;
-      i < selected.length;
-      i++
-    ) {
-
-      const row =
-        selected[i];
-
-      setStatus(
-        `Discord 멤버 확인 중...\n` +
-        `${i + 1}/${selected.length}\n` +
-        `닉네임: ${row.nickname}`
-      );
-
-      const encoded =
-        encodeURIComponent(
-          row.nickname
-        );
-
-      const data =
-        await api(
-          `/api/role/members?nickname=${encoded}`
-        );
-
-      const members =
-        Array.isArray(
-          data.members
-        )
-          ? data.members
-          : [];
-
-      matchedInfo.push({
-        row,
-        members
+    actionBtns().forEach(b => b.disabled = true);
+    try {
+      const userIds = await resolveMembers(targets);
+      if (!userIds.length) return setStatus("선택된 닉네임과 정확히 일치하는 Discord 서버 닉네임을 가진 멤버가 없어요.", "warning");
+      setStatus(`역할 ${isAssign ? "지급" : "제거"} 중... (${userIds.length}명)`);
+      const r = await api(`/api/role/${isAssign ? "assign" : "remove"}-selected`, {
+        method: "POST", body: JSON.stringify({ userIds })
       });
-
-      for (
-        const member of members
-      ) {
-        if (member.id) {
-          memberIds.add(
-            member.id
-          );
-        }
-      }
-    }
-
-    return {
-      memberIds:
-        [...memberIds],
-
-      matchedInfo
-    };
-  }
-
-
-  /* =====================================================
-     선택 대상 역할 지급
-  ===================================================== */
-
-  async function assignSelected() {
-
-    const selected =
-      getSelectedRows();
-
-    if (
-      selected.length === 0
-    ) {
       setStatus(
-        "선택된 항목이 없습니다.",
-        "warning"
+        `✅ 역할 ${isAssign ? "지급" : "제거"} 완료\n\n` +
+        `대상 멤버: ${r.total}명\n${isAssign ? "새로 지급" : "제거"}: ${r.success}명\n` +
+        `${isAssign ? "이미 보유" : "역할 없음"}: ${r.already}명\n실패: ${r.failed}명`,
+        r.failed > 0 ? "warning" : "success"
       );
-
-      return;
-    }
-
-    if (
-      !confirm(
-        `선택된 ${selected.length}개 항목의 Discord 멤버에게\n` +
-        `「白夜」 역할을 지급하시겠습니까?`
-      )
-    ) {
-      return;
-    }
-
-    assignButton.disabled =
-      true;
-
-    removeButton.disabled =
-      true;
-
-    removeAllButton.disabled =
-      true;
-
-    try {
-
-      const resolved =
-        await resolveSelectedMembers();
-
-      if (
-        resolved.memberIds.length === 0
-      ) {
-        setStatus(
-          "선택된 닉네임과 정확히 일치하는 Discord 서버 닉네임을 가진 멤버가 없습니다.",
-          "warning"
-        );
-
-        return;
-      }
-
-      setStatus(
-        `역할 지급 중...\n` +
-        `대상 Discord 멤버: ${resolved.memberIds.length}명`
-      );
-
-      const result =
-        await api(
-          "/api/role/assign-selected",
-          {
-            method: "POST",
-
-            body:
-              JSON.stringify({
-                userIds:
-                  resolved.memberIds
-              })
-          }
-        );
-
-      setStatus(
-        `✅ 역할 지급 완료\n\n` +
-        `대상 멤버: ${result.total}명\n` +
-        `새로 지급: ${result.success}명\n` +
-        `이미 보유: ${result.already}명\n` +
-        `실패: ${result.failed}명`,
-        result.failed > 0
-          ? "warning"
-          : "success"
-      );
-
-    } catch (error) {
-
-      setStatus(
-        `❌ ${error.message}`,
-        "error"
-      );
-
+    } catch (e) {
+      setStatus(`❌ ${e.message}`, "error");
     } finally {
-
-      assignButton.disabled =
-        false;
-
-      removeButton.disabled =
-        false;
-
-      removeAllButton.disabled =
-        false;
+      actionBtns().forEach(b => b.disabled = false);
+      updateCount();
     }
   }
-
-
-  /* =====================================================
-     선택 대상 역할 제거
-  ===================================================== */
-
-  async function removeSelected() {
-
-    const selected =
-      getSelectedRows();
-
-    if (
-      selected.length === 0
-    ) {
-      setStatus(
-        "선택된 항목이 없습니다.",
-        "warning"
-      );
-
-      return;
-    }
-
-    if (
-      !confirm(
-        `선택된 ${selected.length}개 항목에서\n` +
-        `「白夜」 역할을 제거하시겠습니까?`
-      )
-    ) {
-      return;
-    }
-
-    assignButton.disabled =
-      true;
-
-    removeButton.disabled =
-      true;
-
-    removeAllButton.disabled =
-      true;
-
-    try {
-
-      const resolved =
-        await resolveSelectedMembers();
-
-      if (
-        resolved.memberIds.length === 0
-      ) {
-        setStatus(
-          "선택된 닉네임과 정확히 일치하는 Discord 서버 닉네임을 가진 멤버가 없습니다.",
-          "warning"
-        );
-
-        return;
-      }
-
-      setStatus(
-        `역할 제거 중...\n` +
-        `대상 Discord 멤버: ${resolved.memberIds.length}명`
-      );
-
-      const result =
-        await api(
-          "/api/role/remove-selected",
-          {
-            method: "POST",
-
-            body:
-              JSON.stringify({
-                userIds:
-                  resolved.memberIds
-              })
-          }
-        );
-
-      setStatus(
-        `✅ 역할 제거 완료\n\n` +
-        `대상 멤버: ${result.total}명\n` +
-        `제거: ${result.success}명\n` +
-        `역할 없음: ${result.already}명\n` +
-        `실패: ${result.failed}명`,
-        result.failed > 0
-          ? "warning"
-          : "success"
-      );
-
-    } catch (error) {
-
-      setStatus(
-        `❌ ${error.message}`,
-        "error"
-      );
-
-    } finally {
-
-      assignButton.disabled =
-        false;
-
-      removeButton.disabled =
-        false;
-
-      removeAllButton.disabled =
-        false;
-    }
-  }
-
-
-  /* =====================================================
-     서버 전체 白夜 제거
-  ===================================================== */
 
   async function removeAll() {
-
-    if (
-      !confirm(
-        "정말로 이 서버의 모든 白夜 역할을 제거하시겠습니까?"
-      )
-    ) {
-      return;
-    }
-
-    assignButton.disabled =
-      true;
-
-    removeButton.disabled =
-      true;
-
-    removeAllButton.disabled =
-      true;
-
+    if (!confirm("정말로 이 서버의 모든 白夜 역할을 제거하시겠습니까?")) return;
+    actionBtns().forEach(b => b.disabled = true);
     try {
-
+      setStatus("서버 전체 白夜 역할을 확인하는 중...");
+      const r = await api("/api/role/remove-all", { method: "POST", body: JSON.stringify({}) });
       setStatus(
-        "서버 전체 白夜 역할을 확인하는 중..."
+        `✅ 서버 전체 역할 제거 완료\n\n확인된 대상: ${r.totalFound}명\n제거 성공: ${r.success}명\n실패: ${r.failed}명`,
+        r.failed > 0 ? "warning" : "success"
       );
-
-      const result =
-        await api(
-          "/api/role/remove-all",
-          {
-            method: "POST",
-
-            body:
-              JSON.stringify({})
-          }
-        );
-
-      setStatus(
-        `✅ 서버 전체 역할 제거 완료\n\n` +
-        `확인된 대상: ${result.totalFound}명\n` +
-        `제거 성공: ${result.success}명\n` +
-        `실패: ${result.failed}명`,
-        result.failed > 0
-          ? "warning"
-          : "success"
-      );
-
-    } catch (error) {
-
-      setStatus(
-        `❌ ${error.message}`,
-        "error"
-      );
-
+    } catch (e) {
+      setStatus(`❌ ${e.message}`, "error");
     } finally {
-
-      assignButton.disabled =
-        false;
-
-      removeButton.disabled =
-        false;
-
-      removeAllButton.disabled =
-        false;
+      actionBtns().forEach(b => b.disabled = false);
+      updateCount();
     }
   }
 
+  $("search").addEventListener("input", renderList);
+  $("selectAll").addEventListener("click", () => { rows.forEach((_, i) => selected.add(i)); renderList(); updateCount(); });
+  $("unselectAll").addEventListener("click", () => { selected.clear(); renderList(); updateCount(); });
+  $("reload").addEventListener("click", loadSheet);
+  $("assign").addEventListener("click", () => runSelected("assign"));
+  $("remove").addEventListener("click", () => runSelected("remove"));
+  $("removeAll").addEventListener("click", removeAll);
+  $("loginButton").addEventListener("click", () => { location.href = API_BASE + "/api/login"; });
 
-  /* =====================================================
-     드롭다운
-  ===================================================== */
-
-  multiSelectButton.addEventListener(
-    "click",
-    event => {
-
-      event.stopPropagation();
-
-      multiSelectMenu.classList.toggle(
-        "hidden"
-      );
-    }
-  );
-
-
-  document.addEventListener(
-    "click",
-    event => {
-
-      if (
-        !multiSelectMenu.contains(
-          event.target
-        ) &&
-        event.target !==
-          multiSelectButton
-      ) {
-        multiSelectMenu.classList.add(
-          "hidden"
-        );
-      }
-    }
-  );
-
-
-  /* =====================================================
-     전체 선택
-  ===================================================== */
-
-  selectAllButton.addEventListener(
-    "click",
-    () => {
-
-      document
-        .querySelectorAll(
-          ".team-checkbox"
-        )
-        .forEach(
-          checkbox => {
-            checkbox.checked =
-              true;
-          }
-        );
-
-      updateSelectionInfo();
-    }
-  );
-
-
-  /* =====================================================
-     전체 해제
-  ===================================================== */
-
-  unselectAllButton.addEventListener(
-    "click",
-    () => {
-
-      document
-        .querySelectorAll(
-          ".team-checkbox"
-        )
-        .forEach(
-          checkbox => {
-            checkbox.checked =
-              false;
-          }
-        );
-
-      updateSelectionInfo();
-    }
-  );
-
-
-  /* =====================================================
-     이벤트
-  ===================================================== */
-
-  loadSheetButton.addEventListener(
-    "click",
-    loadSheet
-  );
-
-  assignButton.addEventListener(
-    "click",
-    assignSelected
-  );
-
-  removeButton.addEventListener(
-    "click",
-    removeSelected
-  );
-
-  removeAllButton.addEventListener(
-    "click",
-    removeAll
-  );
-
-
-  /* =====================================================
-     로그인 확인
-  ===================================================== */
-
-  if (!token) {
-
-    setStatus(
-      "로그인이 필요합니다. 페이지를 새로고침한 뒤 Discord 로그인을 진행해주세요.",
-      "warning"
-    );
-
+  /* 시작 */
+  if (token) {
+    document.body.classList.remove("auth-locked");
+    loadSheet();
+  } else {
+    showLogin();
+    setStatus("로그인이 필요해요.", "warning");
   }
-
 </script>
-
 </body>
 </html>
