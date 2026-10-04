@@ -46,7 +46,7 @@ html {
   font-family:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo',sans-serif;
   font-size:16px; -webkit-font-smoothing:antialiased;
 }
-body { background:var(--bg); color:var(--text); min-height:100vh; transition:background .2s,color .2s; }
+body { background:var(--bg); color:var(--text); min-height:100vh; min-height:100dvh; transition:background .2s,color .2s; }
 ul { list-style:none; }
 button { font:inherit; color:inherit; }
 
@@ -67,7 +67,7 @@ button { font:inherit; color:inherit; }
 
 /* ===== Main ===== */
 .main { max-width:640px; margin:0 auto; padding:0 0 60px; }
-.section { padding:32px 0 0; }
+.section { padding:32px 0 0; min-width:0; }
 .section-head {
   display:flex; align-items:center; justify-content:space-between;
   padding:0 20px; margin-bottom:8px;
@@ -91,7 +91,17 @@ button { font:inherit; color:inherit; }
 /* ===== List ===== */
 .list { border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
 .list li + li { border-top:1px solid var(--line); }
-.scroll { max-height:56vh; overflow-y:auto; }
+
+/* 스크롤 목록: .list 보다 우선순위를 높여 미디어쿼리에 덮이지 않게 함 */
+.list.scroll {
+  max-height:56vh;
+  max-height:56dvh;
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+}
+
 .list-item {
   display:flex; align-items:center; gap:14px; padding:15px 20px;
   background:var(--bg-item); transition:background .12s; cursor:pointer;
@@ -185,8 +195,10 @@ body.auth-locked { overflow:hidden; }
   .status { margin:0 24px; }
   .list {
     border:1px solid var(--line); border-radius:12px;
-    overflow:hidden; margin:0 24px;
+    margin:0 24px;
   }
+  /* 둥근 모서리 유지 + 스크롤 가능 (overflow:hidden 제거) */
+  .list.scroll { overflow-y:auto; overflow-x:hidden; }
   .list-item { padding:16px 24px; }
   .footer { padding-left:24px; padding-right:24px; }
 }
@@ -201,6 +213,7 @@ body.auth-locked { overflow:hidden; }
   .main > .section:nth-child(2) { grid-column:2; grid-row:1; }
   .main > .section:nth-child(3) { grid-column:2; grid-row:2; }
   .main > .section:nth-child(4) { grid-column:2; grid-row:3; }
+  .list.scroll { max-height:70vh; max-height:70dvh; }
 }
 </style>
 </head>
