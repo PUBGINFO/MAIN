@@ -110,7 +110,7 @@ button { font:inherit; color:inherit; }
 .list-item:hover,.list-item:active { background:var(--bg-item-hover); }
 .list-item[disabled] { opacity:.4; cursor:not-allowed; }
 .list-item input[type=checkbox] {
-  width:18px; height:18px; accent-color:var(--primary); flex-shrink:0;
+  width:18px; height:18px; accent-color:#2f7cf6; flex-shrink:0;
 }
 .list-body { display:flex; flex-direction:column; gap:2px; flex:1; min-width:0; }
 .list-name { font-size:15px; font-weight:500; line-height:1.3; word-break:break-all; }
@@ -129,6 +129,7 @@ button { font:inherit; color:inherit; }
   background:var(--tag-info-bg); color:var(--tag-info-text);
 }
 .tag-update { background:var(--tag-update-bg); color:var(--tag-update-text); }
+.tag-missing { background:var(--tag-notice-bg); color:var(--tag-notice-text); }
 
 /* ===== Status ===== */
 .status {
@@ -372,6 +373,7 @@ body.auth-locked { overflow:hidden; }
   } catch {}
 
   let rows = [];
+  let missingNames = new Set(); // 마지막 조회에서 Discord에서 못 찾은 닉네임
   const selected = new Set();
 
   const $ = id => document.getElementById(id);
@@ -566,6 +568,12 @@ body.auth-locked { overflow:hidden; }
               ? `<span class="tag tag-update">${esc(row.seed)}</span>`
               : ""
           }
+
+          ${
+            missingNames.has(row.nickname)
+              ? `<span class="tag tag-missing">못 찾음</span>`
+              : ""
+          }
         </label>
       `;
 
@@ -635,6 +643,7 @@ body.auth-locked { overflow:hidden; }
   async function resolveMembers(targets) {
 
     const ids = new Set();
+    const found = new Set();
 
     const names = [...new Set(
       targets.map(t => String(t.nickname || "").trim()).filter(Boolean)
@@ -655,10 +664,13 @@ body.auth-locked { overflow:hidden; }
 
       for (const m of (Array.isArray(data.members) ? data.members : [])) {
         if (m.id) ids.add(m.id);
+        if (m.nick) found.add(m.nick);
       }
     }
 
-    return [...ids];
+    const missing = names.filter(n => !found.has(n));
+
+    return { ids: [...ids], missing };
   }
 
   /* =========================================================
@@ -692,11 +704,21 @@ body.auth-locked { overflow:hidden; }
 
     try {
 
-      const userIds = await resolveMembers(targets);
+      const resolved = await resolveMembers(targets);
+      const userIds = resolved.ids;
+      const missing = resolved.missing;
+
+      missingNames = new Set(missing);
+      renderList();
+
+      const missingText = missing.length
+        ? `\n\n⚠️ Discord에서 못 찾은 팀 (${missing.length}개)\n` +
+          missing.map(n => `· ${n}`).join("\n")
+        : "";
 
       if (!userIds.length) {
         return setStatus(
-          "선택된 닉네임과 정확히 일치하는 Discord 서버 닉네임을 가진 멤버가 없어요.",
+          "선택된 닉네임과 정확히 일치하는 Discord 서버 닉네임을 가진 멤버가 없어요." + missingText,
           "warning"
         );
       }
@@ -718,8 +740,9 @@ body.auth-locked { overflow:hidden; }
         `대상 멤버: ${r.total}명\n` +
         `${isAssign ? "새로 지급" : "제거"}: ${r.success}명\n` +
         `${isAssign ? "이미 보유" : "역할 없음"}: ${r.already}명\n` +
-        `실패: ${r.failed}명`,
-        r.failed > 0 ? "warning" : "success"
+        `실패: ${r.failed}명` +
+        missingText,
+        (r.failed > 0 || missing.length > 0) ? "warning" : "success"
       );
 
     } catch (e) {
