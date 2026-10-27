@@ -24,15 +24,21 @@
 
       <form id="loginForm" class="auth-form">
         <label for="loginId">아이디 또는 이메일</label>
-        <input type="text" id="loginId" placeholder="아이디 또는 이메일" required>
+        <input type="text" id="loginId" placeholder="아이디 또는 이메일"
+          autocomplete="username" autocapitalize="none" spellcheck="false" required>
 
         <label for="password">비밀번호</label>
-        <input type="password" id="password" placeholder="비밀번호" required>
+        <input type="password" id="password" placeholder="비밀번호"
+          autocomplete="current-password" required>
 
         <button type="submit">로그인</button>
+        <button type="button" id="resetPasswordBtn"
+          style="background:transparent;color:var(--text);border-color:var(--line);">
+          비밀번호 재설정 메일 받기
+        </button>
       </form>
 
-      <p class="auth-message" id="message"></p>
+      <p class="auth-message" id="message" role="status" aria-live="polite"></p>
 
       <p style="margin-top:6px; font-size:13px; color:var(--text-sub); text-align:center;">
         아직 계정이 없으신가요?
@@ -46,14 +52,13 @@
     import { auth, db } from "./firebase.js";
 
     import {
-      signInWithEmailAndPassword
+      signInWithEmailAndPassword,
+      sendPasswordResetEmail
     } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
     import {
-      collection,
-      query,
-      where,
-      getDocs
+      doc,
+      getDoc
     } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 
@@ -61,7 +66,19 @@
     const loginId = document.getElementById("loginId");
     const password = document.getElementById("password");
     const message = document.getElementById("message");
-    const submitBtn = loginForm.querySelector("button");
+    const submitBtn = loginForm.querySelector('button[type="submit"]');
+    const resetBtn = document.getElementById("resetPasswordBtn");
+
+    // 아이디가 없는지, 비밀번호가 틀렸는지 구분되지 않도록 같은 문구를 쓴다.
+    const LOGIN_FAILED = "아이디(또는 이메일) 또는 비밀번호가 올바르지 않습니다.";
+    const RESET_NOTICE =
+      "입력한 계정이 존재하면 비밀번호 재설정 안내 메일을 보냈습니다. 받은편지함과 스팸함을 확인해주세요.";
+
+    let busy = false;
+
+    if (new URLSearchParams(window.location.search).get("blocked") === "1") {
+      setMessage("이용이 제한된 계정입니다. 문의가 필요하면 관리자에게 연락해주세요.", "error");
+    }
 
 
     function setMessage(text, state) {
@@ -74,77 +91,138 @@
     }
 
 
+    // 이미 로그인되어 있으면 로그인 화면을 건너뛴다.
+    (async () => {
+      try {
+        await auth.authStateReady();
+        const user = auth.currentUser;
+        if (busy || !user) return;
+        window.location.replace(user.emailVerified ? "/" : "/verify-email.html");
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+
+
+    // 아이디면 이메일로 변환, 이메일이면 그대로. 아이디가 없으면 null.
+    async function resolveEmail(input) {
+      const value = input.trim();
+      if (value.includes("@")) return value;
+
+      // 목록 조회가 아니라 문서 1건 조회 (아이디는 소문자로 저장됨)
+      const snapshot = await getDoc(doc(db, "usernames", value.toLowerCase()));
+      if (!snapshot.exists()) return null;
+      return snapshot.data().email || null;
+    }
+
+
     loginForm.addEventListener("submit", async (event) => {
 
       event.preventDefault();
 
+      busy = true;
       submitBtn.disabled = true;
+      resetBtn.disabled = true;
       setMessage("로그인 중...", null);
-
 
       try {
 
-        let email = loginId.value.trim();
+        const email = await resolveEmail(loginId.value);
 
-
-        // 이메일이 아니라 아이디를 입력한 경우
-        if (!email.includes("@")) {
-
-          const usersRef = collection(db, "users");
-
-          const q = query(
-            usersRef,
-            where("username", "==", email)
-          );
-
-          const snapshot = await getDocs(q);
-
-
-          if (snapshot.empty) {
-            throw new Error("존재하지 않는 아이디입니다.");
-          }
-
-
-          const userData = snapshot.docs[0].data();
-
-          email = userData.email;
-
+        if (!email) {
+          throw { code: "app/login-failed" };
         }
 
-
-        // Firebase Authentication 로그인
-        await signInWithEmailAndPassword(
+        const credential = await signInWithEmailAndPassword(
           auth,
           email,
           password.value
         );
 
+        // 이메일 인증 전이면 인증 화면으로 (메일 발송은 인증 화면에서 1회만)
+        if (!credential.user.emailVerified) {
+          window.location.replace("/verify-email.html?send=1");
+          return;
+        }
 
         setMessage("로그인 성공! 이동 중...", "success");
-
-        // 로그인 성공
         window.location.href = "/";
-
 
       } catch (error) {
 
         console.error(error);
 
+        busy = false;
         submitBtn.disabled = false;
+        resetBtn.disabled = false;
 
-        if (error.message === "존재하지 않는 아이디입니다.") {
-
-          setMessage(error.message, "error");
-
+        if (error.code === "auth/too-many-requests") {
+          setMessage("로그인 시도가 너무 많습니다. 잠시 후 다시 시도해주세요.", "error");
+        } else if (error.code === "auth/network-request-failed") {
+          setMessage("네트워크 연결을 확인한 뒤 다시 시도해주세요.", "error");
+        } else if (error.code === "permission-denied") {
+          setMessage("아이디로 로그인할 수 없습니다. 이메일로 로그인해주세요.", "error");
         } else {
-
-          setMessage(
-            "아이디(또는 이메일) 또는 비밀번호가 올바르지 않습니다.",
-            "error"
-          );
-
+          setMessage(LOGIN_FAILED, "error");
         }
 
+      }
+
+    });
+
+
+    resetBtn.addEventListener("click", async () => {
+
+      if (!loginId.value.trim()) {
+        setMessage("아이디 또는 이메일을 입력해주세요.", "error");
+        loginId.focus();
+        return;
+      }
+
+      resetBtn.disabled = true;
+      setMessage("재설정 메일 발송 중...", null);
+
+      try {
+
+        const email = await resolveEmail(loginId.value);
+
+        if (email) {
+          try {
+            await sendPasswordResetEmail(auth, email, {
+              url: window.location.origin + "/login.html"
+            });
+          } catch (error) {
+            // 현재 도메인이 Firebase 승인된 도메인에 없으면 링크 없이 재시도
+            if (
+              error.code === "auth/unauthorized-continue-uri" ||
+              error.code === "auth/invalid-continue-uri"
+            ) {
+              await sendPasswordResetEmail(auth, email);
+            } else {
+              throw error;
+            }
+          }
+        }
+
+        // 계정이 있든 없든 같은 안내를 보여준다.
+        setMessage(RESET_NOTICE, "success");
+
+      } catch (error) {
+
+        console.error("비밀번호 재설정 오류:", error);
+
+        if (error.code === "auth/user-not-found") {
+          setMessage(RESET_NOTICE, "success");
+        } else if (error.code === "auth/invalid-email") {
+          setMessage("올바른 이메일 주소를 입력해주세요.", "error");
+        } else if (error.code === "auth/too-many-requests") {
+          setMessage("요청이 너무 많습니다. 잠시 후 다시 시도해주세요.", "error");
+        } else {
+          setMessage("재설정 메일을 보내지 못했습니다. 잠시 후 다시 시도해주세요.", "error");
+        }
+
+      } finally {
+        resetBtn.disabled = false;
       }
 
     });
