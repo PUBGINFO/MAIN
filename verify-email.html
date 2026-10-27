@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="robots" content="noindex">
+  <title>이메일 인증 - PUBG INFO</title>
+
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="stylesheet" as="style" crossorigin
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body class="auth-locked">
+
+  <main class="auth-gate">
+    <section class="auth-card">
+      <div class="auth-brand">PUBG INFO</div>
+
+      <h1>이메일 인증이 필요합니다</h1>
+      <p>
+        계속 이용하려면 가입한 이메일 주소의 인증을 완료해주세요.<br>
+        기존 회원도 인증이 필요합니다.
+      </p>
+
+      <p id="accountEmail" style="font-size:13px; color:var(--text); overflow-wrap:anywhere;"></p>
+
+      <p id="message" class="auth-message" role="status" aria-live="polite">계정 확인 중...</p>
+
+      <div class="auth-form" style="margin-top:12px;">
+        <button type="button" id="checkBtn">인증 완료 확인</button>
+        <button type="button" id="resendBtn"
+          style="background:transparent;color:var(--text);border-color:var(--line);">
+          인증 메일 재발송
+        </button>
+        <button type="button" id="logoutBtn"
+          style="background:transparent;color:var(--text);border-color:var(--line);">
+          로그아웃
+        </button>
+      </div>
+
+      <p style="margin-top:18px; font-size:12px; color:var(--text-sub); line-height:1.6;">
+        메일이 보이지 않으면 스팸함도 확인해주세요.<br>
+        메일의 링크를 눌러 인증한 뒤 이 화면으로 돌아오면 자동으로 이동합니다.
+        이동하지 않으면 ‘인증 완료 확인’을 눌러주세요.
+      </p>
+    </section>
+  </main>
+
+  <script type="module">
+
+    import { auth } from "./firebase.js";
+
+    import {
+      onAuthStateChanged,
+      reload,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+
+    import {
+      sendVerificationMail,
+      cooldownLeft
+    } from "./auth-utils.js";
+
+
+    const message = document.getElementById("message");
+    const accountEmail = document.getElementById("accountEmail");
+    const checkBtn = document.getElementById("checkBtn");
+    const resendBtn = document.getElementById("resendBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    let currentUser = null;
+    let started = false;
+    let sending = false;
+    let cooldownTimer = null;
+
+
+    function setMessage(text, state) {
+      message.textContent = text;
+      if (state) {
+        message.setAttribute("data-state", state);
+      } else {
+        message.removeAttribute("data-state");
+      }
+    }
+
+
+    // 서버에서 최신 인증 상태를 받아온다. 인증됐다면 토큰도 갱신해서
+    // 보안 규칙의 email_verified 검사가 바로 통과되도록 한다.
+    async function refreshVerified() {
+      if (!currentUser) return false;
+      await reload(currentUser);
+      if (currentUser.emailVerified) {
+        await currentUser.getIdToken(true);
+        return true;
+      }
+      return false;
+    }
+
+
+    // 재발송 버튼의 대기 시간 표시
+    function updateResendButton() {
+      if (sending) return;
+      const left = currentUser ? cooldownLeft(currentUser.uid) : 0;
+      if (left > 0) {
+        resendBtn.disabled = true;
+        resendBtn.textContent = "인증 메일 재발송 (" + left + "초)";
+      } else {
+        resendBtn.disabled = false;
+        resendBtn.textContent = "인증 메일 재발송";
+        clearInterval(cooldownTimer);
+        cooldownTimer = null;
+      }
+    }
+
+    function startCooldownTimer() {
+      clearInterval(cooldownTimer);
+      updateResendButton();
+      if (currentUser && cooldownLeft(currentUser.uid) > 0) {
+        cooldownTimer = setInterval(updateResendButton, 1000);
+      }
+    }
+
+
+    async function sendMail() {
+      if (!currentUser || sending) return;
+
+      sending = true;
+      resendBtn.disabled = true;
+      setMessage("인증 메일 발송 중...", null);
+
+      try {
+        const result = await sendVerificationMail(currentUser);
+        if (result.status === "cooldown") {
+          setMessage(
+            "방금 인증 메일을 보냈습니다. " + result.left +
+            "초 뒤에 다시 보낼 수 있어요. 받은편지함과 스팸함을 확인해주세요.",
+            null
+          );
+        } else {
+          setMessage("인증 메일을 보냈습니다. 받은편지함과 스팸함을 확인해주세요.", "success");
+        }
+      } catch (error) {
+        console.error(error);
+        if (error.code === "auth/too-many-requests") {
+          setMessage("요청이 너무 많습니다. 잠시 후 다시 시도해주세요.", "error");
+        } else {
+          setMessage("인증 메일을 보내지 못했습니다. 잠시 후 다시 시도해주세요.", "error");
+        }
+      } finally {
+        sending = false;
+        startCooldownTimer();
+      }
+    }
+
+
+    onAuthStateChanged(auth, async (user) => {
+
+      if (!user) {
+        window.location.replace("/login.html");
+        return;
+      }
+
+      currentUser = user;
+      accountEmail.textContent = "가입 이메일: " + (user.email || "");
+
+      // 최초 1회만 실행
+      if (started) return;
+      started = true;
+
+      // 메일 링크를 눌러 이미 인증을 마쳤을 수 있으니 먼저 최신 상태 확인
+      try {
+        if (await refreshVerified()) {
+          window.location.replace("/");
+          return;
+        }
+      } catch (error) {
+        console.error(error);
+      }
+
+      const params = new URLSearchParams(window.location.search);
+      const sent = params.get("sent");
+      const send = params.get("send");
+
+      // 새로고침할 때 같은 동작이 반복되지 않도록 주소의 파라미터를 지운다.
+      window.history.replaceState(null, "", window.location.pathname);
+
+      if (send === "1") {
+        await sendMail();
+      } else if (sent === "1") {
+        setMessage("인증 메일을 보냈습니다. 메일의 인증 링크를 눌러주세요.", "success");
+        startCooldownTimer();
+      } else if (sent === "0") {
+        setMessage("인증 메일이 자동으로 발송되지 않았습니다. 아래 버튼으로 다시 보내주세요.", "error");
+        startCooldownTimer();
+      } else {
+        setMessage("인증 메일을 확인해주세요. 메일이 없다면 재발송할 수 있습니다.", null);
+        startCooldownTimer();
+      }
+
+    });
+
+
+    checkBtn.addEventListener("click", async () => {
+
+      if (!currentUser) return;
+
+      checkBtn.disabled = true;
+      setMessage("인증 상태 확인 중...", null);
+
+      try {
+        if (await refreshVerified()) {
+          setMessage("인증이 완료되었습니다. 이동 중...", "success");
+          window.location.replace("/");
+        } else {
+          setMessage("아직 인증이 확인되지 않았습니다. 메일의 인증 링크를 누른 뒤 다시 확인해주세요.", "error");
+        }
+      } catch (error) {
+        console.error(error);
+        setMessage("인증 상태를 확인하지 못했습니다. 잠시 후 다시 시도해주세요.", "error");
+      } finally {
+        checkBtn.disabled = false;
+      }
+
+    });
+
+
+    resendBtn.addEventListener("click", sendMail);
+
+
+    // 메일 앱에서 인증하고 이 탭으로 돌아오면 자동으로 확인
+    document.addEventListener("visibilitychange", async () => {
+      if (document.visibilityState !== "visible" || !currentUser || !started) return;
+      try {
+        if (await refreshVerified()) {
+          setMessage("인증이 완료되었습니다. 이동 중...", "success");
+          window.location.replace("/");
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    });
+
+
+    logoutBtn.addEventListener("click", async () => {
+      try {
+        await signOut(auth);
+      } finally {
+        window.location.replace("/login.html");
+      }
+    });
+
+  </script>
+
+</body>
+</html>
