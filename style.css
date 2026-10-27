@@ -434,3 +434,15 @@ body.auth-locked { overflow: hidden; }
 .auth-message { min-height: 18px; margin: 3px 0 0; font-size: 12px; color: var(--text-sub); }
 .auth-message[data-state="error"] { color: #d04444; }
 .auth-message[data-state="success"] { color: #2b9960; }
+
+
+/* =======================
+   Header user area (로그인 후 표시)
+======================= */
+.user-area { display: flex; align-items: center; gap: 10px; min-width: 0; font-size: 13px; }
+.user-area a { color: var(--text-sub); font-weight: 600; }
+.user-area a:hover { color: var(--text); }
+.user-area .user-register { color: var(--text); }
+.user-welcome { max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-sub); }
+.user-logout { border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; background: transparent; color: var(--text); font-size: 12px; font-weight: 600; cursor: pointer; }
+.user-logout:hover { background: var(--bg-item-hover); }
