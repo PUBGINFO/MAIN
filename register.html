@@ -24,40 +24,27 @@
 
       <form id="registerForm" class="auth-form">
         <label for="username">아이디</label>
-        <input
-          type="text"
-          id="username"
-          placeholder="4~20자"
-          minlength="4"
-          maxlength="20"
-          required
-        >
+        <input type="text" id="username" placeholder="영문·숫자·밑줄 4~20자"
+          minlength="4" maxlength="20" pattern="[A-Za-z0-9_]{4,20}"
+          title="영문, 숫자, 밑줄(_)만 사용해 4~20자로 입력해주세요."
+          autocomplete="username" autocapitalize="none" spellcheck="false" required>
 
         <label for="email">이메일</label>
-        <input type="email" id="email" placeholder="이메일 주소" required>
+        <input type="email" id="email" placeholder="인증 메일을 받을 이메일 주소"
+          autocomplete="email" required>
 
         <label for="password">비밀번호</label>
-        <input
-          type="password"
-          id="password"
-          placeholder="6자 이상"
-          minlength="6"
-          required
-        >
+        <input type="password" id="password" placeholder="8자 이상"
+          minlength="8" autocomplete="new-password" required>
 
         <label for="passwordConfirm">비밀번호 확인</label>
-        <input
-          type="password"
-          id="passwordConfirm"
-          placeholder="비밀번호 재입력"
-          minlength="6"
-          required
-        >
+        <input type="password" id="passwordConfirm" placeholder="비밀번호 재입력"
+          minlength="8" autocomplete="new-password" required>
 
         <button type="submit">회원가입</button>
       </form>
 
-      <p class="auth-message" id="message"></p>
+      <p class="auth-message" id="message" role="status" aria-live="polite"></p>
 
       <p style="margin-top:6px; font-size:13px; color:var(--text-sub); text-align:center;">
         이미 계정이 있으신가요?
@@ -66,24 +53,27 @@
     </div>
   </div>
 
-
   <script type="module">
 
     import { auth, db } from "./firebase.js";
 
     import {
-      createUserWithEmailAndPassword
+      createUserWithEmailAndPassword,
+      deleteUser
     } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
     import {
-      collection,
-      query,
-      where,
-      getDocs,
       doc,
-      setDoc,
+      getDoc,
+      writeBatch,
       serverTimestamp
     } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+    import {
+      USERNAME_PATTERN,
+      MIN_PASSWORD_LENGTH,
+      sendVerificationMail
+    } from "./auth-utils.js";
 
 
     const registerForm = document.getElementById("registerForm");
@@ -94,7 +84,7 @@
     const passwordConfirmInput = document.getElementById("passwordConfirm");
 
     const message = document.getElementById("message");
-    const submitBtn = registerForm.querySelector("button");
+    const submitBtn = registerForm.querySelector('button[type="submit"]');
 
 
     function setMessage(text, state) {
@@ -112,80 +102,82 @@
       event.preventDefault();
 
       const username = usernameInput.value.trim();
-      const email = emailInput.value.trim();
+      const email = emailInput.value.trim().toLowerCase();
       const password = passwordInput.value;
       const passwordConfirm = passwordConfirmInput.value;
 
-
       setMessage("", null);
 
-
-      // 비밀번호 확인
-      if (password !== passwordConfirm) {
-
-        setMessage("비밀번호가 일치하지 않습니다.", "error");
-
+      // 입력값 검사
+      if (!USERNAME_PATTERN.test(username)) {
+        setMessage("아이디는 영문, 숫자, 밑줄(_)만 사용해 4~20자로 입력해주세요.", "error");
         return;
       }
 
+      if (password.length < MIN_PASSWORD_LENGTH) {
+        setMessage("비밀번호는 " + MIN_PASSWORD_LENGTH + "자 이상이어야 합니다.", "error");
+        return;
+      }
+
+      if (password !== passwordConfirm) {
+        setMessage("비밀번호가 일치하지 않습니다.", "error");
+        return;
+      }
 
       submitBtn.disabled = true;
-
 
       try {
 
         setMessage("가입 처리 중...", null);
 
-
         // 아이디 중복 확인
-        const usersRef = collection(db, "users");
+        const usernameLower = username.toLowerCase();
+        const usernameSnapshot = await getDoc(doc(db, "usernames", usernameLower));
 
-        const usernameQuery = query(
-          usersRef,
-          where("username", "==", username)
-        );
-
-        const usernameSnapshot = await getDocs(usernameQuery);
-
-
-        if (!usernameSnapshot.empty) {
-
+        if (usernameSnapshot.exists()) {
           setMessage("이미 사용 중인 아이디입니다.", "error");
           submitBtn.disabled = false;
-
           return;
         }
 
-
-        // Firebase Authentication 계정 생성
-        const userCredential =
-          await createUserWithEmailAndPassword(
-            auth,
-            email,
-            password
-          );
-
-
+        // Firebase Authentication 계정 생성 (생성 직후 로그인된 상태)
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
-
         // Firestore 사용자 정보 저장
-        await setDoc(
-          doc(db, "users", user.uid),
-          {
+        try {
+          // 아이디 선점 문서와 회원 문서를 한 번에 저장 (동시 가입 시에도 아이디 중복 불가)
+          const batch = writeBatch(db);
+          batch.set(doc(db, "usernames", usernameLower), {
+            uid: user.uid,
+            email: email,
+            username: username
+          });
+          batch.set(doc(db, "users", user.uid), {
             username: username,
+            usernameLower: usernameLower,
             email: email,
             role: "user",
             createdAt: serverTimestamp()
-          }
-        );
+          });
+          await batch.commit();
+        } catch (profileError) {
+          // 프로필 저장에 실패하면 계정만 남지 않도록 방금 만든 계정을 지운다.
+          try { await deleteUser(user); } catch (_) {}
+          throw profileError;
+        }
 
+        // 인증 메일 발송. 실패해도 계정은 만들어졌으므로 인증 화면에서 재발송하게 한다.
+        let sent = "1";
+        try {
+          await sendVerificationMail(user);
+        } catch (mailError) {
+          console.error("인증 메일 발송 오류:", mailError);
+          sent = "0";
+        }
 
-        setMessage("가입 완료! 이동 중...", "success");
-
-        // 가입 즉시 로그인된 상태로 메인으로 이동
-        window.location.href = "/";
-
+        setMessage("가입 완료! 이메일 인증 화면으로 이동합니다...", "success");
+        window.location.replace("/verify-email.html?sent=" + sent);
 
       } catch (error) {
 
@@ -193,23 +185,20 @@
 
         submitBtn.disabled = false;
 
-
         if (error.code === "auth/email-already-in-use") {
-
           setMessage("이미 가입된 이메일입니다.", "error");
-
         } else if (error.code === "auth/invalid-email") {
-
           setMessage("올바른 이메일 주소를 입력해주세요.", "error");
-
         } else if (error.code === "auth/weak-password") {
-
-          setMessage("비밀번호는 6자 이상이어야 합니다.", "error");
-
+          setMessage("비밀번호는 " + MIN_PASSWORD_LENGTH + "자 이상이어야 합니다.", "error");
+        } else if (error.code === "auth/too-many-requests") {
+          setMessage("요청이 너무 많습니다. 잠시 후 다시 시도해주세요.", "error");
+        } else if (error.code === "auth/network-request-failed") {
+          setMessage("네트워크 연결을 확인한 뒤 다시 시도해주세요.", "error");
+        } else if (error.code === "permission-denied") {
+          setMessage("이미 사용 중이거나 사용할 수 없는 아이디입니다. 다른 아이디로 시도해주세요.", "error");
         } else {
-
-          setMessage("회원가입 중 오류가 발생했습니다.", "error");
-
+          setMessage("회원가입 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.", "error");
         }
 
       }
