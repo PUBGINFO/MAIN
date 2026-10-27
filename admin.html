@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="robots" content="noindex">
+  <title>회원 관리 - PUBG INFO</title>
+  <link rel="stylesheet" as="style" crossorigin
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="./style.css">
+  <script>
+    try { const t = localStorage.getItem("pubg-theme"); if (t) document.documentElement.setAttribute("data-theme", t); } catch (_) {}
+  </script>
+  <style>
+    .adm { max-width: 720px; margin: 0 auto; padding: 20px; }
+    .adm h1 { font-size: 20px; margin-bottom: 6px; }
+    .adm .sub { font-size: 12px; color: var(--text-sub); margin-bottom: 16px; line-height: 1.6; }
+    .adm-bar { display: flex; gap: 8px; margin-bottom: 12px; }
+    .adm input[type=search] { flex: 1; min-width: 0; border: 1px solid var(--line); border-radius: 10px; padding: 11px 12px; background: var(--bg); color: var(--text); }
+    .adm button { border: 1px solid var(--line); border-radius: 8px; padding: 8px 11px; background: transparent; color: var(--text); font-size: 12px; font-weight: 600; cursor: pointer; }
+    .adm button:hover { background: var(--bg-item-hover); }
+    .adm button:disabled { opacity: .5; cursor: wait; }
+    .adm button.danger { color: #d04444; border-color: #d04444; }
+    .adm-card { border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin-bottom: 10px; background: var(--bg-item); }
+    .adm-name { font-weight: 700; font-size: 15px; margin-right: 6px; overflow-wrap: anywhere; }
+    .adm-badge { display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 99px; border: 1px solid var(--line); color: var(--text-sub); margin-right: 4px; }
+    .adm-badge.bad { color: #d04444; border-color: #d04444; }
+    .adm-meta { font-size: 12px; color: var(--text-sub); margin-top: 6px; overflow-wrap: anywhere; line-height: 1.6; }
+    .adm-email { font-size: 13px; color: var(--text); margin-top: 8px; overflow-wrap: anywhere; }
+    .adm-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .adm-status { min-height: 18px; font-size: 12px; margin: 8px 0; color: var(--text-sub); white-space: pre-line; }
+    .adm-status[data-state="error"] { color: #d04444; }
+    .adm-status[data-state="success"] { color: #2b9960; }
+    .adm-foot { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-wrap">
+      <a class="logo" href="/">PUBG INFO</a>
+      <span style="font-size:13px;color:var(--text-sub);">회원 관리</span>
+    </div>
+  </header>
+
+  <main class="adm">
+    <p id="gate" class="sub">권한 확인 중...</p>
+
+    <section id="panel" hidden>
+      <h1>회원 관리</h1>
+      <p class="sub">
+        이메일·아이디·가입일을 확인하고 비밀번호 재설정 메일 발송, 이용 차단, 삭제를 할 수 있습니다.<br>
+        비밀번호는 Firebase에 암호화(해시)되어 저장되므로 누구도 볼 수 없습니다. 비밀번호를 잊은 회원에게는 ‘재설정 메일 보내기’를 사용하세요.
+      </p>
+
+      <div class="adm-bar">
+        <input type="search" id="search" placeholder="아이디 또는 이메일 검색" autocomplete="off">
+      </div>
+      <p id="summary" class="sub" style="margin-bottom:8px;"></p>
+      <p id="status" class="adm-status" role="status" aria-live="polite"></p>
+
+      <div id="list"></div>
+
+      <div class="adm-foot">
+        <button type="button" id="moreBtn">더 불러오기</button>
+        <button type="button" id="migrateBtn">기존 회원 아이디 이전 (최초 1회)</button>
+      </div>
+    </section>
+  </main>
+
+  <script type="module">
+
+    import { auth, db } from "./firebase.js";
+    import { onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+    import {
+      collection, query, limit, startAfter, getDocs, getDoc, setDoc, updateDoc, deleteDoc, doc
+    } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+    const PAGE = 200;
+    const $ = (id) => document.getElementById(id);
+    let users = [];
+    let lastDoc = null;
+    let hasMore = true;
+
+    function status(text, state) {
+      const el = $("status");
+      el.textContent = text || "";
+      if (state) el.setAttribute("data-state", state); else el.removeAttribute("data-state");
+    }
+
+    function fmtDate(ts) {
+      if (!ts || !ts.toDate) return "-";
+      const d = ts.toDate(), p = (n) => String(n).padStart(2, "0");
+      return d.getFullYear() + "." + p(d.getMonth() + 1) + "." + p(d.getDate()) + " " + p(d.getHours()) + ":" + p(d.getMinutes());
+    }
+
+    async function copy(text) {
+      try { await navigator.clipboard.writeText(text); status("복사했습니다: " + text, "success"); }
+      catch (_) { status("복사하지 못했습니다. 직접 선택해서 복사해주세요.", "error"); }
+    }
+
+    function el(tag, cls, text) {
+      const e = document.createElement(tag);
+      if (cls) e.className = cls;
+      if (text !== undefined) e.textContent = text;
+      return e;
+    }
+
+    function btn(label, onClick, cls) {
+      const b = el("button", cls || "", label);
+      b.type = "button";
+      b.addEventListener("click", async () => {
+        b.disabled = true;
+        try { await onClick(); } finally { b.disabled = false; }
+      });
+      return b;
+    }
+
+    // ---------- 목록 ----------
+    function render() {
+      const keyword = $("search").value.trim().toLowerCase();
+      const rows = users
+        .filter((u) => !keyword || (u.username || "").toLowerCase().includes(keyword) || (u.email || "").toLowerCase().includes(keyword))
+        .sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+
+      const blocked = users.filter((u) => u.disabled === true).length;
+      const needMigrate = users.filter((u) => !u.usernameLower).length;
+      $("summary").textContent = "불러온 회원 " + users.length + "명 · 차단 " + blocked + "명 · 이전 필요 " + needMigrate + "명" +
+        (keyword ? " · 검색 결과 " + rows.length + "명" : "");
+      $("moreBtn").hidden = !hasMore;
+
+      const list = $("list");
+      list.textContent = "";
+      rows.forEach((u) => list.append(card(u)));
+      if (!rows.length) list.append(el("p", "sub", "표시할 회원이 없습니다."));
+    }
+
+    function card(u) {
+      const c = el("div", "adm-card");
+      const head = el("div");
+      head.append(el("span", "adm-name", u.username || "(아이디 없음)"));
+      if (u.role === "admin") head.append(el("span", "adm-badge", "관리자"));
+      if (u.disabled === true) head.append(el("span", "adm-badge bad", "차단됨"));
+      if (!u.usernameLower) head.append(el("span", "adm-badge", "이전 필요"));
+      c.append(head);
+
+      c.append(el("div", "adm-email", u.email || "(이메일 없음)"));
+      c.append(el("div", "adm-meta", "가입 " + fmtDate(u.createdAt) + " · UID " + u.id));
+
+      const actions = el("div", "adm-actions");
+      actions.append(btn("이메일 복사", () => copy(u.email || "")));
+      actions.append(btn("재설정 메일 보내기", async () => {
+        if (!u.email || !confirm(u.email + " 로 비밀번호 재설정 메일을 보낼까요?")) return;
+        try { await sendPasswordResetEmail(auth, u.email); status("재설정 메일을 보냈습니다: " + u.email, "success"); }
+        catch (e) { console.error(e); status("메일 발송 실패: " + (e.code || e.message), "error"); }
+      }));
+      if (u.role !== "admin") {
+        actions.append(btn(u.disabled ? "차단 해제" : "이용 차단", async () => {
+          const next = !u.disabled;
+          if (!confirm((u.username || u.email) + " 회원을 " + (next ? "차단" : "차단 해제") + "할까요?")) return;
+          try { await updateDoc(doc(db, "users", u.id), { disabled: next }); u.disabled = next; render(); status("처리했습니다.", "success"); }
+          catch (e) { console.error(e); status("처리 실패: " + (e.code || e.message), "error"); }
+        }));
+        actions.append(btn("삭제", async () => {
+          if (!confirm((u.username || u.email) + " 회원 정보를 삭제할까요?\n로그인 계정(Authentication)은 Firebase Console에서 따로 삭제해야 합니다.")) return;
+          try {
+            const lower = (u.usernameLower || u.username || "").toLowerCase();
+            await deleteDoc(doc(db, "users", u.id));
+            if (lower) { try { await deleteDoc(doc(db, "usernames", lower)); } catch (_) {} }
+            users = users.filter((x) => x.id !== u.id); render();
+            status("회원 정보를 삭제했습니다. Firebase Console > Authentication 에서 계정도 삭제하세요.", "success");
+          } catch (e) { console.error(e); status("삭제 실패: " + (e.code || e.message), "error"); }
+        }, "danger"));
+      }
+      c.append(actions);
+      return c;
+    }
+
+    async function loadMore() {
+      const base = collection(db, "users");
+      const q = lastDoc ? query(base, startAfter(lastDoc), limit(PAGE)) : query(base, limit(PAGE));
+      const snap = await getDocs(q);
+      snap.forEach((d) => users.push({ id: d.id, ...d.data() }));
+      if (snap.docs.length) lastDoc = snap.docs[snap.docs.length - 1];
+      hasMore = snap.size === PAGE;
+    }
+
+    // ---------- 기존 회원 아이디 이전 ----------
+    async function migrate() {
+      if (!confirm("기존 회원의 아이디를 새 방식(usernames)으로 이전합니다. 진행할까요?")) return;
+      status("전체 회원을 불러오는 중...", null);
+      while (hasMore) await loadMore();
+
+      let created = 0, done = 0;
+      const problems = [];
+      for (const u of users) {
+        const name = String(u.username || "").trim();
+        const lower = name.toLowerCase();
+        if (!name || lower === "." || lower === ".." || lower.includes("/")) { problems.push((u.email || u.id) + ": 사용할 수 없는 아이디(" + name + ")"); continue; }
+        try {
+          const ref = doc(db, "usernames", lower);
+          const ex = await getDoc(ref);
+          if (!ex.exists()) {
+            await setDoc(ref, { uid: u.id, email: u.email, username: name });
+            created++;
+          } else if (ex.data().uid !== u.id) {
+            problems.push(name + ": 대소문자만 다른 같은 아이디의 다른 회원이 있어 아이디 로그인이 안 됩니다(이메일 로그인은 가능)");
+            continue;
+          }
+          if (u.usernameLower !== lower) {
+            await updateDoc(doc(db, "users", u.id), { usernameLower: lower });
+            u.usernameLower = lower;
+          }
+          done++;
+        } catch (e) { problems.push(name + ": " + (e.code || e.message)); }
+      }
+      render();
+      status("이전 완료: 정상 " + done + "명 (새로 등록 " + created + "명)" + (problems.length ? "\n확인 필요 " + problems.length + "건\n" + problems.join("\n") : ""),
+        problems.length ? "error" : "success");
+    }
+
+    // ---------- 권한 확인 ----------
+    function deny(msg) { $("gate").textContent = msg; }
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { window.location.replace("/login.html"); return; }
+      if (!user.emailVerified) { window.location.replace("/verify-email.html"); return; }
+      try {
+        const me = await getDoc(doc(db, "users", user.uid));
+        if (!me.exists() || me.data().role !== "admin") { deny("접근 권한이 없습니다."); return; }
+        await loadMore();
+      } catch (e) {
+        console.error(e);
+        deny("회원 정보를 불러오지 못했습니다. 관리자 권한과 Firestore 보안 규칙을 확인해주세요. (" + (e.code || e.message) + ")");
+        return;
+      }
+      $("gate").hidden = true;
+      $("panel").hidden = false;
+      render();
+    });
+
+    $("search").addEventListener("input", render);
+    $("moreBtn").addEventListener("click", async () => { try { await loadMore(); render(); } catch (e) { status("불러오기 실패: " + (e.code || e.message), "error"); } });
+    $("migrateBtn").addEventListener("click", migrate);
+
+  </script>
+</body>
+</html>
