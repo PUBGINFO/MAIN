@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PUBG MOBILE - UC 계산기 (2/3~ 통합)</title>
+<title>PUBG MOBILE - UC 계산기</title>
 <meta property="og:title" content="PUBG INFO - UC 계산기">
 <meta property="og:description" content="PUBG MOBILE - UC 최저가 계산기">
 <meta property="og:url" content="https://pubginfo.site/UC%20CALC">
@@ -82,6 +82,7 @@ body{
 
 .midas-card{background:linear-gradient(160deg, rgba(245,158,11,.09), var(--surface) 55%);}
 .midas-card .os-name{color:#e08a0c;}
+.tri-img{height:40px; width:40px; border-radius:9px; object-fit:contain;}
 .midas-card:hover{border-color:#f5a623;}
 [data-theme="dark"] .ios-card{background:linear-gradient(160deg, rgba(59,130,246,.14), var(--surface) 55%);}
 [data-theme="dark"] .aos-card{background:linear-gradient(160deg, rgba(52,168,83,.15), var(--surface) 55%);}
@@ -102,20 +103,15 @@ input[type="number"]{
   border:1.5px solid var(--border); transition:border-color .2s;
 }
 input[type="number"]:focus{border-color:var(--accent);}
-select{width:100%; padding:12px; font-size:.95rem; border-radius:12px; background:var(--bg); color:var(--text); border:1.5px solid var(--border); outline:none; font-family:inherit;}
-select:focus{border-color:var(--accent);}
-.cmp-head{font-size:.8rem; font-weight:800; color:var(--accent); margin:18px 0 8px;}
-.cmp-diff{margin-top:16px; padding:14px 16px; border-radius:12px; background:var(--surface2); border:1px solid var(--border); font-size:.86rem; line-height:1.7; font-weight:600;}
-.cmp-diff .up{color:var(--bad);} .cmp-diff .down{color:var(--good);}
-.unified-card{max-width:340px; min-width:260px; padding:28px 18px 22px; background:linear-gradient(160deg, rgba(47,111,237,.08), var(--surface) 55%);}
-.unified-card:hover{border-color:var(--accent);}
-.tri-icons{display:flex; align-items:center; justify-content:center; gap:14px; margin-bottom:16px;}
-.tri-ic{display:inline-flex; width:38px; height:38px;}
-.tri-ic svg{width:100%; height:100%;}
+.platform-card{flex:1; min-width:150px; max-width:220px; padding:28px 14px 22px;
+  background:linear-gradient(160deg, rgba(47,111,237,.08), var(--surface) 55%);}
+.platform-card:hover{border-color:var(--accent);}
+.os-icons{display:flex; align-items:center; justify-content:center; gap:12px; height:44px; margin-bottom:14px;}
+.os-icons .os-icon{margin:0; width:40px; height:40px;}
 .ios-ic{color:var(--text2);} .aos-ic{color:#2fa757;}
-.tri-img{height:38px; width:38px; border-radius:9px; object-fit:contain;}
-.unified-card .os-name{color:var(--text);}
-.note{font-size:.74rem; color:var(--text3); margin:-6px 0 16px 2px; line-height:1.5;}
+.platform-card .os-name{color:var(--text);}
+[data-theme="dark"] .platform-card{background:linear-gradient(160deg, rgba(91,141,239,.14), var(--surface) 55%);}
+.plat-chip{display:inline-block; font-size:.72rem; font-weight:700; padding:3px 10px; border-radius:20px; background:var(--surface2); color:var(--text2); border:1px solid var(--border); margin-bottom:14px;}
 
 .checkbox-group{display:flex; align-items:center; margin-bottom:18px; padding-left:2px; cursor:pointer;}
 .checkbox-group input[type="checkbox"]{
@@ -185,14 +181,20 @@ button.calc-btn:disabled{opacity:.6; transform:none !important;}
   <div class="welcome-sub">PUBG MOBILE · 모바일 배틀그라운드</div>
   <div class="welcome-question">어떤 플랫폼의 정보를 원하시나요?</div>
   <div class="os-cards">
-    <div class="os-card unified-card" onclick="selectOS('all')">
-      <div class="tri-icons">
-        <span class="tri-ic ios-ic"><svg viewBox="0 0 384 512" fill="currentColor"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 21.8-88.5 21.8-11.4 0-51.1-20.8-82.3-20.1-41.2.6-79.1 23.9-100.2 60.5-42.5 73.7-10.9 183.7 30.2 243.2 20.1 29 44.1 61.3 75.7 60.1 30.5-1.2 41.9-19.7 78.9-19.7 36.5 0 47.1 19.7 79 19 32.1-.6 53.1-29.3 72.8-58.1 22.6-33 32-65 32.5-66.6-.7-.3-63.1-24.2-63.4-96zM232 81.9c16.1-19.5 26.3-46.6 23.3-73.9-23.4 1-52 15.6-68.8 35.2-15.2 17.5-28.5 45.4-24.8 72 26 2.1 52.8-14 70.3-33.3z"/></svg></span>
-        <span class="tri-ic aos-ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 10.5V17a1 1 0 001 1h1v2.5a1.5 1.5 0 003 0V18h4v2.5a1.5 1.5 0 003 0V18h1a1 1 0 001-1v-6.5H5z"/><path d="M5 10.5a7 7 0 0114 0z" opacity=".85"/><rect x="1.6" y="10.8" width="2.2" height="6" rx="1.1"/><rect x="20.2" y="10.8" width="2.2" height="6" rx="1.1"/><g stroke="currentColor" stroke-width="1.4" stroke-linecap="round" fill="none"><path d="M8.5 4.5L7 2.5M15.5 4.5L17 2.5"/></g><circle cx="9.5" cy="8" r="1" fill="#fff"/><circle cx="14.5" cy="8" r="1" fill="#fff"/></svg></span>
+    <div class="os-card platform-card" onclick="selectOS('android')">
+      <div class="os-icons">
+        <div class="os-icon ios-ic"><svg viewBox="0 0 384 512" fill="currentColor"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 21.8-88.5 21.8-11.4 0-51.1-20.8-82.3-20.1-41.2.6-79.1 23.9-100.2 60.5-42.5 73.7-10.9 183.7 30.2 243.2 20.1 29 44.1 61.3 75.7 60.1 30.5-1.2 41.9-19.7 78.9-19.7 36.5 0 47.1 19.7 79 19 32.1-.6 53.1-29.3 72.8-58.1 22.6-33 32-65 32.5-66.6-.7-.3-63.1-24.2-63.4-96zM232 81.9c16.1-19.5 26.3-46.6 23.3-73.9-23.4 1-52 15.6-68.8 35.2-15.2 17.5-28.5 45.4-24.8 72 26 2.1 52.8-14 70.3-33.3z"/></svg></div>
+        <div class="os-icon aos-ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 10.5V17a1 1 0 001 1h1v2.5a1.5 1.5 0 003 0V18h4v2.5a1.5 1.5 0 003 0V18h1a1 1 0 001-1v-6.5H5z"/><path d="M5 10.5a7 7 0 0114 0z" opacity=".85"/><rect x="1.6" y="10.8" width="2.2" height="6" rx="1.1"/><rect x="20.2" y="10.8" width="2.2" height="6" rx="1.1"/><g stroke="currentColor" stroke-width="1.4" stroke-linecap="round" fill="none"><path d="M8.5 4.5L7 2.5M15.5 4.5L17 2.5"/></g><circle cx="9.5" cy="8" r="1" fill="#fff"/><circle cx="14.5" cy="8" r="1" fill="#fff"/></svg></div>
+      </div>
+      <div class="os-name">iOS + Android</div>
+      <div class="os-desc">App Store · Google Play<br>두 스토어 동일 구성</div>
+    </div>
+    <div class="os-card platform-card midas-card" onclick="selectOS('midasbuy')">
+      <div class="os-icons">
         <img class="tri-img" src="midasbuy.jpeg" alt="MidasBuy">
       </div>
-      <div class="os-name">iOS + Android + MidasBuy</div>
-      <div class="os-desc">전 플랫폼 가격 동일<br></div>
+      <div class="os-name">MidasBuy</div>
+      <div class="os-desc">공식 충전소<br>보너스 UC 더 많음</div>
     </div>
   </div>
 </div>
@@ -210,20 +212,10 @@ button.calc-btn:disabled{opacity:.6; transform:none !important;}
 
   <h1 class="title" id="mainTitle">UC 최저가 계산기 <span class="title-badge">BETA</span></h1>
   <div class="calculator">
-    <div class="input-group">
-      <label for="storeSel">충전처 (가격은 동일, 보너스 UC만 다름)</label>
-      <select id="storeSel" onchange="onStoreChange()">
-        <option value="android">iOS · Android</option>
-        <option value="midasbuy">MidasBuy</option>
-      </select>
-    </div>
+    <div class="plat-chip" id="platChip">iOS + Android</div>
     <div class="input-group">
       <label id="inputLabel">필요한 UC를 입력하세요</label>
       <input type="number" id="mainInput" min="1" placeholder="예: 12000" onkeypress="handleEnterKey(event)">
-    </div>
-    <div class="checkbox-group" id="bonusRow" style="display:none">
-      <input type="checkbox" id="useBonus" checked>
-      <label for="useBonus" id="bonusLabel">누적 충전 보너스 적용</label>
     </div>
     <button class="calc-btn" onclick="calculate()" id="calculateBtn">계산하기</button>
     <div id="result" class="result"></div>
@@ -240,47 +232,30 @@ button.calc-btn:disabled{opacity:.6; transform:none !important;}
 <div class="version" id="versionTag">v5.0</div>
 
 <script>
-let platform = 'ios', mode = 'price', period = 'old', compareOn = false; const CMP = {};
+let platform = 'android', mode = 'price';   // 'android' = iOS + Android 공용
 
+// 2027.2.3 09:00 이후 가격 (전 플랫폼 동일) / 보너스 UC만 스토어별로 다름
+const PRICES = [1300, 4000, 13000, 33000, 66000, 130000];
 const data = {
-    ios: [
-        { price:1100,   baseUC:60,   bonusUC:0,    totalUC:60,   label:'60 UC' },
-        { price:4400,   baseUC:180,  bonusUC:10,   totalUC:190,  label:'190 UC' },
-        { price:14000,  baseUC:600,  bonusUC:60,   totalUC:660,  label:'660 UC' },
-        { price:33000,  baseUC:1500, bonusUC:300,  totalUC:1800, label:'1,800 UC' },
-        { price:66000,  baseUC:2950, bonusUC:900,  totalUC:3850, label:'3,850 UC' },
-        { price:149000, baseUC:5900, bonusUC:2200, totalUC:8100, label:'8,100 UC' }
-    ],
-    android: [
-        { price:1100,   baseUC:60,   bonusUC:0,    totalUC:60,   label:'60 UC' },
-        { price:3300,   baseUC:180,  bonusUC:10,   totalUC:190,  label:'180 + 10 UC' },
-        { price:11000,  baseUC:600,  bonusUC:60,   totalUC:660,  label:'600 + 60 UC' },
-        { price:27500,  baseUC:1500, bonusUC:300,  totalUC:1800, label:'1,500 + 300 UC' },
-        { price:55000,  baseUC:2950, bonusUC:900,  totalUC:3850, label:'2,950 + 900 UC' },
-        { price:110000, baseUC:5900, bonusUC:2200, totalUC:8100, label:'5,900 + 2,200 UC' }
+    android: [   // iOS + Android
+        { baseUC:60,   bonusUC:0,    totalUC:60,   label:'60 UC' },
+        { baseUC:180,  bonusUC:10,   totalUC:190,  label:'180 + 10 UC' },
+        { baseUC:600,  bonusUC:60,   totalUC:660,  label:'600 + 60 UC' },
+        { baseUC:1500, bonusUC:300,  totalUC:1800, label:'1,500 + 300 UC' },
+        { baseUC:2950, bonusUC:900,  totalUC:3850, label:'2,950 + 900 UC' },
+        { baseUC:5900, bonusUC:2200, totalUC:8100, label:'5,900 + 2,200 UC' }
     ],
     midasbuy: [
-        { price:1100,   baseUC:60,   bonusUC:0,    totalUC:60,   label:'60 UC' },
-        { price:3300,   baseUC:180,  bonusUC:15,   totalUC:195,  label:'180 + 15 UC' },
-        { price:11000,  baseUC:600,  bonusUC:80,   totalUC:680,  label:'600 + 80 UC' },
-        { price:27500,  baseUC:1500, bonusUC:350,  totalUC:1850, label:'1,500 + 350 UC' },
-        { price:55000,  baseUC:2950, bonusUC:1000, totalUC:3950, label:'2,950 + 1,000 UC' },
-        { price:110000, baseUC:5900, bonusUC:2400, totalUC:8300, label:'5,900 + 2,400 UC' }
+        { baseUC:60,   bonusUC:0,    totalUC:60,   label:'60 UC' },
+        { baseUC:180,  bonusUC:15,   totalUC:195,  label:'180 + 15 UC' },
+        { baseUC:600,  bonusUC:80,   totalUC:680,  label:'600 + 80 UC' },
+        { baseUC:1500, bonusUC:350,  totalUC:1850, label:'1,500 + 350 UC' },
+        { baseUC:2950, bonusUC:1000, totalUC:3950, label:'2,950 + 1,000 UC' },
+        { baseUC:5900, bonusUC:2400, totalUC:8300, label:'5,900 + 2,400 UC' }
     ]
 };
-
-// ---- 2027.2.3 09:00 이후: 전 플랫폼 동일가, 충전 보상 이벤트 없음 ----
-const PRICE_NEW = [1300, 4000, 13000, 33000, 66000, 130000];
-function getPkgs(os) {
-    return data[os === 'midasbuy' ? 'midasbuy' : 'android'].map((p, i) => ({ ...p, price: PRICE_NEW[i] }));
-}
-function bonusActive() { return false; }
-function getBonus() { return 0; }
-function onStoreChange() {
-    platform = document.getElementById('storeSel').value;
-    document.getElementById('result').classList.remove('show');
-    document.getElementById('result').innerHTML = '';
-}
+const PLATFORM_NAME = { android:'iOS + Android', midasbuy:'MidasBuy' };
+function getPkgs(os) { return data[os].map((p, i) => ({ ...p, price: PRICES[i] })); }
 
 // ---- 테마 ----
 function applyTheme(t){
@@ -296,33 +271,33 @@ function toggleTheme(){
     applyTheme(saved === 'dark' ? 'dark' : 'light');
 })();
 
-// ---- DP 빌더: 그리디 선결제 + 좁힌 범위 DP 하이브리드 ----
-function buildMinCostDP(pkgs, maxBaseUC) {
-    const dp = new Array(maxBaseUC + 1).fill(Infinity);
-    const dpTotal = new Array(maxBaseUC + 1).fill(0);
-    const ch = new Array(maxBaseUC + 1).fill(-1);
-    dp[0] = 0; dpTotal[0] = 0;
-    for (let i = 0; i < pkgs.length; i++) {
-        for (let j = pkgs[i].baseUC; j <= maxBaseUC; j++) {
-            const prev = dp[j - pkgs[i].baseUC];
-            if (prev === Infinity) continue;
-            const newCost = prev + pkgs[i].price;
-            const newTotal = dpTotal[j - pkgs[i].baseUC] + pkgs[i].totalUC;
-            if (newCost < dp[j] || (newCost === dp[j] && newTotal > dpTotal[j])) {
-                dp[j] = newCost; dpTotal[j] = newTotal; ch[j] = i;
+// ---- DP 빌더: 총 UC(보너스 포함) 기준 최소비용 (정확히 u UC를 얻는 최소 가격) ----
+function buildMinCostDP(pkgs, maxU) {
+    const dp = new Array(maxU + 1).fill(Infinity);
+    const dpClicks = new Array(maxU + 1).fill(Infinity);
+    const ch = new Array(maxU + 1).fill(-1);
+    dp[0] = 0; dpClicks[0] = 0;
+    for (let u = 1; u <= maxU; u++) {
+        for (let i = 0; i < pkgs.length; i++) {
+            const t = pkgs[i].totalUC;
+            if (u < t || dp[u - t] === Infinity) continue;
+            const nc = dp[u - t] + pkgs[i].price;
+            const ncl = dpClicks[u - t] + 1;
+            if (nc < dp[u] || (nc === dp[u] && ncl < dpClicks[u])) {
+                dp[u] = nc; dpClicks[u] = ncl; ch[u] = i;
             }
         }
     }
-    return { dp, dpTotal, ch };
+    return { dp, ch };
 }
 
-function traceback(ch, pkgs, startValue, key = 'baseUC') {
+function traceback(ch, pkgs, startValue) {
     const counts = new Array(pkgs.length).fill(0);
     let tmp = startValue;
     while (tmp > 0 && ch[tmp] !== -1) {
         const pkgIdx = ch[tmp];
         counts[pkgIdx]++;
-        tmp -= pkgs[pkgIdx][key];
+        tmp -= pkgs[pkgIdx].totalUC;
     }
     return counts;
 }
@@ -348,19 +323,17 @@ function showPage(showId, hideId, animClass) {
 }
 
 function selectOS(os) {
-    platform = 'android'; mode = 'price'; document.getElementById('storeSel').value = 'android';
+    platform = os; mode = 'price';
     document.getElementById('result').classList.remove('show');
     document.getElementById('result').innerHTML = '';
     document.getElementById('mainInput').value = '';
-    document.getElementById('useBonus').checked = true;
     document.getElementById('tabPrice').classList.add('active');
     document.getElementById('tabUC').classList.remove('active');
     document.getElementById('inputLabel').textContent = '필요한 UC를 입력하세요';
     document.getElementById('mainInput').placeholder = '예: 12000';
     document.getElementById('mainTitle').innerHTML = 'UC 최저가 계산기 <span class="title-badge">BETA</span>';
-    period = 'end';
-    const verMap = { all: 'v5.0 (2/3~ 통합)' };
-    document.getElementById('versionTag').textContent = verMap[os];
+    document.getElementById('platChip').textContent = PLATFORM_NAME[os];
+    document.getElementById('versionTag').textContent = 'v5.0 (' + PLATFORM_NAME[os] + ')';
     showPage('calcPage', 'welcomePage', 'anim-up');
     setTimeout(() => updateMSlider(), 260);
     setTimeout(() => document.getElementById('mainInput').focus(), 420);
@@ -399,53 +372,45 @@ function resetResult() {
 }
 
 function handleEnterKey(e) { if (e.key === 'Enter') calculate(); }
-function calculate() {
-    const fn = mode === 'price' ? calcMinPrice : calcMaxUC;
-    const v = parseInt(document.getElementById('mainInput').value);
-    if (isNaN(v) || v <= 0) return;
-    fn({ el: () => document.getElementById('result'), p: 'end', key: 'A' });
-}
+function calculate() { mode === 'price' ? calcMinPrice() : calcMaxUC(); }
 
 // ---- 모드 A: UC 입력 -> [최저 가격 / 최대 획득 / 묶음 위주] 3대 카드를 모두 분석하여 제안 ----
-function calcMinPrice(RT) {
+function calcMinPrice() {
     const input = document.getElementById('mainInput');
-    const resultDiv = RT.el();
+    const resultDiv = document.getElementById('result');
     const btn = document.getElementById('calculateBtn');
-    let bonusOn = false;
     const targetUC = parseInt(input.value);
     if (isNaN(targetUC) || targetUC <= 0) return;
 
     btn.innerHTML = '<span class="loading"></span> 계산중...'; btn.disabled = true;
 
     setTimeout(() => {
-        period = RT.p; bonusOn = bonusActive();
         const pkgs = getPkgs(platform);
-        const best = pkgs[pkgs.length - 1]; // 최고가 패키지
-        const maxBase = Math.max(...pkgs.map(p => p.baseUC));
+        // UC당 단가가 가장 낮은 패키지 (큰 목표일 때 미리 담아두는 용도)
+        const bestIdx = pkgs.reduce((bi, p, i) => (p.price / p.totalUC < pkgs[bi].price / pkgs[bi].totalUC ? i : bi), 0);
+        const best = pkgs[bestIdx];
+        const maxTotal = Math.max(...pkgs.map(p => p.totalUC));
 
-        // 1. 그리디 선결제 범위 축소
+        // 1. 큰 목표는 최저 단가 패키지를 먼저 담아 DP 범위 축소 (총 UC 기준)
         let preBuyCount = 0;
         let remainingTarget = targetUC;
-        const safetyMargin = maxBase * 2;
-        if (targetUC > best.baseUC * 3) {
-            const affordable = Math.floor((targetUC - safetyMargin) / best.baseUC);
-            preBuyCount = Math.max(affordable, 0);
-            remainingTarget = targetUC - preBuyCount * best.baseUC;
+        if (targetUC > best.totalUC * 3) {
+            preBuyCount = Math.max(Math.floor((targetUC - maxTotal * 2) / best.totalUC), 0);
+            remainingTarget = targetUC - preBuyCount * best.totalUC;
         }
 
-        const searchMax = remainingTarget + maxBase * 3;
-        const { dp, dpTotal, ch } = buildMinCostDP(pkgs, searchMax);
+        const searchMax = remainingTarget + maxTotal * 2;
+        const { dp, ch } = buildMinCostDP(pkgs, searchMax);
 
-        // 2. 유효 후보군 생성
+        // 2. 유효 후보군: 총 UC가 목표 이상인 모든 (정확히 u UC) 조합
         const candidates = [];
-        for (let b = 0; b <= searchMax; b++) {
-            if (dp[b] === Infinity) continue;
-            const preBase = preBuyCount * best.baseUC;
-            const totalBase = preBase + b;
-            const effective = (dpTotal[b] + preBuyCount * best.totalUC) + (bonusOn ? getBonus(totalBase, true) : 0);
-            if (effective < targetUC) continue;
-            const price = dp[b] + preBuyCount * best.price;
-            candidates.push({ b, price, effective, totalBase });
+        for (let u = Math.max(remainingTarget, 0); u <= searchMax; u++) {
+            if (dp[u] === Infinity) continue;
+            candidates.push({
+                b: u,
+                price: dp[u] + preBuyCount * best.price,
+                effective: u + preBuyCount * best.totalUC
+            });
         }
 
         if (candidates.length === 0) {
@@ -457,8 +422,8 @@ function calcMinPrice(RT) {
 
         // 역추적 보조 함수들
         function countsOf(c) {
-            const dpCounts = traceback(ch, pkgs, c.b, 'baseUC');
-            dpCounts[pkgs.length - 1] += preBuyCount;
+            const dpCounts = traceback(ch, pkgs, c.b);
+            dpCounts[bestIdx] += preBuyCount;
             return dpCounts;
         }
         function clicksOf(c) { return totalPaymentClicks(countsOf(c)); }
@@ -468,10 +433,15 @@ function calcMinPrice(RT) {
         candidates.sort((a, b) => a.price - b.price || b.effective - a.effective);
         const cCheapest = candidates[0];
 
-        // [카드 2] 최대 획득 (가성비를 고려하여 약간의 마진(15% 이내)에서 획득량 극대화)
+        // [카드 2] 가성비 (최저가 +15% 이내에서 UC당 단가가 가장 낮은 조합)
         const yieldCandidates = candidates.filter(c => c.price <= cCheapest.price * 1.15 && c.effective > cCheapest.effective);
         yieldCandidates.sort((a,b) => (a.price / a.effective) - (b.price / b.effective) || b.effective - a.effective);
         const cMaxYield = yieldCandidates.length > 0 ? yieldCandidates[0] : cCheapest;
+
+        // [카드 3] 최대 획득 (최저가 +15% 이내에서 획득 UC가 가장 많은 조합, 같으면 더 저렴한 쪽)
+        const cTopYield = candidates
+            .filter(c => c.price <= cCheapest.price * 1.15)
+            .reduce((best, c) => (c.effective > best.effective || (c.effective === best.effective && c.price < best.price)) ? c : best, cCheapest);
 
         // [카드 3] 묶음 상품 위주 (25% 예산 추가 한도 내에서 결제 횟수가 최소인 구성)
         const bundleCandidates = candidates.filter(c => c.price <= cCheapest.price * 1.25);
@@ -492,7 +462,7 @@ function calcMinPrice(RT) {
         // [조건 2] 돈 차이는 거의 안 나는데 보너스를 훨씬 더 많이 준다면 가성비 최대 획득을 추천
         else if (cMaxYield !== cCheapest && (cMaxYield.price - cCheapest.price) <= priceMargin && cMaxYield.effective > cCheapest.effective) {
             recommendedCard = cMaxYield;
-            recommendedTag = '최대 획득 보너스';
+            recommendedTag = '가성비';
         }
 
         // 5. 카드 렌더링 헬퍼 함수
@@ -523,71 +493,73 @@ function calcMinPrice(RT) {
         out += renderPriceCard('최저 가격', 'tag-simple', cCheapest);
 
         if (cMaxYield !== cCheapest) {
-            out += renderPriceCard('최대 획득', 'tag-value', cMaxYield);
+            out += renderPriceCard('가성비 (단가↓)', 'tag-value', cMaxYield);
         }
-        if (cBundle !== cCheapest && cBundle !== cMaxYield) {
+        if (cTopYield !== cCheapest && cTopYield !== cMaxYield) {
+            out += renderPriceCard('최대 획득', 'tag-min', cTopYield);
+        }
+        if (cBundle !== cCheapest && cBundle !== cMaxYield && cBundle !== cTopYield) {
             out += renderPriceCard('묶음 상품 위주', 'tag-min', cBundle);
         }
         out += `</div>`;
 
-        CMP[RT.key] = cCheapest.price; resultDiv.innerHTML = out; resultDiv.classList.add('show');
+        resultDiv.innerHTML = out; resultDiv.classList.add('show');
         btn.innerHTML = '계산하기'; btn.disabled = false;
     }, 250);
 }
 
 // ---- 모드 B: 예산 입력 -> 최대 UC ----
-function calcMaxUC(RT) {
+function calcMaxUC() {
     const input = document.getElementById('mainInput');
-    const resultDiv = RT.el();
+    const resultDiv = document.getElementById('result');
     const btn = document.getElementById('calculateBtn');
-    let bonusOn = false;
     const budget = parseInt(input.value);
     if (isNaN(budget) || budget <= 0) return;
 
     btn.innerHTML = '<span class="loading"></span> 계산중...'; btn.disabled = true;
 
     setTimeout(() => {
-        period = RT.p; bonusOn = bonusActive();
         const pkgs = getPkgs(platform);
 
-        const cheapestRate = Math.min(...pkgs.map(p => p.price / p.baseUC));
-        const maxBase = Math.ceil(budget / cheapestRate) + 6000;
+        // 가격 단위(최대공약수)로 나눠 "정확히 s×단위 원을 쓸 때 얻는 최대 UC"를 계산
+        const gcd = (x, y) => y ? gcd(y, x % y) : x;
+        const unit = pkgs.reduce((g, p) => gcd(g, p.price), 0);
+        const steps = Math.floor(budget / unit);
+        if (steps > 3000000) {
+            resultDiv.innerHTML = '<div class="empty-msg">예산이 너무 큽니다. (최대 약 ' + (3000000 * unit).toLocaleString() + '원)</div>';
+            resultDiv.classList.add('show');
+            btn.innerHTML = '계산하기'; btn.disabled = false;
+            return;
+        }
 
-        const dp = new Array(maxBase + 1).fill(Infinity);
-        const dpTotal = new Array(maxBase + 1).fill(0);
-        const dpClicks = new Array(maxBase + 1).fill(Infinity);
-        const ch = new Array(maxBase + 1).fill(-1);
-        dp[0] = 0; dpClicks[0] = 0;
-
-        for (let i = 0; i < pkgs.length; i++) {
-            for (let b = pkgs[i].baseUC; b <= maxBase; b++) {
-                const prev = dp[b - pkgs[i].baseUC];
-                if (prev === Infinity) continue;
-                const nc = prev + pkgs[i].price;
-                if (nc > budget) continue;
-                const nt = dpTotal[b - pkgs[i].baseUC] + pkgs[i].totalUC;
-                const nClicks = dpClicks[b - pkgs[i].baseUC] + 1;
-                if (nc < dp[b] || (nc === dp[b] && nClicks < dpClicks[b]) || (nc === dp[b] && nClicks === dpClicks[b] && nt > dpTotal[b])) {
-                    dp[b] = nc; dpTotal[b] = nt; dpClicks[b] = nClicks; ch[b] = i;
+        const dpU = new Array(steps + 1).fill(-1);
+        const dpClicks = new Array(steps + 1).fill(Infinity);
+        const ch = new Array(steps + 1).fill(-1);
+        dpU[0] = 0; dpClicks[0] = 0;
+        for (let st = 1; st <= steps; st++) {
+            for (let i = 0; i < pkgs.length; i++) {
+                const ps = pkgs[i].price / unit;
+                if (st < ps || dpU[st - ps] < 0) continue;
+                const nt = dpU[st - ps] + pkgs[i].totalUC;
+                const ncl = dpClicks[st - ps] + 1;
+                if (nt > dpU[st] || (nt === dpU[st] && ncl < dpClicks[st])) {
+                    dpU[st] = nt; dpClicks[st] = ncl; ch[st] = i;
                 }
             }
         }
 
-        function traceCounts(b) {
+        function traceCounts(st) {
             const counts = new Array(pkgs.length).fill(0);
-            let tmp = b;
-            while (tmp > 0 && ch[tmp] !== -1) { counts[ch[tmp]]++; tmp -= pkgs[ch[tmp]].baseUC; }
+            let tmp = st;
+            while (tmp > 0 && ch[tmp] !== -1) { counts[ch[tmp]]++; tmp -= pkgs[ch[tmp]].price / unit; }
             return counts;
         }
 
-        // 후보 수집
+        // 후보 수집 (예산 이하로 쓰는 모든 도달 가능 금액)
         const candidates = [];
-        for (let b = 0; b <= maxBase; b++) {
-            if (dp[b] === Infinity) continue;
-            const bonus = bonusOn ? getBonus(b, true) : 0;
-            const total = dpTotal[b] + bonus;
-            if (total <= 0) continue;
-            candidates.push({ base: b, cost: dp[b], total, clicks: dpClicks[b] });
+        for (let st = 1; st <= steps; st++) {
+            if (dpU[st] <= 0) continue;
+            candidates.push({ st, cost: st * unit, total: dpU[st], clicks: dpClicks[st] });
         }
 
         if (candidates.length === 0) {
@@ -620,15 +592,14 @@ function calcMaxUC(RT) {
         });
 
         function renderCard(tag, tagClass, c) {
-            const counts = traceCounts(c.base);
-            const bonus = bonusOn ? getBonus(c.base, true) : 0;
+            const counts = traceCounts(c.st);
             const remain = budget - c.cost;
             const rate = (c.cost / c.total).toFixed(1);
             let html = `<div class="rec-card"><div class="rec-card-head">
                 <span class="rec-tag ${tagClass}">${tag}</span>
                 <span class="rec-price">${c.total.toLocaleString()} UC</span>
               </div>
-              <div class="rec-sub">사용: <strong>${c.cost.toLocaleString()}원</strong> / ${budget.toLocaleString()}원 · 단가 ${rate}원/UC${bonus ? ` · 누적보너스 ${bonus.toLocaleString()} UC 포함` : ''}${remain > 0 ? `<br>잔여: ${remain.toLocaleString()}원` : ''}</div>`;
+              <div class="rec-sub">사용: <strong>${c.cost.toLocaleString()}원</strong> / ${budget.toLocaleString()}원 · 단가 ${rate}원/UC${remain > 0 ? `<br>잔여: ${remain.toLocaleString()}원` : ''}</div>`;
             counts.forEach((cnt, i) => {
                 if (cnt > 0) html += `<div class="pkg-line"><span>${pkgs[i].price.toLocaleString()}원 (${pkgs[i].label})</span><b>× ${cnt}</b></div>`;
             });
@@ -645,7 +616,7 @@ function calcMaxUC(RT) {
         if (c3 !== c1 && c3 !== c2) out += renderCard('결제 간편', 'tag-simple', c3);
         out += `</div>`;
 
-        CMP[RT.key] = c1.total; resultDiv.innerHTML = out; resultDiv.classList.add('show');
+        resultDiv.innerHTML = out; resultDiv.classList.add('show');
         btn.innerHTML = '계산하기'; btn.disabled = false;
     }, 250);
 }
