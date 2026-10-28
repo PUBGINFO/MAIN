@@ -261,15 +261,15 @@ button.calc-btn:disabled{opacity:.6; transform:none !important;}
       <label for="periodSel">적용 시점 (11/11 09:00 개편)</label>
       <select id="periodSel" onchange="onPeriodChange()">
         <option value="old">개편 전 (~11/11 09:00)</option>
-        <option value="p1">개편 후 · 이벤트 1개월차 (11/11~12/9)</option>
-        <option value="p2">개편 후 · 이벤트 2개월차 (12/9~1/6)</option>
-        <option value="p3">개편 후 · 이벤트 3개월차 (1/6~2/3)</option>
-        <option value="end">개편 후 · 이벤트 종료 (2/3~)</option>
+        <option value="p1">이벤트 1개월차 (11/11~12/9)</option>
+        <option value="p2">이벤트 2개월차 (12/9~1/6)</option>
+        <option value="p3">이벤트 3개월차 (1/6~2/3)</option>
+        <option value="end">개편 후 이벤트 종료 (2/3~)</option>
       </select>
     </div>
     <div class="checkbox-group">
       <input type="checkbox" id="compareOn" onchange="onCompareChange()">
-      <label for="compareOn">현재(개편 전) vs 개편 후 비교</label>
+      <label for="compareOn">( 개편 전 vs 개편 후 ) 비교</label>
     </div>
     <div class="input-group">
       <label id="inputLabel">필요한 UC를 입력하세요</label>
