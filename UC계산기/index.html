@@ -107,6 +107,25 @@ select:focus{border-color:var(--accent);}
 .cmp-head{font-size:.8rem; font-weight:800; color:var(--accent); margin:18px 0 8px;}
 .cmp-diff{margin-top:16px; padding:14px 16px; border-radius:12px; background:var(--surface2); border:1px solid var(--border); font-size:.86rem; line-height:1.7; font-weight:600;}
 .cmp-diff .up{color:var(--bad);} .cmp-diff .down{color:var(--good);}
+.cmp-grid{display:grid; grid-template-columns:1fr; gap:0 18px; align-items:start;}
+.cmp-col{min-width:0;}
+.cmp-diff{margin-top:0; margin-bottom:6px;}
+@media (min-width:720px){
+  .cmp-grid{grid-template-columns:1fr 1fr;}
+  .page.wide{max-width:760px;}
+  .page.wide .calculator{display:grid; grid-template-columns:1fr 1fr; column-gap:28px; align-items:start;}
+  .page.wide .g-period{grid-column:1; grid-row:1;}
+  .page.wide .g-input{grid-column:2; grid-row:1;}
+  .page.wide .g-compare{grid-column:1; grid-row:2; margin-bottom:6px;}
+  .page.wide .g-bonus{grid-column:2; grid-row:2; margin-bottom:6px;}
+  .page.wide button.calc-btn{grid-column:1 / -1; grid-row:3; justify-self:center; max-width:360px;}
+  .page.wide .result{grid-column:1 / -1;}
+  .page.wide .mode-toggle-wrapper{grid-column:1 / -1;}
+}
+@media (min-width:1024px){
+  .page.wide{max-width:1040px;}
+  .cmp-grid{gap:0 24px;}
+}
 .note{font-size:.74rem; color:var(--text3); margin:-6px 0 16px 2px; line-height:1.5;}
 
 .checkbox-group{display:flex; align-items:center; margin-bottom:18px; padding-left:2px; cursor:pointer;}
@@ -259,7 +278,7 @@ button.calc-btn:disabled{opacity:.6; transform:none !important;}
 
   <h1 class="title" id="mainTitle">UC 최저가 계산기 <span class="title-badge">BETA</span></h1>
   <div class="calculator">
-    <div class="input-group">
+    <div class="input-group g-period">
       <label for="periodSel">적용 시점 (11/11 09:00 개편)</label>
       <select id="periodSel" onchange="onPeriodChange()">
         <option value="old">개편 전 (~11/11 09:00)</option>
@@ -269,15 +288,15 @@ button.calc-btn:disabled{opacity:.6; transform:none !important;}
         <option value="end">개편 후 이벤트 종료 (2/3~)</option>
       </select>
     </div>
-    <div class="checkbox-group">
+    <div class="checkbox-group g-compare">
       <input type="checkbox" id="compareOn" onchange="onCompareChange()">
       <label for="compareOn">( 개편 전 vs 개편 후 ) 비교</label>
     </div>
-    <div class="input-group">
+    <div class="input-group g-input">
       <label id="inputLabel">필요한 UC를 입력하세요</label>
       <input type="number" id="mainInput" min="1" placeholder="예: 12000" onkeypress="handleEnterKey(event)">
     </div>
-    <div class="checkbox-group" id="bonusRow">
+    <div class="checkbox-group g-bonus" id="bonusRow">
       <input type="checkbox" id="useBonus" checked>
       <label for="useBonus" id="bonusLabel">누적 충전 보너스 적용</label>
       <div class="bonus-note" id="bonusNote"></div>
@@ -376,6 +395,7 @@ function refreshPeriodUI() {
     document.getElementById('periodSel').value = period;
     const row = document.getElementById('bonusRow');
     document.getElementById('compareOn').checked = compareOn;
+    document.getElementById('calcPage').classList.toggle('wide', compareOn);
     document.querySelector('#periodSel option[value="old"]').disabled = compareOn;
     row.style.display = (compareOn ? (availFor('old') || availFor(period)) : availFor(period)) ? 'flex' : 'none';
     const [s, l] = (BONUS_TIERS[platform] || {})[period] || [0, 0];
@@ -529,15 +549,20 @@ function calculate() {
     const resultDiv = document.getElementById('result');
     if (!compareOn) { fn({ el: () => resultDiv, p: period, key: 'A' }); return; }
     const np = period;
-    resultDiv.innerHTML = `<div class="cmp-head">현재 (개편 전)</div><div id="resA"></div>
-        <div class="cmp-head">개편 후 · ${PERIOD_NAME[np]}</div><div id="resB"></div><div id="resDiff"></div>`;
+    resultDiv.innerHTML = `<div id="resDiff"></div>
+        <div class="cmp-grid">
+          <div class="cmp-col"><div class="cmp-head">현재 (개편 전)</div><div id="resA"></div></div>
+          <div class="cmp-col"><div class="cmp-head">개편 후 · ${PERIOD_NAME[np]}</div><div id="resB"></div></div>
+        </div>`;
     resultDiv.classList.add('show');
     delete CMP.A; delete CMP.B;
     fn({ el: () => document.getElementById('resA'), p: 'old', key: 'A' });
     fn({ el: () => document.getElementById('resB'), p: np, key: 'B' });
-    setTimeout(() => {
+    let tries = 0;
+    const showDiff = () => {
         const d = document.getElementById('resDiff');
-        if (!d || CMP.A === undefined || CMP.B === undefined) return;
+        if (!d) return;
+        if (CMP.A === undefined || CMP.B === undefined) { if (++tries < 50) setTimeout(showDiff, 100); return; }
         const diff = CMP.B - CMP.A;
         const sign = diff > 0 ? '+' : '';
         const pct = CMP.A ? (diff / CMP.A * 100).toFixed(1) : '0';
@@ -546,7 +571,8 @@ function calculate() {
         } else {
             d.innerHTML = `<div class="cmp-diff">최대 획득 기준: ${CMP.A.toLocaleString()} UC → ${CMP.B.toLocaleString()} UC<br><span class="${diff < 0 ? 'up' : 'down'}">${sign}${diff.toLocaleString()} UC (${sign}${pct}%)</span></div>`;
         }
-    }, 450);
+    };
+    setTimeout(showDiff, 300);
 }
 
 // ---- 모드 A: UC 입력 -> [최저 가격 / 최대 획득 / 묶음 위주] 3대 카드를 모두 분석하여 제안 ----
