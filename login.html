@@ -9,6 +9,19 @@
   <link rel="stylesheet" as="style" crossorigin
     href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
   <link rel="stylesheet" href="./style.css">
+  <style>
+    .field-error { margin: -4px 0 4px; font-size: 12px; line-height: 1.5; color: #d04444; }
+    .field-error:empty { display: none; }
+    .auth-form input[aria-invalid="true"] { border-color: #d04444; }
+    .forgot-link { margin: -2px 0 4px; text-align: right; font-size: 12px; }
+    .forgot-link a { color: var(--text-sub); text-decoration: underline; }
+    .consent { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; line-height: 1.5; }
+    .consent input { width: auto; margin-top: 3px; }
+    .consent a { text-decoration: underline; }
+    .consent-note { font-size: 12px; line-height: 1.6; color: var(--text-sub); }
+    .auth-footer-links { margin-top: 10px; font-size: 12px; color: var(--text-sub); text-align: center; }
+    .auth-footer-links a { text-decoration: underline; }
+  </style>
 </head>
 <body class="auth-locked">
 
@@ -22,20 +35,20 @@
         PUBG 모바일 정보를 한곳에서 확인하세요.
       </p>
 
-      <form id="loginForm" class="auth-form">
+      <form id="loginForm" class="auth-form" novalidate>
         <label for="loginId">아이디 또는 이메일</label>
         <input type="text" id="loginId" placeholder="아이디 또는 이메일"
-          autocomplete="username" autocapitalize="none" spellcheck="false" required>
+          autocomplete="username" autocapitalize="none" spellcheck="false">
+        <p class="field-error" id="loginIdError" role="alert"></p>
 
         <label for="password">비밀번호</label>
         <input type="password" id="password" placeholder="비밀번호"
-          autocomplete="current-password" required>
+          autocomplete="current-password">
+        <p class="field-error" id="passwordError" role="alert"></p>
+
+        <p class="forgot-link"><a href="/forgot-password.html">비밀번호를 잊으셨나요?</a></p>
 
         <button type="submit">로그인</button>
-        <button type="button" id="resetPasswordBtn"
-          style="background:transparent;color:var(--text);border-color:var(--line);">
-          비밀번호 재설정 메일 받기
-        </button>
       </form>
 
       <p class="auth-message" id="message" role="status" aria-live="polite"></p>
@@ -44,6 +57,7 @@
         아직 계정이 없으신가요?
         <a href="/register.html" style="color:var(--text); font-weight:600;">회원가입</a>
       </p>
+      <p class="auth-footer-links"><a href="/privacy.html">개인정보 처리방침</a></p>
     </div>
   </div>
 
@@ -51,34 +65,23 @@
 
     import { auth, db } from "./firebase.js";
 
-    import {
-      signInWithEmailAndPassword,
-      sendPasswordResetEmail
-    } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+    import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
-    import {
-      doc,
-      getDoc
-    } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 
     const loginForm = document.getElementById("loginForm");
     const loginId = document.getElementById("loginId");
     const password = document.getElementById("password");
+    const loginIdError = document.getElementById("loginIdError");
+    const passwordError = document.getElementById("passwordError");
     const message = document.getElementById("message");
     const submitBtn = loginForm.querySelector('button[type="submit"]');
-    const resetBtn = document.getElementById("resetPasswordBtn");
 
     // 아이디가 없는지, 비밀번호가 틀렸는지 구분되지 않도록 같은 문구를 쓴다.
     const LOGIN_FAILED = "아이디(또는 이메일) 또는 비밀번호가 올바르지 않습니다.";
-    const RESET_NOTICE =
-      "입력한 계정이 존재하면 비밀번호 재설정 안내 메일을 보냈습니다. 받은편지함과 스팸함을 확인해주세요.";
 
     let busy = false;
-
-    if (new URLSearchParams(window.location.search).get("blocked") === "1") {
-      setMessage("이용이 제한된 계정입니다. 문의가 필요하면 관리자에게 연락해주세요.", "error");
-    }
 
 
     function setMessage(text, state) {
@@ -88,6 +91,24 @@
       } else {
         message.removeAttribute("data-state");
       }
+    }
+
+    // 빈칸 아래에 빨간 글씨로 오류를 표시
+    function setFieldError(input, errorEl, text) {
+      errorEl.textContent = text;
+      if (text) {
+        input.setAttribute("aria-invalid", "true");
+      } else {
+        input.removeAttribute("aria-invalid");
+      }
+    }
+
+    loginId.addEventListener("input", () => setFieldError(loginId, loginIdError, ""));
+    password.addEventListener("input", () => setFieldError(password, passwordError, ""));
+
+
+    if (new URLSearchParams(window.location.search).get("blocked") === "1") {
+      setMessage("이용이 제한된 계정입니다. 문의가 필요하면 관리자에게 연락해주세요.", "error");
     }
 
 
@@ -120,9 +141,30 @@
 
       event.preventDefault();
 
+      setMessage("", null);
+      setFieldError(loginId, loginIdError, "");
+      setFieldError(password, passwordError, "");
+
+      // 빈칸 검사
+      let firstInvalid = null;
+
+      if (!loginId.value.trim()) {
+        setFieldError(loginId, loginIdError, "아이디 또는 이메일을 입력해주세요.");
+        firstInvalid = loginId;
+      }
+
+      if (!password.value) {
+        setFieldError(password, passwordError, "비밀번호를 입력해주세요.");
+        if (!firstInvalid) firstInvalid = password;
+      }
+
+      if (firstInvalid) {
+        firstInvalid.focus();
+        return;
+      }
+
       busy = true;
       submitBtn.disabled = true;
-      resetBtn.disabled = true;
       setMessage("로그인 중...", null);
 
       try {
@@ -154,7 +196,6 @@
 
         busy = false;
         submitBtn.disabled = false;
-        resetBtn.disabled = false;
 
         if (error.code === "auth/too-many-requests") {
           setMessage("로그인 시도가 너무 많습니다. 잠시 후 다시 시도해주세요.", "error");
@@ -166,63 +207,6 @@
           setMessage(LOGIN_FAILED, "error");
         }
 
-      }
-
-    });
-
-
-    resetBtn.addEventListener("click", async () => {
-
-      if (!loginId.value.trim()) {
-        setMessage("아이디 또는 이메일을 입력해주세요.", "error");
-        loginId.focus();
-        return;
-      }
-
-      resetBtn.disabled = true;
-      setMessage("재설정 메일 발송 중...", null);
-
-      try {
-
-        const email = await resolveEmail(loginId.value);
-
-        if (email) {
-          try {
-            await sendPasswordResetEmail(auth, email, {
-              url: window.location.origin + "/login.html"
-            });
-          } catch (error) {
-            // 현재 도메인이 Firebase 승인된 도메인에 없으면 링크 없이 재시도
-            if (
-              error.code === "auth/unauthorized-continue-uri" ||
-              error.code === "auth/invalid-continue-uri"
-            ) {
-              await sendPasswordResetEmail(auth, email);
-            } else {
-              throw error;
-            }
-          }
-        }
-
-        // 계정이 있든 없든 같은 안내를 보여준다.
-        setMessage(RESET_NOTICE, "success");
-
-      } catch (error) {
-
-        console.error("비밀번호 재설정 오류:", error);
-
-        if (error.code === "auth/user-not-found") {
-          setMessage(RESET_NOTICE, "success");
-        } else if (error.code === "auth/invalid-email") {
-          setMessage("올바른 이메일 주소를 입력해주세요.", "error");
-        } else if (error.code === "auth/too-many-requests") {
-          setMessage("요청이 너무 많습니다. 잠시 후 다시 시도해주세요.", "error");
-        } else {
-          setMessage("재설정 메일을 보내지 못했습니다. 잠시 후 다시 시도해주세요.", "error");
-        }
-
-      } finally {
-        resetBtn.disabled = false;
       }
 
     });
