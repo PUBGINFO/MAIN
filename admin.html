@@ -31,6 +31,8 @@
     .adm-status { min-height: 18px; font-size: 12px; margin: 8px 0; color: var(--text-sub); white-space: pre-line; }
     .adm-status[data-state="error"] { color: #d04444; }
     .adm-status[data-state="success"] { color: #2b9960; }
+    .adm a.adm-btn { display: inline-block; border: 1px solid var(--line); border-radius: 8px; padding: 8px 11px; color: var(--text); font-size: 12px; font-weight: 600; }
+    .adm a.adm-btn:hover { background: var(--bg-item-hover); }
     .adm-foot { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
   </style>
 </head>
@@ -52,6 +54,10 @@
         이메일·아이디·가입일을 확인하고 비밀번호 재설정 메일 발송, 이용 차단, 삭제를 할 수 있습니다.<br>
         비밀번호는 Firebase에 암호화(해시)되어 저장되므로 누구도 볼 수 없습니다. 비밀번호를 잊은 회원에게는 ‘재설정 메일 보내기’를 사용하세요.
       </p>
+
+      <div class="adm-foot" style="margin:0 0 14px;">
+        <a class="adm-btn" href="/admin-privacy.html">개인정보 처리방침 수정 화면으로 가기 ›</a>
+      </div>
 
       <div class="adm-bar">
         <input type="search" id="search" placeholder="아이디 또는 이메일 검색" autocomplete="off">
