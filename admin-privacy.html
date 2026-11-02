@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="robots" content="noindex">
+  <title>처리방침 수정 - PUBG INFO</title>
+  <link rel="stylesheet" as="style" crossorigin
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="./style.css">
+  <script>
+    try { const t = localStorage.getItem("pubg-theme"); if (t) document.documentElement.setAttribute("data-theme", t); } catch (_) {}
+  </script>
+  <style>
+    .adm { max-width: 720px; margin: 0 auto; padding: 20px; }
+    .adm h1 { font-size: 20px; margin-bottom: 6px; }
+    .adm .sub { font-size: 12px; color: var(--text-sub); margin-bottom: 14px; line-height: 1.7; }
+    .adm textarea { width: 100%; min-height: 360px; border: 1px solid var(--line); border-radius: 10px; padding: 12px; background: var(--bg); color: var(--text); font: 13px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; resize: vertical; box-sizing: border-box; }
+    .adm button, .adm a.adm-btn { display: inline-block; border: 1px solid var(--line); border-radius: 8px; padding: 9px 12px; background: transparent; color: var(--text); font-size: 12px; font-weight: 600; cursor: pointer; }
+    .adm button:hover, .adm a.adm-btn:hover { background: var(--bg-item-hover); }
+    .adm button:disabled { opacity: .5; cursor: wait; }
+    .adm button.primary { background: var(--text); color: var(--bg); }
+    .adm-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+    .adm-status { min-height: 18px; font-size: 12px; margin: 8px 0; color: var(--text-sub); }
+    .adm-status[data-state="error"] { color: #d04444; }
+    .adm-status[data-state="success"] { color: #2b9960; }
+    .adm details { margin-bottom: 12px; font-size: 12px; color: var(--text-sub); line-height: 1.7; }
+    .adm summary { cursor: pointer; font-weight: 600; color: var(--text); }
+    .adm pre { background: var(--bg-item); border: 1px solid var(--line); border-radius: 8px; padding: 10px; overflow-x: auto; margin-top: 6px; }
+    .doc { border: 1px solid var(--line); border-radius: 12px; padding: 16px; line-height: 1.75; font-size: 14px; color: var(--text); }
+    .doc h1 { font-size: 20px; margin-bottom: 8px; }
+    .doc h2 { font-size: 15px; margin: 22px 0 8px; }
+    .doc p { margin: 8px 0; }
+    .doc ul { padding-left: 20px; margin: 6px 0; }
+    .doc table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 8px 0; }
+    .doc th, .doc td { border: 1px solid var(--line); padding: 8px; text-align: left; vertical-align: top; overflow-wrap: anywhere; }
+    .doc th { width: 30%; background: var(--bg-item); }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-wrap">
+      <a class="logo" href="/">PUBG INFO</a>
+      <span style="font-size:13px;color:var(--text-sub);">처리방침 수정</span>
+    </div>
+  </header>
+
+  <main class="adm">
+    <p id="gate" class="sub">권한 확인 중...</p>
+
+    <section id="panel" hidden>
+      <h1>개인정보 처리방침 수정</h1>
+      <p class="sub">
+        저장하면 <b>/privacy.html</b> 에 바로 반영됩니다. [대괄호]로 표시된 빈칸을 모두 실제 내용으로 바꿔주세요.
+        (빈칸이 남아 있으면 공개 페이지 위에 안내 문구가 표시됩니다.)
+      </p>
+
+      <details>
+        <summary>글 쓰는 방법(서식)</summary>
+<pre># 큰 제목
+## 소제목
+- 목록 항목
+| 항목 이름 | 항목 내용 |    ← 표(연속된 줄이 하나의 표)
+일반 문장은 그냥 쓰면 됩니다. 빈 줄로 문단을 나눕니다.</pre>
+      </details>
+
+      <textarea id="editor" spellcheck="false" aria-label="처리방침 내용"></textarea>
+      <p class="sub" id="counter" style="margin:6px 0 0;"></p>
+
+      <div class="adm-row">
+        <button type="button" id="saveBtn" class="primary">저장</button>
+        <button type="button" id="defaultBtn">기본 초안 불러오기</button>
+        <a class="adm-btn" href="/privacy.html" target="_blank" rel="noopener">공개 페이지 보기</a>
+        <a class="adm-btn" href="/admin.html">관리자 페이지로</a>
+      </div>
+      <p id="status" class="adm-status" role="status" aria-live="polite"></p>
+
+      <h2 style="font-size:14px;margin:18px 0 8px;">미리보기</h2>
+      <div class="doc" id="preview"></div>
+    </section>
+  </main>
+
+  <script type="module">
+
+    import { auth, db } from "./firebase.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+    import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+    import {
+      POLICY_COLLECTION, POLICY_ID, POLICY_MAX_LENGTH, DEFAULT_TEXT, renderPolicy
+    } from "./privacy-content.js";
+
+    const $ = (id) => document.getElementById(id);
+    const editor = $("editor");
+    let currentUser = null;
+    let dirty = false;
+
+    function status(text, state) {
+      const el = $("status");
+      el.textContent = text || "";
+      if (state) el.setAttribute("data-state", state); else el.removeAttribute("data-state");
+    }
+
+    function refresh() {
+      renderPolicy(editor.value, $("preview"));
+      const len = editor.value.length;
+      $("counter").textContent = len.toLocaleString() + " / " + POLICY_MAX_LENGTH.toLocaleString() + "자" +
+        (/\[[^\]]+\]/.test(editor.value) ? " · 아직 채우지 않은 [빈칸]이 있습니다" : "");
+    }
+
+    function deny(msg) { $("gate").textContent = msg; }
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { window.location.replace("/login.html"); return; }
+      if (!user.emailVerified) { window.location.replace("/verify-email.html"); return; }
+      currentUser = user;
+
+      try {
+        const me = await getDoc(doc(db, "users", user.uid));
+        if (!me.exists() || me.data().role !== "admin") { deny("접근 권한이 없습니다."); return; }
+
+        // 저장된 내용이 있으면 불러오고, 없으면 기본 초안으로 시작
+        const snap = await getDoc(doc(db, POLICY_COLLECTION, POLICY_ID));
+        editor.value = (snap.exists() && typeof snap.data().text === "string" && snap.data().text.trim())
+          ? snap.data().text
+          : DEFAULT_TEXT;
+      } catch (e) {
+        console.error(e);
+        deny("불러오지 못했습니다. 관리자 권한과 Firestore 보안 규칙을 확인해주세요. (" + (e.code || e.message) + ")");
+        return;
+      }
+
+      $("gate").hidden = true;
+      $("panel").hidden = false;
+      refresh();
+    });
+
+    editor.addEventListener("input", () => { dirty = true; refresh(); });
+
+    $("defaultBtn").addEventListener("click", () => {
+      if (!confirm("지금 쓰던 내용이 기본 초안으로 바뀝니다. 계속할까요? (저장하기 전에는 공개되지 않습니다)")) return;
+      editor.value = DEFAULT_TEXT;
+      dirty = true;
+      refresh();
+      status("기본 초안을 불러왔습니다. 저장해야 공개 페이지에 반영됩니다.", null);
+    });
+
+    $("saveBtn").addEventListener("click", async () => {
+      const text = editor.value.trim();
+      if (!text) { status("내용을 입력해주세요.", "error"); return; }
+      if (text.length > POLICY_MAX_LENGTH) { status("내용이 너무 깁니다. (최대 " + POLICY_MAX_LENGTH + "자)", "error"); return; }
+
+      const btn = $("saveBtn");
+      btn.disabled = true;
+      status("저장 중...", null);
+      try {
+        await setDoc(doc(db, POLICY_COLLECTION, POLICY_ID), {
+          text: text,
+          updatedAt: serverTimestamp(),
+          updatedBy: currentUser.email || ""
+        });
+        dirty = false;
+        status("저장했습니다. 공개 페이지에 바로 반영됩니다.", "success");
+      } catch (e) {
+        console.error(e);
+        status("저장 실패: " + (e.code || e.message) + " (보안 규칙에 siteContent 항목이 추가됐는지 확인해주세요)", "error");
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    window.addEventListener("beforeunload", (event) => {
+      if (dirty) { event.preventDefault(); event.returnValue = ""; }
+    });
+
+  </script>
+</body>
+</html>

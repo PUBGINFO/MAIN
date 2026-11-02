@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>개인정보 처리방침 - PUBG INFO</title>
+
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="stylesheet" as="style" crossorigin
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="./style.css">
+  <script>
+    try { const t = localStorage.getItem("pubg-theme"); if (t) document.documentElement.setAttribute("data-theme", t); } catch (_) {}
+  </script>
+  <style>
+    .doc { max-width: 640px; margin: 0 auto; padding: 24px 20px 60px; line-height: 1.75; font-size: 14px; color: var(--text); }
+    .doc h1 { font-size: 22px; margin-bottom: 8px; }
+    .doc h2 { font-size: 16px; margin: 28px 0 8px; }
+    .doc p { margin: 8px 0; }
+    .doc ul { padding-left: 20px; margin: 6px 0; }
+    .doc table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 8px 0; }
+    .doc th, .doc td { border: 1px solid var(--line); padding: 8px; text-align: left; vertical-align: top; overflow-wrap: anywhere; }
+    .doc th { width: 30%; background: var(--bg-item); }
+    .draft { border: 1px solid #d04444; color: #d04444; border-radius: 10px; padding: 10px 12px; margin-bottom: 18px; font-size: 13px; }
+    .sub { color: var(--text-sub); font-size: 12px; }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-wrap">
+      <a class="logo" href="/">PUBG INFO</a>
+      <span style="font-size:13px;color:var(--text-sub);">개인정보 처리방침</span>
+    </div>
+  </header>
+
+  <main class="doc">
+    <p class="draft" id="draftNotice" hidden>
+      ※ 아직 [대괄호]로 표시된 빈칸이 남아 있습니다. 관리자 페이지에서 실제 내용으로 바꿔주세요.
+    </p>
+    <div id="policy"><p class="sub">불러오는 중...</p></div>
+    <p class="sub" id="updated"></p>
+    <p style="margin-top:28px;"><a href="/" style="text-decoration:underline;">메인으로 돌아가기</a></p>
+  </main>
+
+  <script type="module">
+
+    import { db } from "./firebase.js";
+    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+    import { POLICY_COLLECTION, POLICY_ID, DEFAULT_TEXT, renderPolicy } from "./privacy-content.js";
+
+    let text = DEFAULT_TEXT;
+    let updatedAt = null;
+
+    try {
+      // 관리자가 사이트에서 저장한 처리방침이 있으면 그것을, 없으면 기본 초안을 보여준다.
+      const snap = await getDoc(doc(db, POLICY_COLLECTION, POLICY_ID));
+      if (snap.exists() && typeof snap.data().text === "string" && snap.data().text.trim()) {
+        text = snap.data().text;
+        updatedAt = snap.data().updatedAt || null;
+      }
+    } catch (error) {
+      console.error("처리방침 불러오기 오류:", error);
+    }
+
+    renderPolicy(text, document.getElementById("policy"));
+
+    if (/\[[^\]]+\]/.test(text)) {
+      document.getElementById("draftNotice").hidden = false;
+    }
+
+    if (updatedAt && updatedAt.toDate) {
+      const d = updatedAt.toDate(), p = (n) => String(n).padStart(2, "0");
+      document.getElementById("updated").textContent =
+        "최종 수정: " + d.getFullYear() + "." + p(d.getMonth() + 1) + "." + p(d.getDate());
+    }
+
+  </script>
+
+</body>
+</html>
