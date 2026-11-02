@@ -9,6 +9,19 @@
   <link rel="stylesheet" as="style" crossorigin
     href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
   <link rel="stylesheet" href="./style.css">
+  <style>
+    .field-error { margin: -4px 0 4px; font-size: 12px; line-height: 1.5; color: #d04444; }
+    .field-error:empty { display: none; }
+    .auth-form input[aria-invalid="true"] { border-color: #d04444; }
+    .forgot-link { margin: -2px 0 4px; text-align: right; font-size: 12px; }
+    .forgot-link a { color: var(--text-sub); text-decoration: underline; }
+    .consent { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; line-height: 1.5; }
+    .consent input { width: auto; margin-top: 3px; }
+    .consent a { text-decoration: underline; }
+    .consent-note { font-size: 12px; line-height: 1.6; color: var(--text-sub); }
+    .auth-footer-links { margin-top: 10px; font-size: 12px; color: var(--text-sub); text-align: center; }
+    .auth-footer-links a { text-decoration: underline; }
+  </style>
 </head>
 <body class="auth-locked">
 
@@ -22,24 +35,34 @@
         UC 계산기 · 확률 계산기 · 대회 일정을 이용해보세요.
       </p>
 
-      <form id="registerForm" class="auth-form">
+      <form id="registerForm" class="auth-form" novalidate>
         <label for="username">아이디</label>
         <input type="text" id="username" placeholder="영문·숫자·밑줄 4~20자"
-          minlength="4" maxlength="20" pattern="[A-Za-z0-9_]{4,20}"
-          title="영문, 숫자, 밑줄(_)만 사용해 4~20자로 입력해주세요."
-          autocomplete="username" autocapitalize="none" spellcheck="false" required>
+          maxlength="20" autocomplete="username" autocapitalize="none" spellcheck="false">
+        <p class="field-error" id="usernameError" role="alert"></p>
 
         <label for="email">이메일</label>
         <input type="email" id="email" placeholder="인증 메일을 받을 이메일 주소"
-          autocomplete="email" required>
+          autocomplete="email" autocapitalize="none" spellcheck="false">
+        <p class="field-error" id="emailError" role="alert"></p>
 
         <label for="password">비밀번호</label>
-        <input type="password" id="password" placeholder="8자 이상"
-          minlength="8" autocomplete="new-password" required>
+        <input type="password" id="password" placeholder="8자 이상" autocomplete="new-password">
+        <p class="field-error" id="passwordError" role="alert"></p>
 
         <label for="passwordConfirm">비밀번호 확인</label>
-        <input type="password" id="passwordConfirm" placeholder="비밀번호 재입력"
-          minlength="8" autocomplete="new-password" required>
+        <input type="password" id="passwordConfirm" placeholder="비밀번호 재입력" autocomplete="new-password">
+        <p class="field-error" id="passwordConfirmError" role="alert"></p>
+
+        <div class="consent">
+          <input type="checkbox" id="agreePrivacy">
+          <label for="agreePrivacy">[필수] <a href="/privacy.html" target="_blank" rel="noopener">개인정보 수집·이용 안내</a>를 확인했으며 동의합니다.</label>
+        </div>
+        <p class="field-error" id="consentError" role="alert"></p>
+        <p class="consent-note">
+          수집 항목: 아이디, 이메일, 비밀번호 / 이용 목적: 회원 식별 및 계정 관리 / 보유 기간: 회원 정보 삭제 시까지.
+          동의를 거부할 수 있으며, 거부하면 회원가입이 제한됩니다. 만 14세 미만은 가입할 수 없습니다.
+        </p>
 
         <button type="submit">회원가입</button>
       </form>
@@ -50,6 +73,7 @@
         이미 계정이 있으신가요?
         <a href="/login.html" style="color:var(--text); font-weight:600;">로그인</a>
       </p>
+      <p class="auth-footer-links"><a href="/privacy.html">개인정보 처리방침</a></p>
     </div>
   </div>
 
@@ -86,6 +110,38 @@
     const message = document.getElementById("message");
     const submitBtn = registerForm.querySelector('button[type="submit"]');
 
+    const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const agreePrivacy = document.getElementById("agreePrivacy");
+
+    const fields = [
+      [usernameInput, "usernameError"],
+      [emailInput, "emailError"],
+      [passwordInput, "passwordError"],
+      [passwordConfirmInput, "passwordConfirmError"]
+    ];
+
+    // 빈칸/형식 오류를 해당 칸 아래에 빨간 글씨로 표시
+    function showError(input, errorId, text) {
+      document.getElementById(errorId).textContent = text;
+      if (input && input.type !== "checkbox") input.setAttribute("aria-invalid", "true");
+    }
+
+    function clearErrors() {
+      document.querySelectorAll(".field-error").forEach((el) => { el.textContent = ""; });
+      fields.forEach(([input]) => input.removeAttribute("aria-invalid"));
+    }
+
+    // 입력을 시작하면 그 칸의 오류를 지운다
+    fields.forEach(([input, errorId]) => {
+      input.addEventListener("input", () => {
+        document.getElementById(errorId).textContent = "";
+        input.removeAttribute("aria-invalid");
+      });
+    });
+    agreePrivacy.addEventListener("change", () => {
+      document.getElementById("consentError").textContent = "";
+    });
+
 
     function setMessage(text, state) {
       message.textContent = text;
@@ -108,19 +164,44 @@
 
       setMessage("", null);
 
-      // 입력값 검사
-      if (!USERNAME_PATTERN.test(username)) {
-        setMessage("아이디는 영문, 숫자, 밑줄(_)만 사용해 4~20자로 입력해주세요.", "error");
-        return;
+      // 입력값 검사: 빈칸이나 형식 오류는 각 칸 아래에 빨간 글씨로 표시
+      clearErrors();
+      let firstInvalid = null;
+      const fail = (input, errorId, text) => {
+        showError(input, errorId, text);
+        if (!firstInvalid) firstInvalid = input;
+      };
+
+      if (!username) {
+        fail(usernameInput, "usernameError", "아이디를 입력해주세요.");
+      } else if (!USERNAME_PATTERN.test(username)) {
+        fail(usernameInput, "usernameError", "아이디는 영문, 숫자, 밑줄(_)만 사용해 4~20자로 입력해주세요.");
       }
 
-      if (password.length < MIN_PASSWORD_LENGTH) {
-        setMessage("비밀번호는 " + MIN_PASSWORD_LENGTH + "자 이상이어야 합니다.", "error");
-        return;
+      if (!email) {
+        fail(emailInput, "emailError", "이메일을 입력해주세요.");
+      } else if (!EMAIL_PATTERN.test(email)) {
+        fail(emailInput, "emailError", "올바른 이메일 형식으로 입력해주세요.");
       }
 
-      if (password !== passwordConfirm) {
-        setMessage("비밀번호가 일치하지 않습니다.", "error");
+      if (!password) {
+        fail(passwordInput, "passwordError", "비밀번호를 입력해주세요.");
+      } else if (password.length < MIN_PASSWORD_LENGTH) {
+        fail(passwordInput, "passwordError", "비밀번호는 " + MIN_PASSWORD_LENGTH + "자 이상이어야 합니다.");
+      }
+
+      if (!passwordConfirm) {
+        fail(passwordConfirmInput, "passwordConfirmError", "비밀번호 확인을 입력해주세요.");
+      } else if (password !== passwordConfirm) {
+        fail(passwordConfirmInput, "passwordConfirmError", "비밀번호가 일치하지 않습니다.");
+      }
+
+      if (!agreePrivacy.checked) {
+        fail(agreePrivacy, "consentError", "개인정보 수집·이용에 동의해주세요.");
+      }
+
+      if (firstInvalid) {
+        firstInvalid.focus();
         return;
       }
 
@@ -135,7 +216,8 @@
         const usernameSnapshot = await getDoc(doc(db, "usernames", usernameLower));
 
         if (usernameSnapshot.exists()) {
-          setMessage("이미 사용 중인 아이디입니다.", "error");
+          showError(usernameInput, "usernameError", "이미 사용 중인 아이디입니다.");
+          setMessage("", null);
           submitBtn.disabled = false;
           return;
         }
@@ -186,7 +268,7 @@
         submitBtn.disabled = false;
 
         if (error.code === "auth/email-already-in-use") {
-          setMessage("이미 가입된 이메일입니다.", "error");
+          showError(emailInput, "emailError", "이미 가입된 이메일입니다.");
         } else if (error.code === "auth/invalid-email") {
           setMessage("올바른 이메일 주소를 입력해주세요.", "error");
         } else if (error.code === "auth/weak-password") {
