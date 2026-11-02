@@ -59,7 +59,8 @@
 
     import {
       sendVerificationMail,
-      cooldownLeft
+      cooldownLeft,
+      formatWait
     } from "./auth-utils.js";
 
 
@@ -104,7 +105,7 @@
       const left = currentUser ? cooldownLeft(currentUser.uid) : 0;
       if (left > 0) {
         resendBtn.disabled = true;
-        resendBtn.textContent = "인증 메일 재발송 (" + left + "초)";
+        resendBtn.textContent = "인증 메일 재발송 (" + formatWait(left) + ")";
       } else {
         resendBtn.disabled = false;
         resendBtn.textContent = "인증 메일 재발송";
@@ -131,10 +132,16 @@
 
       try {
         const result = await sendVerificationMail(currentUser);
-        if (result.status === "cooldown") {
+        if (result.status === "limited") {
           setMessage(
-            "방금 인증 메일을 보냈습니다. " + result.left +
-            "초 뒤에 다시 보낼 수 있어요. 받은편지함과 스팸함을 확인해주세요.",
+            "발송 횟수 제한에 걸렸습니다. " + formatWait(result.left) +
+            " 뒤에 딱 한 번만 다시 시도해주세요. 그 사이 계속 누르면 제한이 길어질 수 있어요.",
+            "error"
+          );
+        } else if (result.status === "cooldown") {
+          setMessage(
+            "방금 인증 메일을 보냈습니다. " + formatWait(result.left) +
+            " 뒤에 다시 보낼 수 있어요. 받은편지함과 스팸함을 확인해주세요.",
             null
           );
         } else {
