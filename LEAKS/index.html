@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b0b0e">
+<title>My Links</title>
+<style>
+:root{color-scheme:dark;--bg:#0b0b0e;--card:#17171c;--line:#292932;--text:#f7f7fb;--muted:#a6a6b1;--accent:#a78bfa}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;padding:48px 18px 30px;background:radial-gradient(ellipse at 50% 0,#272338 0,var(--bg) 52%);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;display:flex;justify-content:center}main{width:min(100%,650px)}header{text-align:center;margin-bottom:30px}.avatar{width:88px;height:88px;object-fit:cover;border-radius:50%;border:1px solid #ffffff22}.name{font-size:28px;letter-spacing:-.6px;margin:17px 0 8px}.bio{color:var(--muted);font-size:14px;line-height:1.65;margin:0}.links{display:grid;gap:15px}.link{display:flex;align-items:center;gap:16px;padding:13px;background:linear-gradient(125deg,#1d1d24,#15151a);border:1px solid var(--line);border-radius:18px;text-decoration:none;color:inherit;transition:transform .2s,border-color .2s}.link:hover{transform:translateY(-3px);border-color:#71668c}.thumb{width:108px;height:108px;object-fit:cover;border-radius:13px;background:#292932;flex-shrink:0}.info{flex:1;min-width:0}.label{font-size:17px;font-weight:720;margin:0 0 5px}.desc{font-size:13px;line-height:1.5;color:var(--muted);margin:0}.arrow{font-size:20px;color:#81818c;padding:0 5px}.status{text-align:center;font-size:12px;color:var(--muted);margin:22px 0 0}.footer{text-align:center;font-size:12px;color:#777783;margin-top:28px}.footer a{color:inherit}.hidden{display:none!important}@media(min-width:600px){.thumb{width:120px;height:120px}.link{padding:15px}}@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body><main>
+<header>
+<img id="avatar" class="avatar hidden" alt="프로필 사진">
+<h1 class="name" id="name">YOUR NAME</h1>
+<p class="bio" id="bio">소개 문구를 여기에 입력하세요.<br>나의 다양한 링크를 한곳에서 확인할 수 있습니다.</p>
+</header>
+<section class="links" id="links" aria-label="링크 목록"></section>
+<p class="status" id="status">링크를 불러오는 중...</p>
+<footer class="footer">© <span id="year"></span> <span id="footerName">YOUR NAME</span></footer>
+</main>
+<script>
+/* ====== 사용자가 수정할 설정 ====== */
+const CONFIG={
+  owner:'PUBGINFO',
+  repo:'MAIN',
+  // 원하는 Release 태그명. 빈 문자열이면 첫 번째 공개 Release 사용.
+  tag:'4.7_x-suit', // 태그 규칙: (버전)_(출시 상품), 예: 4.7_x-suit
+  name:'YOUR NAME',
+  bio:'소개 문구를 여기에 입력하세요.\n나의 다양한 링크를 한곳에서 확인할 수 있습니다.',
+  // Release assets 파일명 및 카드별 이동주소/제목/설명
+  cards:[
+    {asset:'link1.jpg',title:'LINK ONE',description:'첫 번째 링크에 대한 설명',url:'https://example.com'},
+    {asset:'link2.jpg',title:'LINK TWO',description:'두 번째 링크에 대한 설명',url:'https://example.com'},
+    {asset:'link3.jpg',title:'LINK THREE',description:'세 번째 링크에 대한 설명',url:'https://example.com'}
+  ],
+  // 선택사항: avatar.jpg asset이 있으면 프로필에 사용
+  avatarAsset:'avatar.jpg'
+};
+/* ====== 설정 끝 ====== */
+const $=id=>document.getElementById(id);
+$('name').textContent=CONFIG.name;$('footerName').textContent=CONFIG.name;$('bio').innerHTML=CONFIG.bio.split('\n').map(escapeHTML).join('<br>');$('year').textContent=new Date().getFullYear();
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function assetURL(asset){return `https://github.com/${CONFIG.owner}/${CONFIG.repo}/releases/download/${encodeURIComponent(CONFIG.tag)}/${encodeURIComponent(asset)}`;}
+function renderCards(){
+ const container=$('links');container.innerHTML='';
+ CONFIG.cards.forEach(c=>{
+  const a=document.createElement('a');a.className='link';a.href=c.url;a.target='_blank';a.rel='noopener noreferrer';
+  const img=document.createElement('img');img.className='thumb';img.src=assetURL(c.asset);img.alt=c.title;img.loading='lazy';img.onerror=()=>{img.style.opacity='.35';img.alt='이미지를 찾을 수 없습니다'};
+  const info=document.createElement('div');info.className='info';const h=document.createElement('h2');h.className='label';h.textContent=c.title;const p=document.createElement('p');p.className='desc';p.textContent=c.description;info.append(h,p);
+  const arrow=document.createElement('span');arrow.className='arrow';arrow.textContent='↗';a.append(img,info,arrow);container.append(a);
+ });
+}
+async function loadRelease(){
+ renderCards();
+ try{
+  const api=`https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/releases/tags/${encodeURIComponent(CONFIG.tag)}`;
+  const res=await fetch(api,{headers:{Accept:'application/vnd.github+json'}});
+  if(!res.ok)throw new Error(`GitHub API 응답 ${res.status}`);
+  const release=await res.json();
+  const files=new Map(release.assets.map(x=>[x.name,x.browser_download_url]));
+  document.querySelectorAll('.thumb').forEach((img,i)=>{const c=CONFIG.cards[i];if(files.has(c.asset))img.src=files.get(c.asset);});
+  if(files.has(CONFIG.avatarAsset)){$('avatar').src=files.get(CONFIG.avatarAsset);$('avatar').classList.remove('hidden');}
+  $('status').textContent='';
+ }catch(e){$('status').textContent='Release 이미지 연결 확인이 필요합니다. 설정된 태그와 파일명을 확인하세요.';console.warn(e);}
+}
+loadRelease();
+</script>
+</body></html>
