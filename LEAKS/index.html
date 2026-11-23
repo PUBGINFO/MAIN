@@ -28,7 +28,7 @@ const CONFIG={
   // 원하는 Release 태그명. 빈 문자열이면 첫 번째 공개 Release 사용.
   tag:'4.7_x-suit', // 태그 규칙: (버전)_(출시 상품), 예: 4.7_x-suit
   name:'PUBG INFO',
-  bio:'소개 문구를 여기에 입력하세요.\n나의 다양한 링크를 한곳에서 확인할 수 있습니다.',
+  bio:'신규 X-SUIT 미리 보기.\n ',
   // Release assets 파일명 및 카드별 이동주소/제목/설명
   cards:[
     {asset:'link1.jpg',title:'Aether Miravix X-SUIT',description:'첫 번째 링크에 대한 설명',url:'https://vt.tiktok.com/ZSsLhMTCr/'},
@@ -66,7 +66,7 @@ async function loadRelease(){
   document.querySelectorAll('.thumb').forEach((img,i)=>{const c=CONFIG.cards[i];if(files.has(c.asset))img.src=files.get(c.asset);});
   if(files.has(CONFIG.avatarAsset)){$('avatar').src=files.get(CONFIG.avatarAsset);$('avatar').classList.remove('hidden');}
   $('status').textContent='';
- }catch(e){$('status').textContent='Release 이미지 연결 확인이 필요합니다. 설정된 태그와 파일명을 확인하세요.';console.warn(e);}
+ }catch(e){$('status').textContent=' 이미지 연결 오류. PUBG INFO에 문의하여주세요';console.warn(e);}
 }
 loadRelease();
 </script>
