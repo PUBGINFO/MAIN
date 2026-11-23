@@ -1,33 +1,25 @@
-// Release의 link0(없으면 link1) 이미지를 찾아 index.html의 og:image를 정적으로 갱신
-import fs from 'node:fs';
+name: Update OG Image
 
-const file = process.env.INDEX_FILE || 'index.html';
-let html = fs.readFileSync(file, 'utf8');
-const pick = re => (html.match(re) || [])[1];
+on:
+  release:
+    types: [published, edited, released]
+  workflow_dispatch:
 
-const owner = pick(/owner:\s*'([^']+)'/);
-const repo = pick(/repo:\s*'([^']+)'/);
-const tag = pick(/tag:\s*'([^']+)'/);
-const list = pick(/ogAssets:\s*\[([^\]]*)\]/) || "'link0','link1'";
-const order = [...list.matchAll(/'([^']+)'/g)].map(m => m[1].replace(/\.[^.]+$/, '').toLowerCase());
-const EXT = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+permissions:
+  contents: write
 
-if (!owner || !repo || !tag) { console.error('CONFIG(owner/repo/tag)를 찾지 못했습니다.'); process.exit(1); }
-
-const headers = { Accept: 'application/vnd.github+json' };
-if (process.env.GITHUB_TOKEN) headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
-const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/releases/tags/${encodeURIComponent(tag)}`, { headers });
-if (!res.ok) { console.error(`Release 조회 실패: ${res.status}`); process.exit(1); }
-const assets = (await res.json()).assets || [];
-
-let url = null;
-outer: for (const base of order)
-  for (const ext of EXT) {
-    const a = assets.find(x => x.name.toLowerCase() === `${base}.${ext}`);
-    if (a) { url = a.browser_download_url; break outer; }
-  }
-if (!url) { console.warn('link0/link1 이미지를 찾지 못해 변경하지 않습니다.'); process.exit(0); }
-
-const next = html
-  .replace(/(<meta property="og:image" content=")[^"]*(">)/, `$1${url}$2`);
-if (next !== html) { fs.writeFileSync(file, next); console.log('갱신:', url); } else console.log('변경 없음:', url);
+jobs:
+  update-og:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node update-og.mjs
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git diff --quiet index.html || (git add index.html && git commit -m "chore: update og:image from release" && git push)
