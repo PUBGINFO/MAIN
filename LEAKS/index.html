@@ -4,7 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0b0b0e">
-<title>My Links</title>
+<title>PUBG INFO</title>
+<meta property="og:title" content="PUBG INFO - 정보 열람">
+<meta property="og:description" content="PUBG MOBILE - UC & 확률 계산기, 최신 정보">
+<meta property="og:image" content="https://github.com/PUBGINFO/MAIN/releases/download/4.7_x-suit/link0.jpg">
+<meta property="og:url" content="https://pubginfo.site">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://github.com/PUBGINFO/MAIN/releases/download/4.7_x-suit/link0.jpg">
 <style>
 :root{color-scheme:dark;--bg:#0b0b0e;--card:#17171c;--line:#292932;--text:#f7f7fb;--muted:#a6a6b1;--accent:#a78bfa}
 *{box-sizing:border-box}body{margin:0;min-height:100vh;padding:48px 18px 30px;background:radial-gradient(ellipse at 50% 0,#272338 0,var(--bg) 52%);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;display:flex;justify-content:center}main{width:min(100%,720px)}header{text-align:center;margin-bottom:30px}.avatar{width:110px;height:110px;object-fit:cover;border-radius:50%;border:1px solid #ffffff22}.name{font-size:28px;letter-spacing:-.6px;margin:17px 0 8px}.bio{color:var(--muted);font-size:14px;line-height:1.65;margin:0}.links{display:grid;gap:15px}.link{display:flex;flex-direction:column;overflow:hidden;padding:0;background:linear-gradient(125deg,#1d1d24,#15151a);border:1px solid var(--line);border-radius:18px;text-decoration:none;color:inherit;transition:transform .2s,border-color .2s}.link:hover{transform:translateY(-3px);border-color:#71668c}.thumb{display:block;width:100%;aspect-ratio:var(--ratio,16/9);object-fit:cover;object-position:center;background:#292932}.row{display:flex;align-items:center;gap:12px;padding:14px 16px}.info{flex:1;min-width:0}.label{font-size:18px;font-weight:720;margin:0 0 5px}.desc{font-size:13px;line-height:1.5;color:var(--muted);margin:0}.arrow{font-size:20px;color:#81818c;padding:0 5px}.status{text-align:center;font-size:12px;color:var(--muted);margin:22px 0 0}.footer{text-align:center;font-size:12px;color:#777783;margin-top:28px}.footer a{color:inherit}.hidden{display:none!important}@media(min-width:600px){.row{padding:16px 20px}}@media(prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -39,7 +46,9 @@ const CONFIG={
   // 이미지 표시 비율 (가로/세로). 비율이 달라도 가운데 기준으로 잘라서 꽉 채움. 예: '16/9', '4/3', '1/1'
   ratio:'16/9',
   // 카드별로 pos:'center top' 처럼 지정하면 잘리는 기준 위치 변경 가능 (세로로 긴 사진은 'center top' 추천)
-  avatarAsset:'avatar.jpg'
+  avatarAsset:'avatar.jpg',
+  // 미리보기(OG) 이미지 우선순위: 앞에서부터 Release에 있는 첫 번째 파일 사용
+  ogAssets:['link0.jpg','link1.jpg']
 };
 /* ====== 설정 끝 ====== */
 const $=id=>document.getElementById(id);
@@ -65,6 +74,8 @@ async function loadRelease(){
   const files=new Map(release.assets.map(x=>[x.name,x.browser_download_url]));
   document.querySelectorAll('.thumb').forEach((img,i)=>{const c=CONFIG.cards[i];if(files.has(c.asset))img.src=files.get(c.asset);});
   if(files.has(CONFIG.avatarAsset)){$('avatar').src=files.get(CONFIG.avatarAsset);$('avatar').classList.remove('hidden');}
+  const og=CONFIG.ogAssets.find(n=>files.has(n));
+  if(og)['og:image','twitter:image'].forEach(k=>{const m=document.querySelector(`meta[property="${k}"],meta[name="${k}"]`);if(m)m.setAttribute('content',files.get(og));});
   $('status').textContent='';
  }catch(e){$('status').textContent=' 이미지 연결 오류. PUBG INFO에 문의하여주세요';console.warn(e);}
 }
