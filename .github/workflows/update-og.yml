@@ -18,7 +18,7 @@ jobs:
           node-version: '20'
       - env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node update-og.mjs
+        run: node LEAKS/update-og.mjs
       - run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
